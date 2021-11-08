@@ -1,4 +1,4 @@
-namespace app
+namespace DeVote
 {
     public class Transaction
     {
