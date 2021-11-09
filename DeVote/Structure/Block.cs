@@ -1,23 +1,28 @@
 using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace DeVote
+
+namespace Structure
 {
     public class Block
     {
         public int Height { get; set; }
-        public string Date;
+        // public string Date;
         public string Miner;
+        public DateTime Timestamp;
         public string Hash { get; set; }
         public string PrevHash;
-        public string Data { get; set; }
+        public List<Transaction> Transactions { get; set; }
 
-        public Block(string date, string prevHash, string data)
+
+        public Block(DateTime timestamp, string prevHash, List<Transaction> transactions)
         {
-            Date = date;
+            Timestamp = timestamp;
             PrevHash = prevHash;
-            Data = data;
+            Transactions = transactions;
             Hash = ComputeHash();
         }
 
@@ -26,8 +31,10 @@ namespace DeVote
             // Create a SHA256   
             using (SHA256 sha256 = SHA256.Create())
             {
+                string data = Timestamp + PrevHash + JsonConvert.SerializeObject(Transactions);
+                // Console.WriteLine(data);
                 // ComputeHash - returns byte array  
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{Date}{PrevHash}{Data}"));
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(data));
 
                 // Convert byte array to a string   
                 StringBuilder builder = new StringBuilder();

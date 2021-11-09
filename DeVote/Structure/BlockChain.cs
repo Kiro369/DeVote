@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
 
-namespace DeVote
+namespace Structure
 {
     public class BlockChain
     {
-        public List<Block> VChain { set; get; }
+        public LinkedList<Block> VChain { set; get; }
 
         public BlockChain()
         {
-            VChain = new List<Block>();
-            VChain.Add(new Block(DateTime.UtcNow.ToString("d"),null, "{}"));
+            VChain = new LinkedList<Block>();
+            Block GenesisBlock = new Block(DateTime.Now,null, null);
+            VChain.AddFirst(GenesisBlock);
         }
 
         public void AddBlock(Block block)
         {
-            Block latestBlock = VChain[VChain.Count - 1];
+            Block latestBlock = VChain.Last.Value;
             block.Height = latestBlock.Height + 1;
             block.PrevHash = latestBlock.Hash;
             block.Hash = block.ComputeHash();
-            VChain.Add(block);
+            VChain.AddLast(block);
         }
     }
 }
