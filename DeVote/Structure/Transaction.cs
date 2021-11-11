@@ -1,6 +1,6 @@
 using System;
 
-namespace Structure
+namespace DeVote.Structure
 {
     public class Transaction
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Structure;
+using DeVote.Structure;
 
 namespace DeVote
 {
@@ -15,7 +15,7 @@ namespace DeVote
             List<Transaction> myTransactions = new List<Transaction>();
             myTransactions.Add(new Transaction(1, DateTime.UtcNow.ToString("d"), "elector1", "elected1"));
             myTransactions.Add(new Transaction(2, DateTime.UtcNow.ToString("d"), "elector2", "elected2"));
-            myTransactions.Add(new Transaction(2, DateTime.UtcNow.ToString("d"), "elector3", "elected3"));
+            myTransactions.Add(new Transaction(3, DateTime.UtcNow.ToString("d"), "elector3", "elected3"));
 
             // Console.WriteLine(JsonConvert.SerializeObject(myTransactions));
 

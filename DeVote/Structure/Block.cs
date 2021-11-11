@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 
-namespace Structure
+namespace DeVote.Structure
 {
     public class Block
     {
