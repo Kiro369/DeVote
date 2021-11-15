@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using DeVote.Structure;
+using DeVote.Structures;
 
 namespace DeVote
 {
