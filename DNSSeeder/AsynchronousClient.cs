@@ -47,7 +47,7 @@ namespace DNSSeeder
             IPAddress ipAddress = ipHostInfo.AddressList[0];
 
             // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), SeederPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, SeederPort);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(AddressFamily.InterNetwork,
