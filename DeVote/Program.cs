@@ -9,6 +9,14 @@ namespace DeVote
     {
         static void Main(string[] args)
         {
+
+            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+            seederClient.StartClient(true);
+
+            Console.ReadLine();
+
+            return;
+
             Console.WriteLine("Hello World!");
 
             BlockChain deVOTE = new BlockChain();

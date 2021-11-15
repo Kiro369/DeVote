@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -89,15 +90,18 @@ namespace DNSSeeder
 
             if (bytesRead > 0)
             {
-                if (Address.Length > 0)
+                Console.WriteLine("Seeding the Addresses to " + Address);
+                Send(handler, string.Join(Environment.NewLine, Program.Addresses.ToArray()));
+
+                if (state.buffer[0] == 1)
                 {
-                    Console.WriteLine("Seeding the Addresses to " + Address);
-                    Send(handler, string.Join(Environment.NewLine, Program.Addresses.ToArray()));
-                }
-                if (state.buffer[1] == 1)
-                {
-                    Console.WriteLine("Adding " + Address + " to our list");
-                    Program.Addresses.Add(Address);
+                    if (Program.Addresses.Contains(Address))
+                        Console.WriteLine("Address [" + Address + "] is already added to the list");
+                    else
+                    {
+                        Console.WriteLine("Adding " + Address + " to our list");
+                        Program.Addresses.Add(Address);
+                    }
                 }
             }
         }

@@ -16,6 +16,9 @@ namespace DNSSeeder
 
         // Client socket.
         public Socket workSocket = null;
+
+        // Received data string.
+        public StringBuilder sb = new StringBuilder();
     }
 
 }
