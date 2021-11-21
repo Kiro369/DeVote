@@ -10,12 +10,12 @@ namespace DeVote
         static void Main(string[] args)
         {
 
-            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
-            seederClient.StartClient(true);
+            // DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+            // seederClient.StartClient(true);
 
-            Console.ReadLine();
+            // Console.ReadLine();
 
-            return;
+            // return;
 
             Console.WriteLine("Hello World!");
 
@@ -25,12 +25,25 @@ namespace DeVote
             myTransactions.Add(new Transaction(2, DateTime.UtcNow.ToString("d"), "elector2", "elected2"));
             myTransactions.Add(new Transaction(3, DateTime.UtcNow.ToString("d"), "elector3", "elected3"));
 
-            // Console.WriteLine(JsonConvert.SerializeObject(myTransactions));
-
             Block myBlock = new Block(DateTime.Now, null, myTransactions);
             deVOTE.AddBlock(myBlock);
 
-            Console.WriteLine(JsonConvert.SerializeObject(deVOTE, Formatting.Indented));
+            // Save block into leveldb
+            deVOTE.saveBlock(myBlock);
+
+            // Create new iterator
+            using (var iterator = deVOTE.levelDb.db.CreateIterator())
+            {
+                // Iterate to print the key-value pairs as strings
+                for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
+                {
+                    Console.WriteLine("Block : {0}", iterator.KeyAsString());
+                    Console.WriteLine("Value : {0}", iterator.ValueAsString());
+                }
+            }
+
+            // Close the connection
+            deVOTE.levelDb.db.Close();
         }
     }
 }
