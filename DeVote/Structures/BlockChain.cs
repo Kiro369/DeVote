@@ -16,9 +16,8 @@ namespace DeVote.Structures
             Block GenesisBlock = new Block(DateTime.Now, null, null);
             VChain.AddFirst(GenesisBlock);
 
-            string parent = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-            string dbPath = parent+"\\dbTest";
-
+            string dbPath = Directory.GetCurrentDirectory()+"\\dbTest";
+                        
             // Create a new leveldb
             LevelDb myLevelDb = new LevelDb(dbPath);
             this.levelDb = myLevelDb;
