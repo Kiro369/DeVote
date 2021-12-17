@@ -5,18 +5,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace DNSSeeder
+namespace DeVote.Network
 {
-    public class AsynchronousClient
+    class AsynchronousClient
     {
         // ManualResetEvent instances signal completion.  
-        private static ManualResetEvent connectDone = 
-            new ManualResetEvent(false), sendDone = 
-            new ManualResetEvent(false), receiveDone = 
+        private static ManualResetEvent connectDone =
+            new ManualResetEvent(false), sendDone =
+            new ManualResetEvent(false), receiveDone =
             new ManualResetEvent(false);
 
-        string SeederHost;
-        int SeederPort;
+        string NodeHost;
+        int NodePort;
 
         // The response from the remote device.  
         private static String response = String.Empty;
@@ -28,24 +28,24 @@ namespace DNSSeeder
         /// </summary>
         /// <param name="host">DNS Seeder host that the client will connect to</param>
         /// <param name="port">DNS Seeder port</param>
-        public AsynchronousClient(string host = "dnsseeder.ddns.net", int port = 6942)
+        public AsynchronousClient(string host, int port = 4269)
         {
-            SeederHost = host;
-            SeederPort = port;
+            NodeHost = host;
+            NodePort = port;
         }
 
         /// <summary>
         /// Start the Seeder Client
         /// </summary>
         /// <param name="joinSeeder">Set this to true, to add the address to the list in the Seeder</param>
-        public void StartClient(bool joinSeeder)
+        public void StartClient()
         {
-            //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(SeederHost);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            // Parse string IP to an IPAddress object
+            
+            IPAddress ipAddress = IPAddress.Parse(NodeHost);
 
-            // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, SeederPort);
+            // Establish the remote endpoint for the socket. 
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, NodePort);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(AddressFamily.InterNetwork,
@@ -57,7 +57,7 @@ namespace DNSSeeder
             connectDone.WaitOne();
 
             // Send test data to the remote device.  
-            Send(client, new byte[1] { joinSeeder ? (byte)1 : (byte)0 });
+            Send(client, new byte[1] { 0 });
             sendDone.WaitOne();
 
             // Receive the response from the remote device.  

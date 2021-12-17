@@ -29,10 +29,10 @@ namespace DeVote
             deVOTE.AddBlock(myBlock);
 
             // Save block into leveldb
-            deVOTE.saveBlock(myBlock);
+            deVOTE.SaveBlock(myBlock);
 
             // Create new iterator
-            using (var iterator = deVOTE.levelDb.db.CreateIterator())
+            using (var iterator = deVOTE.LevelDB.CreateIterator())
             {
                 // Iterate to print the key-value pairs as strings
                 for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
@@ -43,7 +43,7 @@ namespace DeVote
             }
 
             // Close the connection
-            deVOTE.levelDb.db.Close();
+            deVOTE.LevelDB.Close();
         }
     }
 }

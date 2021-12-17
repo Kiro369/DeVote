@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
+using LevelDB;
 
 namespace DeVote.Structures
 {
     public class BlockChain
     {
         public LinkedList<Block> VChain { set; get; }
-        public LevelDb levelDb;
+        public DB LevelDB;
 
         public BlockChain()
         {
@@ -17,11 +18,10 @@ namespace DeVote.Structures
             VChain.AddFirst(GenesisBlock);
 
             string dbPath = Directory.GetCurrentDirectory()+"\\dbTest";
-                        
+
             // Create a new leveldb
-            LevelDb myLevelDb = new LevelDb(dbPath);
-            this.levelDb = myLevelDb;
-            this.levelDb.db.Put(GenesisBlock.Height.ToString(), JsonConvert.SerializeObject(GenesisBlock));
+            LevelDB = new DB(new Options { CreateIfMissing = true }, dbPath);
+            LevelDB.Put(GenesisBlock.Height.ToString(), JsonConvert.SerializeObject(GenesisBlock));
         }
 
         public void AddBlock(Block block)
@@ -34,10 +34,10 @@ namespace DeVote.Structures
         }
 
         // Save block into leveldb
-        public void saveBlock(Block block)
+        public void SaveBlock(Block block)
         {
             // Put each block as key-value pair where key is the position (height) of the block
-            this.levelDb.db.Put(block.Height.ToString(), JsonConvert.SerializeObject(block));
+            LevelDB.Put(block.Height.ToString(), JsonConvert.SerializeObject(block));
         }
     }
 }

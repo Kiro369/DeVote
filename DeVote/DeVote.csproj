@@ -14,4 +14,8 @@
     <ProjectReference Include="..\DNSSeeder\DNSSeeder.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Network\Packets\" />
+  </ItemGroup>
+
 </Project>
