@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using DeVote.Structures;
-
+using System.Text;
 namespace DeVote
 {
     class Program
@@ -21,26 +21,27 @@ namespace DeVote
 
             BlockChain deVOTE = new BlockChain();
             List<Transaction> myTransactions = new List<Transaction>();
-            myTransactions.Add(new Transaction(1, DateTime.UtcNow.ToString("d"), "elector1", "elected1"));
-            myTransactions.Add(new Transaction(2, DateTime.UtcNow.ToString("d"), "elector2", "elected2"));
-            myTransactions.Add(new Transaction(3, DateTime.UtcNow.ToString("d"), "elector3", "elected3"));
+            for (int i = 0; i < 10; i++)
+            {
+                myTransactions.Add(new Transaction(i, DateTime.UtcNow, "elector" + i, "elected" + i));
+            }
 
-            Block myBlock = new Block(DateTime.Now, null, myTransactions);
+            Block myBlock = new Block(DateTime.UtcNow, null, myTransactions);
             deVOTE.AddBlock(myBlock);
 
             // Save block into leveldb
             deVOTE.SaveBlock(myBlock);
 
-            // Create new iterator
-            using (var iterator = deVOTE.LevelDB.CreateIterator())
-            {
-                // Iterate to print the key-value pairs as strings
-                for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
-                {
-                    Console.WriteLine("Block : {0}", iterator.KeyAsString());
-                    Console.WriteLine("Value : {0}", iterator.ValueAsString());
-                }
-            }
+            // byte[] TargetBlock1 = deVOTE.LoadBlock("1");
+            // Console.WriteLine("TargetBlock {0}",Encoding.UTF8.GetString(TargetBlock1));
+            
+            List<Byte[]> SerializedBlockChain = deVOTE.LoadBlockChain();
+            Console.WriteLine("SerializedBlockChain");
+            Console.WriteLine(JsonConvert.SerializeObject(SerializedBlockChain, Formatting.Indented));
+
+
+            Console.WriteLine("");
+            deVOTE.SaveBlockChain(SerializedBlockChain);
 
             // Close the connection
             deVOTE.LevelDB.Close();

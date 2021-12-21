@@ -1,0 +1,26 @@
+syntax = "proto3";
+package DeVote.Structures;
+
+import "google/protobuf/timestamp.proto";
+
+message BlockBuf {
+
+    int32 Height = 1;
+    string Hash = 2;
+    google.protobuf.Timestamp Timestamp = 3;
+    string Miner = 4;
+    string PrevHash = 5;
+    int32 nTx = 6;
+
+
+    
+message Transaction {
+    int32 ID =1;
+    google.protobuf.Timestamp Date = 2;
+    string Elector = 3;
+    string Elected = 4;
+};
+
+repeated Transaction Transactions = 7;
+
+}

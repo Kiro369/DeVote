@@ -16,6 +16,7 @@ namespace DeVote.Structures
         public string Hash { get; set; }
         public string PrevHash;
         public List<Transaction> Transactions { get; set; }
+        public int nTx;
 
 
         public Block(DateTime timestamp, string prevHash, List<Transaction> transactions)
