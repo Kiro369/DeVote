@@ -6,17 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Network\Packets\**" />
+    <EmbeddedResource Remove="Network\Packets\**" />
+    <None Remove="Network\Packets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.19.1" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
     <PackageReference Include="LevelDB.Standard" Version="2.1.6.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DNSSeeder\DNSSeeder.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Network\Packets\" />
   </ItemGroup>
 
 </Project>
