@@ -29,15 +29,15 @@ class _Bottom_barState extends State<Bottom_bar> {
             current=index;
           });
         },
-        items: [
+        items:  [
           BottomNavigationBarItem(
-              title: Text('الاماكن'),
+              label: 'الاماكن',
               icon: Icon(Icons.location_on)),
           BottomNavigationBarItem(
-              title: Text('المرشحون'),
+              label: 'المرشحون',
               icon: Icon(Icons.people_alt_outlined)),
           BottomNavigationBarItem(
-              title: Text('النتائج'),
+              label: 'النتائج',
               icon: Icon(Icons.insert_chart_outlined)),
         ],
 

@@ -14,8 +14,8 @@ class Result extends StatefulWidget {
 class _ResultState extends State<Result> {
 
   List<people> motrsh7en=[
-    people('عبد الفتاح السيسي', 55),
-    people(' موسي مصطفي موسي', 30)
+    people('عبد الفتاح السيسي', 65),
+    people(' موسي مصطفي موسي', 35)
   ];
   late List<Model> data;
   late MapShapeSource _mapSource;
@@ -23,32 +23,32 @@ class _ResultState extends State<Result> {
   void initState() {
 
     data = const <Model> [
-      Model('Kafr-El-Sheikh', Color.fromRGBO(155, 239, 216, 1.0), 'كفر الشيخ'),
-      Model('Al Fayyum (Fayoum)', Colors.red, 'الفيوم'),
-      Model('Al Bahr/Al Ahmar (RedSea)',Color.fromRGBO(32, 109, 04, 1.0), 'البحر الاحمر'),
-      Model('Dumyat (Damietta)', Color.fromRGBO(171, 56, 224, 0.75), 'دمياط'),
-      Model('Matruh', Color.fromRGBO(126, 247, 74, 0.75), 'مطروح'),
-      Model('Al Daqahliyah (Dakahlia)', Color.fromRGBO(79, 60, 201, 0.7), 'الدهلقية'),
-      Model('As Ismailiyah (Ismailia)', Color.fromRGBO(99, 164, 230, 1), 'الاسماعيلية'),
-      Model('Aswan', Colors.teal, 'اسوان'),
-      Model('Asyiut', Colors.teal, 'اسيوط'),
-      Model('Beni Suwayf (Beni-Suef)', Colors.teal, 'بني سويف'),
-      Model('Qina', Colors.teal, 'قنا'),
-      Model('Suhaj', Colors.teal, 'سوهاج'),
-      Model('Al Iskandariyah (Alex.)', Colors.teal, 'الاسكندرية'),
-      Model('Al Qahirah (Cairo)', Colors.teal, 'القاهرة'),
-      Model('As Suways (Suez)', Colors.teal, 'السويس'),
-      Model('Bur Said (Port Said)', Colors.teal, 'بورسعيد'),
-      Model('Al Buhayrah (Behera)', Colors.teal, 'البحيرة'),
-      Model('Al Wadi/Al Jadid', Colors.teal, 'الوادي الجديد'),
-      Model('Janub Sina (South Sinai)', Colors.teal, 'جنوب سيناء'),
-      Model('Shamal Sina (North Sinai)', Colors.teal, 'شمال سيناء'),
-      Model('Al Minufiyah (Menoufia)', Colors.teal, 'المنوفية'),
-      Model('Al Gharbiyah (Gharbia)', Colors.teal, 'الغربية'),
-      Model('Al Qalyubiyah (Kalyoubia)', Colors.teal, 'القليوبية'),
-      Model('Ash Sharqiyah (Sharkia)', Colors.red, 'الشرقية'),
-      Model('Al Jizah (Giza)', Colors.red, 'الجيزة'),
-      Model('Al Minya (Menia)', Colors.teal, 'المنيا'),
+      Model('Kafr-El-Sheikh', const Color(0xffd00a16), 'كفر الشيخ'),
+      Model('Al Fayyum (Fayoum)', const Color(0xffd00a16), 'الفيوم'),
+      Model('Al Bahr/Al Ahmar (RedSea)',const Color(0xffd00a16), 'البحر الاحمر'),
+      Model('Dumyat (Damietta)', const Color(0xffd00a16), 'دمياط'),
+      Model('Matruh',  const Color(0xffd00a16), 'مطروح'),
+      Model('Al Daqahliyah (Dakahlia)', const Color(0xffd00a16), 'الدقهلية'),
+      Model('As Ismailiyah (Ismailia)', const Color(0xff6ca0ff), 'الاسماعيلية'),
+      Model('Aswan', const Color(0xff6ca0ff), 'اسوان'),
+      Model('Asyiut',  const Color(0xff6ca0ff), 'اسيوط'),
+      Model('Beni Suwayf (Beni-Suef)', const Color(0xffd00a16), 'بني سويف'),
+      Model('Qina',  const Color(0xff6ca0ff), 'قنا'),
+      Model('Suhaj',  const Color(0xffd00a16), 'سوهاج'),
+      Model('Al Iskandariyah (Alex.)', const Color(0xff6ca0ff), 'الاسكندرية'),
+      Model('Al Qahirah (Cairo)', const Color(0xff6ca0ff), 'القاهرة'),
+      Model('As Suways (Suez)', const Color(0xff6ca0ff), 'السويس'),
+      Model('Bur Said (Port Said)', const Color(0xffd00a16), 'بورسعيد'),
+      Model('Al Buhayrah (Behera)', const Color(0xffd00a16), 'البحيرة'),
+      Model('Al Wadi/Al Jadid', const Color(0xffd00a16), 'الوادي الجديد'),
+      Model('Janub Sina (South Sinai)', const Color(0xffd00a16), 'جنوب سيناء'),
+      Model('Shamal Sina (North Sinai)', const Color(0xff6ca0ff), 'شمال سيناء'),
+      Model('Al Minufiyah (Menoufia)', const Color(0xff6ca0ff), 'المنوفية'),
+      Model('Al Gharbiyah (Gharbia)',const Color(0xffd00a16), 'الغربية'),
+      Model('Al Qalyubiyah (Kalyoubia)', const Color(0xffd00a16), 'القليوبية'),
+      Model('Ash Sharqiyah (Sharkia)',const Color(0xffd00a16), 'الشرقية'),
+      Model('Al Jizah (Giza)',const Color(0xffd00a16), 'الجيزة'),
+      Model('Al Minya (Menia)', const Color(0xff6ca0ff), 'المنيا'),
 
     ];
     _mapSource = MapShapeSource.asset(
@@ -96,36 +96,37 @@ class _ResultState extends State<Result> {
             //child: Image.asset('assets/preview.png'),
           //),
           Container(
-            height: MediaQuery.of(context).size.height/2,
-            child: SfMaps(
-              layers: <MapShapeLayer>[
-                MapShapeLayer(
-                  source: _mapSource,
-                  showDataLabels: true,
-               //   legend: const MapLegend(MapElement.shape),
-                  tooltipSettings: MapTooltipSettings(
-                      color: Colors.grey[700],
-                      strokeColor: Colors.white,
-                      strokeWidth: 2),
-                  strokeColor: Colors.white,
-                  strokeWidth: 0.5,
-                  shapeTooltipBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        data[index].stateCode,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
-                  },
-                  dataLabelSettings: MapDataLabelSettings(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize:8)),
-                ),
-              ],
-            ),
+            height: MediaQuery.of(context).size.height/2.5,
+              child: SfMaps(
+                layers: <MapShapeLayer>[
+                  MapShapeLayer(
+                    source: _mapSource,
+                    showDataLabels: true,
+                 //   legend: const MapLegend(MapElement.shape),
+                    tooltipSettings: MapTooltipSettings(
+                        color: Colors.grey[700],
+                        strokeColor: Colors.white,
+                        strokeWidth: 2),
+                    strokeColor: Colors.white,
+                    strokeWidth: 0.5,
+                    shapeTooltipBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          data[index].stateCode,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                    dataLabelSettings: MapDataLabelSettings(
+                        textStyle: TextStyle(
+                            color: Colors.black,
+                           // fontWeight: FontWeight.bold,
+                            fontSize:7)),
+                  ),
+                ],
+              ),
+
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
