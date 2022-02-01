@@ -1,10 +1,10 @@
 import 'package:devote/models/people.dart';
 import 'package:flutter/material.dart';
-class Info extends StatelessWidget {
+class InfoPage extends StatelessWidget {
   final List<people> motrsh7e;
   final int index;
 
-  const Info({ required this.motrsh7e, required this.index}) ;
+  const InfoPage({ required this.motrsh7e, required this.index}) ;
 
   @override
   Widget build(BuildContext context) {

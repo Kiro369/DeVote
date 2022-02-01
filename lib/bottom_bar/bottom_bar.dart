@@ -33,14 +33,12 @@ class _Bottom_barState extends State<Bottom_bar> {
           BottomNavigationBarItem(
               title: Text('الاماكن'),
               icon: Icon(Icons.location_on)),
-
           BottomNavigationBarItem(
-              title: Text('المترشحون'),
+              title: Text('المرشحون'),
               icon: Icon(Icons.people_alt_outlined)),
           BottomNavigationBarItem(
               title: Text('النتائج'),
               icon: Icon(Icons.insert_chart_outlined)),
-
         ],
 
       ),

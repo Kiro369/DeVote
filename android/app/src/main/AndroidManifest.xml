@@ -3,6 +3,8 @@
    <application
         android:label="devote"
         android:icon="@mipmap/ic_launcher">
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyD9tRGer8ZwdDO7IaHRT91ZZ7-0CZxvaDQ"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

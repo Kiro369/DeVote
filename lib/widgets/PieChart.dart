@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 class PieChart extends StatelessWidget {
 final List<people> motrsh7;
-
-  const PieChart({ required this.motrsh7}) ;
-
+  const PieChart({required this.motrsh7}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +26,7 @@ final List<people> motrsh7;
               },
               series: <CircularSeries<people, String>>[
                 PieSeries<people, String>(
+
                     selectionBehavior: SelectionBehavior(enable: true),
                     explode: true,
                     dataSource: motrsh7,
@@ -36,13 +35,12 @@ final List<people> motrsh7;
                     name: 'Sales',
                     dataLabelSettings: DataLabelSettings(isVisible: true,)
                 )
-              ]),
+              ],
+          ),
         ),
         Container(
-
           width: MediaQuery.of(context).size.width/2,
           child: Column(
-
             children: [
               ListTile(
                 title: Text(motrsh7[0].nickname,textAlign: TextAlign.right,),
@@ -55,6 +53,7 @@ final List<people> motrsh7;
             ],
           ),
         )
-      ],);
+      ],
+    );
   }
 }
