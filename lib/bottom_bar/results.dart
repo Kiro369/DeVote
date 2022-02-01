@@ -31,7 +31,6 @@ class _ResultState extends State<Result> {
       Model('Al Daqahliyah (Dakahlia)', Color.fromRGBO(79, 60, 201, 0.7), 'الدهلقية'),
       Model('As Ismailiyah (Ismailia)', Color.fromRGBO(99, 164, 230, 1), 'الاسماعيلية'),
       Model('Aswan', Colors.teal, 'اسوان'),
-
       Model('Asyiut', Colors.teal, 'اسيوط'),
       Model('Beni Suwayf (Beni-Suef)', Colors.teal, 'بني سويف'),
       Model('Qina', Colors.teal, 'قنا'),
