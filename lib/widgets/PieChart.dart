@@ -14,6 +14,10 @@ final List<people> motrsh7;
           width: MediaQuery.of(context).size.width/2,
           //Initialize the chart widget
           child: SfCircularChart(
+            tooltipBehavior: TooltipBehavior(
+                enable: true,
+                tooltipPosition: TooltipPosition.pointer
+            ),
               backgroundColor: Colors.white,
               palette: [
                 const Color(0xffd00a16),
@@ -30,10 +34,13 @@ final List<people> motrsh7;
                     selectionBehavior: SelectionBehavior(enable: true),
                     explode: true,
                     dataSource: motrsh7,
-                    xValueMapper: (people sales, _) => sales.nickname,
-                    yValueMapper: (people sales, _) => sales.result,
-                    name: 'Sales',
-                    dataLabelSettings: DataLabelSettings(isVisible: true,)
+                    xValueMapper: (people sales, _) => sales.nickname ,
+                    yValueMapper: (people sales, _) => sales.result ,
+                  //  dataLabelMapper: (people sales, _) =>sales.per,
+                    name: 'الانتخابات الرئاسية',
+
+                    dataLabelSettings: DataLabelSettings(isVisible: true,
+                        labelPosition: ChartDataLabelPosition.outside,)
                 )
               ],
           ),

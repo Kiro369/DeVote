@@ -9,5 +9,6 @@ class people {
   final String? image;
   final String? name;
   final double result;
-  people(this.nickname, this.result,[this.name,this.image,this.codestr,this.code,this.info]);
+  final String per;
+  people(this.nickname, this.result,this.per,[this.name,this.image,this.codestr,this.code,this.info, ]);
 }

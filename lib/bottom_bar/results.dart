@@ -1,8 +1,11 @@
 import 'package:devote/models/people.dart';
+import 'package:devote/widgets/MapChart.dart';
 import 'package:devote/widgets/PieChart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
+
+import '../models/mapModel.dart';
 
 class Result extends StatefulWidget {
   const Result({Key? key}) : super(key: key);
@@ -14,20 +17,19 @@ class Result extends StatefulWidget {
 class _ResultState extends State<Result> {
 
   List<people> motrsh7en=[
-    people('عبد الفتاح السيسي', 65),
-    people(' موسي مصطفي موسي', 35)
+    people('عبد الفتاح السيسي', 6589305,'65%'),
+    people(' موسي مصطفي موسي', 335555,'35%')
   ];
   late List<Model> data;
   late MapShapeSource _mapSource;
   @override
   void initState() {
-
     data = const <Model> [
       Model('Kafr-El-Sheikh', const Color(0xffd00a16), 'كفر الشيخ'),
       Model('Al Fayyum (Fayoum)', const Color(0xffd00a16), 'الفيوم'),
       Model('Al Bahr/Al Ahmar (RedSea)',const Color(0xffd00a16), 'البحر الاحمر'),
       Model('Dumyat (Damietta)', const Color(0xffd00a16), 'دمياط'),
-      Model('Matruh',  const Color(0xffd00a16), 'مطروح'),
+      Model('Matruh', const Color(0xffd00a16), 'مطروح'),
       Model('Al Daqahliyah (Dakahlia)', const Color(0xffd00a16), 'الدقهلية'),
       Model('As Ismailiyah (Ismailia)', const Color(0xff6ca0ff), 'الاسماعيلية'),
       Model('Aswan', const Color(0xff6ca0ff), 'اسوان'),
@@ -49,7 +51,6 @@ class _ResultState extends State<Result> {
       Model('Ash Sharqiyah (Sharkia)',const Color(0xffd00a16), 'الشرقية'),
       Model('Al Jizah (Giza)',const Color(0xffd00a16), 'الجيزة'),
       Model('Al Minya (Menia)', const Color(0xff6ca0ff), 'المنيا'),
-
     ];
     _mapSource = MapShapeSource.asset(
         'assets/egypt2.json',
@@ -58,7 +59,6 @@ class _ResultState extends State<Result> {
       primaryValueMapper: (int index) => data[index].state,
       dataLabelMapper: (int index) => data[index].stateCode,
       shapeColorValueMapper: (int index) => data[index].color,
-
     );
 
     super.initState();
@@ -91,64 +91,25 @@ class _ResultState extends State<Result> {
               textAlign:TextAlign.center,
               style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
           ),
-          //Padding(
-            //padding: const EdgeInsets.all(15.0),
-            //child: Image.asset('assets/preview.png'),
-          //),
-          Container(
-            height: MediaQuery.of(context).size.height/2.5,
-              child: SfMaps(
-                layers: <MapShapeLayer>[
-                  MapShapeLayer(
-                    source: _mapSource,
-                    showDataLabels: true,
-                 //   legend: const MapLegend(MapElement.shape),
-                    tooltipSettings: MapTooltipSettings(
-                        color: Colors.grey[700],
-                        strokeColor: Colors.white,
-                        strokeWidth: 2),
-                    strokeColor: Colors.white,
-                    strokeWidth: 0.5,
-                    shapeTooltipBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          data[index].stateCode,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      );
-                    },
-                    dataLabelSettings: MapDataLabelSettings(
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                           // fontWeight: FontWeight.bold,
-                            fontSize:7)),
-                  ),
-                ],
-              ),
-
-          ),
+          MapChart(data: data,mapSource: _mapSource),
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Text('BlockChain Explorer',textAlign:TextAlign.center,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+            child: Text('متابعة العملية الانتخابية',textAlign:TextAlign.center,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
           ),
-
+          Text('( BlockChain Explorer )',textAlign:TextAlign.center,style: TextStyle(fontSize: 12,),
+          ),
+          ListTile(
+            title: Text('Hash',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+            trailing:  Text('Vote',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+            leading: Text('Time',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+          ),
+          ListTile(
+            title: Text('#22ifhs;ouih92',),
+            trailing:  Text('السيسي'),
+            leading: Text('03:12'),
+          )
         ],
       ),
     );
   }
-}
-/// Collection of Australia state code data.
-class Model {
-  /// Initialize the instance of the [Model] class.
-  const Model(this.state, this.color, this.stateCode);
-
-  /// Represents the Australia state name.
-  final String state;
-
-  /// Represents the Australia state color.
-  final Color color;
-
-  /// Represents the Australia state code.
-  final String stateCode;
 }
