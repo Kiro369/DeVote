@@ -10,6 +10,7 @@ namespace DeVote.Network
 {
     class AsynchronousServer
     {
+        Dictionary<string, Node> Nodes = new Dictionary<string, Node>();
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
         // The port our DNS Seeder gonna be listening to
@@ -69,19 +70,22 @@ namespace DeVote.Network
             Socket handler = listener.EndAccept(ar);
 
             // Create the state object.  
-            StateObject state = new StateObject();
-            state.workSocket = handler;
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(RecieveCallback), state);
+            Node state = new Node();
+            state.Socket = handler;
+            var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
+            Program.Nodes[Address] = state;
+
+            handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                new AsyncCallback(ReceiveCallback), state);
         }
-        public void RecieveCallback(IAsyncResult ar)
+        public void ReceiveCallback(IAsyncResult ar)
         {
             String content = String.Empty;
 
             // Retrieve the state object and the handler socket  
             // from the asynchronous state object.  
-            StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
+            Node state = (Node)ar.AsyncState;
+            Socket handler = state.Socket;
 
             // Getting the Address of the Remote end point
             var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
@@ -90,28 +94,14 @@ namespace DeVote.Network
 
             if (bytesRead > 0)
             {
-                // There  might be more data, so store the data received so far.  
-                state.sb.Append(Encoding.ASCII.GetString(
-                    state.buffer, 0, bytesRead));
+                // All the data has arrived; put it in response.  
+                PacketsHandler.Packets.Enqueue(state.buffer.Take(bytesRead).ToArray());
 
-                // Check for end-of-file tag. If it is not there, read
-                // more data.  
-                content = state.sb.ToString();
-                if (content.IndexOf("<EOF>") > -1)
-                {
-                    // All the data has been read from the
-                    // client. Display it on the console.  
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        content.Length, content);
-                    // Echo the data back to the client.  
-                    Send(handler, content);
-                }
-                else
-                {
-                    // Not all data received. Get more.  
-                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(RecieveCallback), state);
-                }
+                Array.Clear(state.buffer, 0, state.buffer.Length);
+
+                // Signal that all bytes have been received.  
+                handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                    new AsyncCallback(ReceiveCallback), state);
             }
         }
         private void Send(Socket handler, String data)
@@ -133,9 +123,6 @@ namespace DeVote.Network
                 // Complete sending the data to the remote device.  
                 int bytesSent = handler.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to client.", bytesSent);
-
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
 
             }
             catch (Exception e)

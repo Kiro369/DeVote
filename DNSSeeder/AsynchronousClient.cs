@@ -9,6 +9,7 @@ namespace DNSSeeder
 {
     public class AsynchronousClient
     {
+        public string[] Addresses;
         // ManualResetEvent instances signal completion.  
         private static ManualResetEvent connectDone = 
             new ManualResetEvent(false), sendDone = 
@@ -30,6 +31,7 @@ namespace DNSSeeder
         /// <param name="port">DNS Seeder port</param>
         public AsynchronousClient(string host = "dnsseeder.ddns.net", int port = 6942)
         {
+            Addresses = new string[0];
             SeederHost = host;
             SeederPort = port;
         }
@@ -64,8 +66,9 @@ namespace DNSSeeder
             Receive(client);
             receiveDone.WaitOne();
 
+            Addresses = response.Split(Environment.NewLine);
             // Write the response to the console.  
-            Console.WriteLine("Response received : {0}", response);
+            Console.WriteLine("Addresses received : {0}", Addresses.Length);
 
             // Release the socket.  
             client.Shutdown(SocketShutdown.Both);

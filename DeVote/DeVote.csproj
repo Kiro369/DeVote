@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Network\Packets\**" />
     <EmbeddedResource Remove="Network\Packets\**" />
@@ -16,6 +20,8 @@
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
     <PackageReference Include="LevelDB.Standard" Version="2.1.6.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="protobuf-net" Version="3.0.101" />
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
