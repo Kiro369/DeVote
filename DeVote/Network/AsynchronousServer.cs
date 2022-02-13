@@ -95,7 +95,7 @@ namespace DeVote.Network
             if (bytesRead > 0)
             {
                 // All the data has arrived; put it in response.  
-                PacketsHandler.Packets.Enqueue(state.buffer.Take(bytesRead).ToArray());
+                PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(state, state.buffer.Take(bytesRead).ToArray()));
 
                 Array.Clear(state.buffer, 0, state.buffer.Length);
 

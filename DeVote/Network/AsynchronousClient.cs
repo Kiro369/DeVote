@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -129,19 +130,17 @@ namespace DeVote.Network
 
                 if (bytesRead > 0)
                 {
-                    // There might be more data, so store the data received so far.  
-                    //state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-
-                    // Get the rest of the data.  
-                    client.BeginReceive(state.buffer, bytesRead, Node.BufferSize - bytesRead, 0,
-                        new AsyncCallback(ReceiveCallback), state);
-                }
-                else
-                {
                     // All the data has arrived; put it in response.  
-                    PacketsHandler.Packets.Enqueue(state.buffer);
+                    PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(state, state.buffer.Take(bytesRead).ToArray()));
+
+                    Array.Clear(state.buffer, 0, state.buffer.Length);
+
                     // Signal that all bytes have been received.  
+                    client.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+
                     receiveDone.Set();
+
                 }
             }
             catch (Exception e)
