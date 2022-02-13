@@ -95,6 +95,44 @@ namespace DeVote
             }
             _ = PacketsHandler.Handle();
             #endregion
+
+            #region BlockChain Test
+            BlockChain deVOTE = new BlockChain();
+            List<Transaction> myTransactions = new List<Transaction>();
+            for (int i = 0; i < 2; i++)
+            {
+                Transaction newTX = new Transaction("elector" + i,"elected" + i);
+                myTransactions.Add(newTX);
+            }
+
+            // Console.WriteLine(JsonConvert.SerializeObject(myTransactions, Formatting.Indented));
+
+            Block myBlock = new Block(myTransactions);
+            myBlock.Miner = "Test33";
+            myBlock.Transactions = myTransactions;
+            deVOTE.AddBlock(myBlock);
+
+            // Save block into leveldb
+            deVOTE.SaveBlock(myBlock);
+
+            var SerializedBlock = Block.SerializeBlock(myBlock);
+
+            Block DeserializedBlock = Block.DeserializeBlock(SerializedBlock);
+            Console.WriteLine(JsonConvert.SerializeObject(DeserializedBlock, Formatting.Indented));
+
+            List<Byte[]> SerializedBlockChain = deVOTE.LoadBlockChain();
+
+            Console.WriteLine("SerializedBlockChain");
+            Console.WriteLine(JsonConvert.SerializeObject(SerializedBlockChain, Formatting.Indented));
+
+
+            Console.WriteLine("");
+            deVOTE.SaveBlockChain(SerializedBlockChain);
+
+            // Close the connection
+            deVOTE.LevelDB.Close();
+            #endregion
+
             #region Prev tests
             //var originalText = "hello bitches";
             //Console.WriteLine("Original text: " + originalText);
@@ -106,35 +144,6 @@ namespace DeVote
             //Console.WriteLine("Original and Decrypted bytes match: " + originalBytes.SequenceEqual(decryptedBytes));
             //Console.ReadLine();
             //// return;
-
-            //Console.WriteLine("Hello World!");
-
-            //BlockChain deVOTE = new BlockChain();
-            //List<Transaction> myTransactions = new List<Transaction>();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    myTransactions.Add(new Transaction(i, DateTime.UtcNow, "elector" + i, "elected" + i));
-            //}
-
-            //Block myBlock = new Block(DateTime.UtcNow, null, myTransactions);
-            //deVOTE.AddBlock(myBlock);
-
-            //// Save block into leveldb
-            //deVOTE.SaveBlock(myBlock);
-
-            //// byte[] TargetBlock1 = deVOTE.LoadBlock("1");
-            //// Console.WriteLine("TargetBlock {0}",Encoding.UTF8.GetString(TargetBlock1));
-
-            //List<Byte[]> SerializedBlockChain = deVOTE.LoadBlockChain();
-            //Console.WriteLine("SerializedBlockChain");
-            //Console.WriteLine(JsonConvert.SerializeObject(SerializedBlockChain, Formatting.Indented));
-
-
-            //Console.WriteLine("");
-            //deVOTE.SaveBlockChain(SerializedBlockChain);
-
-            //// Close the connection
-            //deVOTE.LevelDB.Close();
             #endregion
         }
     }

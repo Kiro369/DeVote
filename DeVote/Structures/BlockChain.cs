@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.IO;
 using LevelDB;
-using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
 
 namespace DeVote.Structures
 {
@@ -27,12 +24,13 @@ namespace DeVote.Structures
 
         private Block CreateGenesisBlock()
         {
-            Block GenesisBlock = new Block(DateTime.UtcNow, "", new List<Transaction>{
-                new Transaction(0,DateTime.UtcNow,"","")
+            Block GenesisBlock = new Block(new List<Transaction>{
+                new Transaction("","")
             });
+            // Block GenesisBlock = new Block();
             GenesisBlock.Height = 1;
-            GenesisBlock.nTx = 0;
             GenesisBlock.Miner = "";
+            GenesisBlock.Hash = Hasher.ComputeHash(GenesisBlock.Timestamp.ToString());
             return GenesisBlock;
         }
 
@@ -41,50 +39,30 @@ namespace DeVote.Structures
             Block latestBlock = VChain.Last.Value;
             block.Height = latestBlock.Height + 1;
             block.PrevHash = latestBlock.Hash;
-            block.Hash = block.ComputeHash();
             block.nTx = block.Transactions.Count;
+            block.MerkleRoot = Hasher.ComputeMerkleRoot(block.Transactions);
+            string blockHeader = block.PrevHash+block.Timestamp.ToString()+block.MerkleRoot;
+            Console.WriteLine($"blockHeader {blockHeader}");
+            block.Hash = Hasher.ComputeHash(blockHeader);
             VChain.AddLast(block);
         }
 
-        // Save Block into LevelDB in Base64 Representation of Protobuf Encoding.
+        // Save Block into LevelDB as byte array representation of Protobuf Encoding.
         public void SaveBlock(Block block)
         {
-            // Convert Block Object to a BlockBuf Message.
-            BlockBuf blockBuf = new BlockBuf
-            {
-                Hash = block.Hash,
-                Height = block.Height,
-                PrevHash = block.PrevHash,
-                Timestamp = Timestamp.FromDateTime(block.Timestamp),
-                NTx = block.nTx
-            };
-
-            foreach (Transaction transaction in block.Transactions)
-            {
-                var TxJSON = JsonConvert.SerializeObject(transaction);
-                // Parses a Transaction Message from the given JSON.
-                BlockBuf.Types.Transaction TxBuf = BlockBuf.Types.Transaction.Parser.ParseJson(TxJSON);
-                blockBuf.Transactions.Add(TxBuf);
-            }
-
-            // Converts BlockBuf into a byte string in protobuf encoding.
-            ByteString BlockBufByteString = blockBuf.ToByteString();
-
-            // Save Each BlockBuf into LevelDB in base64 representation where key is Height.
-            this.LevelDB.Put(block.Height.ToString(), BlockBufByteString.ToBase64());
+            byte[] SerializedBlock = Block.SerializeBlock(block);
+            byte[] Height = BitConverter.GetBytes(block.Height);
+            this.LevelDB.Put(Height, SerializedBlock);
         }
 
         // Load Single Block from LevelDB
-        public byte[] LoadBlock(string height)
+        public byte[] LoadBlock(int height)
         {
-            var BlockBase64String = LevelDB.Get(height);
-            if (BlockBase64String != null)
+            byte[] HeightByte = BitConverter.GetBytes(height);
+            var SerializedBlock = LevelDB.Get(HeightByte);
+            if (SerializedBlock != null)
             {
-                // Write the entire byte array to the provided stream
-                // ByteString.FromBase64(BlockBase64String).WriteTo(stream);
-
-                byte[] BlockByteArray = ByteString.FromBase64(BlockBase64String).ToByteArray();
-                return BlockByteArray;
+                return SerializedBlock;
             }
             else return new byte[] { };
         }
@@ -101,15 +79,8 @@ namespace DeVote.Structures
             {
                 for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
                 {
-                    // Constructs a ByteString from Base64 Encoded String.
-                    ByteString BlockByteString = ByteString.FromBase64(iterator.ValueAsString());
-
-                    // Parses a BlockBuf from the given byte string.
-                    BlockBuf blockBuf = BlockBuf.Parser.ParseFrom(BlockByteString);
-
-                    // Converts Each block into a byte array in protobuf encoding.
-                    byte[] SerializedBlock = MessageExtensions.ToByteArray(blockBuf);
-
+                    byte[] SerializedBlock = iterator.Value();
+                    // TODO: create index map
                     SerializedBlockChain.Add(SerializedBlock);
                 }
                 return SerializedBlockChain;
@@ -121,14 +92,14 @@ namespace DeVote.Structures
         {
             foreach (byte[] block in BlockchainBytes)
             {
-                BlockBuf DeserializedBlock = BlockBuf.Parser.ParseFrom(block);
+                Block SerializedBlock = Block.DeserializeBlock(block);
+                byte[] Height = BitConverter.GetBytes(SerializedBlock.Height);
 
-                // Converts BlockBuf into a byte string in protobuf encoding.
-                ByteString BlockBufByteString = DeserializedBlock.ToByteString();
-
-                // Save Each BlockBuf into LevelDB in base64 representation where key is Height.
-                this.LevelDB.Put(DeserializedBlock.Height.ToString(), BlockBufByteString.ToBase64());
-                Console.WriteLine("DeserializedBlock {0}", DeserializedBlock.ToString());
+                // TODO: get height without deserialization
+                // var firstBytes = new byte[4];
+                // // copy the required number of bytes.
+                // Array.Copy(block, 0, firstBytes, 0, firstBytes.Length);
+                this.LevelDB.Put(Height,block);
             }
         }
     }

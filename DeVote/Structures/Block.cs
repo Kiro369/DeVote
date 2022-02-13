@@ -1,49 +1,43 @@
 using System;
-using System.Text;
-using System.Security.Cryptography;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-
+using ProtoBuf;
+using System.IO;
 
 namespace DeVote.Structures
 {
+    [ProtoContract(SkipConstructor = true)]
     public class Block
     {
-        public int Height { get; set; }
-        // public string Date;
-        public string Miner;
-        public DateTime Timestamp;
-        public string Hash { get; set; }
-        public string PrevHash;
-        public List<Transaction> Transactions { get; set; }
-        public int nTx;
+        [ProtoMember(1)] public int Height { get; set; }
+        [ProtoMember(2)] public string PrevHash;
+        [ProtoMember(3)] public string Hash { get; set; }
+        [ProtoMember(4)] public long Timestamp;
+        [ProtoMember(5)] public string Miner;
+        [ProtoMember(6)] public List<Transaction> Transactions { get; set; }
+        [ProtoMember(7)] public int nTx;
+        [ProtoMember(8)] public string MerkleRoot;
 
-
-        public Block(DateTime timestamp, string prevHash, List<Transaction> transactions)
+        public Block(List<Transaction> transactions)
         {
-            Timestamp = timestamp;
-            PrevHash = prevHash;
-            Transactions = transactions;
-            Hash = ComputeHash();
+            this.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            this.Transactions = transactions;
+            this.nTx = transactions.Count;
+        }
+        
+        public static byte[] SerializeBlock(Block block)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, block);
+                return stream.ToArray();
+            }
         }
 
-        public string ComputeHash()
+        public static Block DeserializeBlock(byte[] data)
         {
-            // Create a SHA256   
-            using (SHA256 sha256 = SHA256.Create())
+            using (MemoryStream stream = new MemoryStream(data))
             {
-                string data = Timestamp + PrevHash + JsonConvert.SerializeObject(Transactions);
-                // Console.WriteLine(data);
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(data));
-
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
+                return Serializer.Deserialize<Block>(stream);
             }
         }
     }
