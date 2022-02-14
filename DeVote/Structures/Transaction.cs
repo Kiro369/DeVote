@@ -2,6 +2,7 @@ using System;
 using ProtoBuf;
 using System.Text;
 using System.Diagnostics;
+using DeVote.Cryptography;
 
 namespace DeVote.Structures
 {

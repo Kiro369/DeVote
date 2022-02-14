@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -15,6 +15,14 @@ namespace DeVote.Network
 
         // Client socket.
         public Socket Socket = null;
+
+        public string Address
+        {
+            get
+            {
+                return Socket == null ? "" : ((IPEndPoint)Socket.RemoteEndPoint).Address.ToString();
+            }
+        }
 
         public void Send(String data)
         {
