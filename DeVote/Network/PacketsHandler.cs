@@ -44,7 +44,9 @@ namespace DeVote.Network
                         {
                             var node = pair.Key;
                             var packet = pair.Value;
-                            if (IsItECDHPacket(packet)) // Check if it's Elliptic Curve Diffie Hellman Key Exchange packet
+                            if (IsItECDHResponse(packet)) // Already handled before the Handler starts to work, so just dequeue
+                                continue; 
+                            else if (IsItECDHRequest(packet)) // Check if it's Elliptic Curve Diffie Hellman Key Exchange packet
                             {
                                 // Extract other party public key from the packet (we skip our header/identifier)
                                 var otherPartyPublicKey = packet.Skip(Constants.ECDHOperations[0].Length).ToArray();
@@ -78,7 +80,7 @@ namespace DeVote.Network
                                     try
                                     {
                                         // Check if that packet can be handled
-                                        if (_handlers.ContainsKey(id)) 
+                                        if (_handlers.ContainsKey(id))
                                             _handlers[id].Invoke(node, packet); // Handle the packet
                                         else Log.Error($"Unhandled packet with ID: {id}"); // Notify that this packet is not handled
                                     }
@@ -112,9 +114,18 @@ namespace DeVote.Network
         /// </summary>
         /// <param name="packet">the packet to be checked</param>
         /// <returns></returns>
-        static bool IsItECDHPacket(byte[] packet)
+        static bool IsItECDHRequest(byte[] packet)
         {
             return packet.StartsWith(Constants.ECDHOperations[0]);
+        }
+        /// <summary>
+        /// Checks if the packet contains an ECDH Response
+        /// </summary>
+        /// <param name="packet">the packet to be checked</param>
+        /// <returns></returns>
+        static bool IsItECDHResponse(byte[] packet)
+        {
+            return packet.StartsWith(Constants.ECDHOperations[1]) || packet.StartsWith(Constants.ECDHOperations[2]);
         }
         /// <summary>
         /// Initalize the Packet Handler, by catching all handlers by a special attribute (NodePacketHandlerAttribute) using Reflection

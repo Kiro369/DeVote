@@ -73,7 +73,7 @@ namespace DeVote
                 for (var i = 0; i < seederClient.Addresses.Length; i++)
                 {
                     var address = seederClient.Addresses[i];
-                    Task.Factory.StartNew(() => // Connect to another node, in a another thread
+                    Task.Factory.StartNew(() => // Connect to another node, in another thread
                     {
                         AsynchronousClient client = new AsynchronousClient(address);
                         client.StartClient();
