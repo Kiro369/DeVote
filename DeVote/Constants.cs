@@ -1,6 +1,4 @@
-﻿using DeVote.Structures;
-using System;
-using System.Collections.Generic;
+﻿using DeVote.Cryptography;
 using System.Text;
 
 namespace DeVote

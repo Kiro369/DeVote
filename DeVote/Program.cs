@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Linq;
 using DeVote.Network;
 using System.Threading.Tasks;
-using DeVote.Network.Cryptography;
+using DeVote.Cryptography;
 using DeVote.Extensions;
 
 namespace DeVote

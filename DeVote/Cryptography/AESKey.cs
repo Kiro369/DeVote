@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DeVote.Network.Cryptography
+namespace DeVote.Cryptography
 {
     [ProtoContract]
     class AESKey

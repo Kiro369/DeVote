@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
 
-namespace DeVote.Network.Cryptography
+namespace DeVote.Cryptography
 {
     class ECDH
     {
