@@ -14,18 +14,15 @@ namespace DeVote
 {
     class Program
     {
-        public static byte[][] ECDHOperations = new byte[][]
-        {
-            Encoding.UTF8.GetBytes("DeVoteECDiffieHellmanRequest"),
-            Encoding.UTF8.GetBytes("DeVoteECDiffieHellmanInitalResponse"),
-            Encoding.UTF8.GetBytes("DeVoteECDiffieHellmanFinalResponse")
-        };
+        /// <summary>
+        /// Connected Nodes
+        /// </summary>
         public static Dictionary<string, Node> Nodes = new Dictionary<string, Node>();
         static void Main(string[] args)
         {
             #region Test
-            var x = new byte[] { 1, 1 };
-            var y = x.Take(5).ToArray();
+            //var x = new byte[] { 1, 1 };
+            //var y = x.Take(5).ToArray();
             //PacketsHandler.Init();
 
             //AsynchronousServer server = new AsynchronousServer(4269);
@@ -41,15 +38,20 @@ namespace DeVote
             //var pkt = PacketsHandler.Packets.Dequeue();
             //Console.WriteLine(Encoding.UTF8.GetString(pkt));
             //Console.ReadLine();
-            return;
+            //return;
             #endregion
             #region Main
+            // Start the server first, so anyone can connect after we get added to the seeder
             AsynchronousServer server = new AsynchronousServer(4269);
             Task.Factory.StartNew(() => { server.Start(); });
 
+            // Starting the seeder client to be able to connect to the network
             DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+
+            // Get the addresses of all nodes, and add out IP to the seeder
             seederClient.StartClient(true);
 
+            // Check if there is anyone on network, if there is none, we create our own AES Key
             if (seederClient.Addresses.Length == 0)
             {
                 using (Aes aes = Aes.Create())
@@ -67,33 +69,61 @@ namespace DeVote
             }
             else
             {
+                // If there is someone on the network, we connect to them, and we do a Key Exchange with the first one we connect to
                 for (var i = 0; i < seederClient.Addresses.Length; i++)
                 {
                     var address = seederClient.Addresses[i];
-                    Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew(() => // Connect to another node, in a another thread
                     {
                         AsynchronousClient client = new AsynchronousClient(address);
                         client.StartClient();
                     });
-                    if (i == 0)
+                    if (i == 0) // If it's the first node we connect to, we do Elliptic Curve Diffie Hellman Key Exchange with them
                     {
+                        // Wait till we connect
                         while (Nodes.Count == 0) Task.Delay(100);
-                        var node = Nodes.FirstOrDefault().Value;
-                        var request = ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
+
+                        // Get the connection
+                        var node = Nodes.FirstOrDefault().Value; 
+
+                        // Generate request by adding special request bytes to the beginning of the packet (so the other side can Identify the packet), and adding our public key
+                        var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
+
+                        // Send the request
                         node.Send(request);
-                        while (!PacketsHandler.Packets.Any(y => y.Value.Take(ECDHOperations[1].Length).SequenceEqual(ECDHOperations[1])));
-                        var responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(ECDHOperations[1].Length).SequenceEqual(ECDHOperations[1])).Value;
-                        var otherPartyPublicKey = responsePacket.Skip(ECDHOperations[1].Length).ToArray();
-                        while (!PacketsHandler.Packets.Any(y => y.Value.Take(ECDHOperations[2].Length).SequenceEqual(ECDHOperations[2]))) ;
-                        responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(ECDHOperations[2].Length).SequenceEqual(ECDHOperations[2])).Value.Skip(ECDHOperations[2].Length).ToArray();
+
+                        // Wait for an inital response containing other party public key
+                        while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1])));
+
+                        // Get that response
+                        var responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1])).Value;
+
+                        // Extract other party public key
+                        var otherPartyPublicKey = responsePacket.Skip(Constants.ECDHOperations[1].Length).ToArray();
+
+                        // Wait for the final response, containing the secret AES Key 
+                        while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2]))) ;
+
+                        // Get that response
+                        responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2])).Value.Skip(Constants.ECDHOperations[2].Length).ToArray();
+
+                        // Split the encrypted and serialized Key from ECDH AES IV 
                         responsePacket.Split(responsePacket.Length - 16, out byte[] encryptedSecretKey, out byte[] IV);
+
+                        // Decrypt the Key
                         var aesKeySerialized = ECDH.Decrypt(encryptedSecretKey, otherPartyPublicKey, IV);
+
+                        // Finally Deserialize the AES Key
                         var key = ProtoBuf.Serializer.Deserialize<AESKey>(new System.Buffers.ReadOnlySequence<byte>(aesKeySerialized));
+
+                        // Set the Key, so we can use it
                         AES.Key = key;
+
+                        // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
+                        _ = PacketsHandler.Handle();
                     }
                 }
             }
-            _ = PacketsHandler.Handle();
             #endregion
 
             #region BlockChain Test

@@ -20,7 +20,7 @@ namespace DeVote.Structures
             this.Elected = elected;
 
             var stopwatch = Stopwatch.StartNew();
-            this.Hash = Hasher.ComputeHash(this.Date + this.Elector + this.Elected);
+            this.Hash = Argon2.ComputeHash(this.Date + this.Elector + this.Elected);
             stopwatch.Stop();
             Console.WriteLine($"Hashing Tx took { stopwatch.ElapsedMilliseconds / 1024.0 } s ");
         }

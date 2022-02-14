@@ -30,7 +30,7 @@ namespace DeVote.Structures
             // Block GenesisBlock = new Block();
             GenesisBlock.Height = 1;
             GenesisBlock.Miner = "";
-            GenesisBlock.Hash = Hasher.ComputeHash(GenesisBlock.Timestamp.ToString());
+            GenesisBlock.Hash = Argon2.ComputeHash(GenesisBlock.Timestamp.ToString());
             return GenesisBlock;
         }
 
@@ -40,10 +40,10 @@ namespace DeVote.Structures
             block.Height = latestBlock.Height + 1;
             block.PrevHash = latestBlock.Hash;
             block.nTx = block.Transactions.Count;
-            block.MerkleRoot = Hasher.ComputeMerkleRoot(block.Transactions);
+            block.MerkleRoot = Argon2.ComputeMerkleRoot(block.Transactions);
             string blockHeader = block.PrevHash+block.Timestamp.ToString()+block.MerkleRoot;
             Console.WriteLine($"blockHeader {blockHeader}");
-            block.Hash = Hasher.ComputeHash(blockHeader);
+            block.Hash = Argon2.ComputeHash(blockHeader);
             VChain.AddLast(block);
         }
 
