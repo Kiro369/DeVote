@@ -15,7 +15,7 @@ namespace DeVote.Network.Messages
         [ProtoMember(1)] public string Message { get; set; }
         public Test(byte[] arr)
         {
-            incomingPacket = arr;
+            incomingPacket = arr.Skip(4).ToArray();
         }
 
         public void Handle(Node client)
@@ -45,6 +45,7 @@ namespace DeVote.Network.Messages
             tst.Message = msg;
             using (MemoryStream stream = new MemoryStream())
             {
+                Serializer.Serialize(stream, tst);
                 var srlzd = stream.ToArray();
                 return (BitConverter.GetBytes((short)PacketTypes.Test).Concat(BitConverter.GetBytes((short)srlzd.Length))).Concat(srlzd).ToArray();
             }

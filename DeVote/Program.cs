@@ -47,6 +47,8 @@ namespace DeVote
             AsynchronousServer server = new AsynchronousServer(4269);
             Task.Factory.StartNew(() => { server.Start(); });
 
+            PacketsHandler.Init();
+
             // Starting the seeder client to be able to connect to the network
             DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
 

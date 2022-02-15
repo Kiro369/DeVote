@@ -55,6 +55,8 @@ namespace DeVote.Network
             Socket client = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
 
+            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
             // Connect to the remote endpoint.  
             client.BeginConnect(remoteEndPoint,
                 new AsyncCallback(ConnectCallback), client);
@@ -68,6 +70,7 @@ namespace DeVote.Network
             // Receive the response from the remote device.  
             while (!Stop)
             {
+                receiveDone.Reset();
                 Receive(client);
                 receiveDone.WaitOne();
             }
@@ -135,9 +138,9 @@ namespace DeVote.Network
 
                     Array.Clear(state.buffer, 0, state.buffer.Length);
 
-                    // Signal that all bytes have been received.  
-                    client.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
-                        new AsyncCallback(ReceiveCallback), state);
+                    //// Signal that all bytes have been received.  
+                    //client.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                    //    new AsyncCallback(ReceiveCallback), state);
 
                     receiveDone.Set();
 
