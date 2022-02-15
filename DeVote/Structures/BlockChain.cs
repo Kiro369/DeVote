@@ -14,13 +14,13 @@ namespace DeVote.Structures
         public BlockChain()
         {
             VChain = new LinkedList<Block>();
-            Block GenesisBlock = CreateGenesisBlock();
-            VChain.AddFirst(GenesisBlock);
+            //Block GenesisBlock = CreateGenesisBlock();
+            //VChain.AddFirst(GenesisBlock);
 
             // Create a new leveldb
             string dbPath = Directory.GetCurrentDirectory() + "\\dbTest";
             LevelDB = new DB(new Options { CreateIfMissing = true }, dbPath);
-            SaveBlock(GenesisBlock);
+            //SaveBlock(GenesisBlock);
         }
 
         private Block CreateGenesisBlock()
@@ -51,6 +51,9 @@ namespace DeVote.Structures
         // Save Block into LevelDB as byte array representation of Protobuf Encoding.
         public void SaveBlock(Block block)
         {
+            block.Save(LevelDB);
+
+
             byte[] SerializedBlock = Block.SerializeBlock(block);
             byte[] Height = BitConverter.GetBytes(block.Height);
             this.LevelDB.Put(Height, SerializedBlock);

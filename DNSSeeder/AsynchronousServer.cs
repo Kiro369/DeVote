@@ -90,6 +90,8 @@ namespace DNSSeeder
 
             if (bytesRead > 0)
             {
+                if (Address == "127.0.0.1")
+                    Address = "156.204.97.201";
                 Console.WriteLine("Seeding the Addresses to " + Address);
                 Send(handler, string.Join(Environment.NewLine, Program.Addresses.ToArray()));
 

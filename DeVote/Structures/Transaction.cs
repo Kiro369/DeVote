@@ -16,9 +16,9 @@ namespace DeVote.Structures
 
         public Transaction(string elector, string elected)
         {
-            this.Date = DateTime.UtcNow;
-            this.Elector = elector;
-            this.Elected = elected;
+            Date = DateTime.UtcNow;
+            Elector = elector;
+            Elected = elected;
 
             var stopwatch = Stopwatch.StartNew();
             this.Hash = Argon2.ComputeHash(this.Date + this.Elector + this.Elected);

@@ -23,6 +23,11 @@ namespace DeVote.Structures
             this.Transactions = transactions;
             this.nTx = transactions.Count;
         }
+
+        public void Save(LevelDB.DB levelDB)
+        {
+
+        }
         
         public static byte[] SerializeBlock(Block block)
         {

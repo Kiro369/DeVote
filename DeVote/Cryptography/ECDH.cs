@@ -15,26 +15,16 @@ namespace DeVote.Cryptography
             {
                 using (ECDiffieHellman bob = ECDiffieHellman.Create())
                 {
-                    using (ECDiffieHellman eve = ECDiffieHellman.Create())
-                    {
-                        var aliceSharedKey = alice.DeriveKeyMaterial(bob.PublicKey);
-
-                        var eveAlice = eve.DeriveKeyMaterial(bob.PublicKey);
-
-                        var bobSharedKey = bob.DeriveKeyMaterial(alice.PublicKey);
-
-                        var eveBob = eve.DeriveKeyMaterial(alice.PublicKey);
-
-                        Console.WriteLine(aliceSharedKey.SequenceEqual(bobSharedKey));
-
-                        Console.WriteLine(eveAlice.SequenceEqual(aliceSharedKey));
-                        Console.WriteLine(eveBob.SequenceEqual(bobSharedKey));
-                        Console.WriteLine(eveAlice.SequenceEqual(eveBob));
-
-                    }
+                    var aliceSharedKey = alice.DeriveKeyMaterial(bob.PublicKey);
+                    var bobSharedKey = bob.DeriveKeyMaterial(alice.PublicKey);
+                    var ar = bob.PublicKey.ToByteArray();
+                    ECDiffieHellmanPublicKey key = ECDiffieHellmanCngPublicKey.FromByteArray(ar, CngKeyBlobFormat.EccPublicBlob);
+                    //ECDiffieHellmanPublicKey key = (new ECDHPublicKey(ar)).Base();
+                    Encrypt(new byte[] { 1, 1, 1, 1 }, key, out byte[] IV);
                 }
             }
         }
+    
         public static byte[] Encrypt(byte[] data, ECDiffieHellmanPublicKey otherPartyPublicKey, out byte[] IV)
         {
             var _aes = CreateAES(otherPartyPublicKey, out IV);
@@ -43,7 +33,7 @@ namespace DeVote.Cryptography
         }
         public static byte[] Encrypt(byte[] data, byte[] otherPartyPublicKey, out byte[] IV)
         {
-            return Encrypt(data, new ECDHPublicKey(otherPartyPublicKey), out IV);
+            return Encrypt(data, ECDiffieHellmanCngPublicKey.FromByteArray(otherPartyPublicKey, CngKeyBlobFormat.EccPublicBlob), out IV);
         }
         public static byte[] Decrypt(byte[] data, ECDiffieHellmanPublicKey otherPartyPublicKey, byte[] IV)
         {
@@ -53,7 +43,7 @@ namespace DeVote.Cryptography
         }
         public static byte[] Decrypt(byte[] data, byte[] otherPartyPublicKey, byte[] IV)
         {
-            return Decrypt(data, new ECDHPublicKey(otherPartyPublicKey), IV);
+            return Decrypt(data, ECDiffieHellmanCngPublicKey.FromByteArray(otherPartyPublicKey, CngKeyBlobFormat.EccPublicBlob), IV);
         }
         #region AES
         static Aes CreateAES(ECDiffieHellmanPublicKey otherPartyPublicKey, out byte[] IV)
@@ -78,12 +68,5 @@ namespace DeVote.Cryptography
             return _aes;
         }
         #endregion
-    }
-    class ECDHPublicKey : ECDiffieHellmanPublicKey
-    {
-        public ECDHPublicKey(byte[] t) : base(t)
-        {
-
-        }
     }
 }

@@ -21,6 +21,8 @@ namespace DeVote
         static void Main(string[] args)
         {
             #region Test
+            //ECDH.test();
+            //return;
             //var x = new byte[] { 1, 1 };
             //var y = x.Take(5).ToArray();
             //PacketsHandler.Init();
@@ -66,6 +68,8 @@ namespace DeVote
                         IV = aes.IV
                     };
                 }
+                // Start the packet Handler since we have our AES Key, we can Decrypt incoming packets from the network
+                Task.Factory.StartNew(() => PacketsHandler.Handle());
             }
             else
             {
@@ -120,14 +124,31 @@ namespace DeVote
                         AES.Key = key;
 
                         // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
-                        _ = PacketsHandler.Handle();
+                        Task.Factory.StartNew(() => PacketsHandler.Handle());
                     }
+                }
+            }
+            while (true)
+            {
+                Console.WriteLine("Write a msg");
+                var msg = Console.ReadLine();
+                var test = Network.Messages.Test.Create(msg);
+                var etest = AES.Encrypt(test);
+                foreach (var node in Nodes.Values)
+                {
+                    node.Send(etest);
                 }
             }
             #endregion
 
             #region BlockChain Test
+            return;
             BlockChain deVOTE = new BlockChain();
+            //deVOTE.Load(); //
+            //request 
+            
+
+
             List<Transaction> myTransactions = new List<Transaction>();
             for (int i = 0; i < 2; i++)
             {
