@@ -52,6 +52,7 @@ def compare_faces(cammera_connection, ID_face):
 
 
             display_rec(frame, temp[1])
+
         process_this_frame = not process_this_frame
 
     cammera_connection.release()
@@ -73,5 +74,5 @@ def display_rec(frame, locations, scale=1):
     for top, right, bottom, left in locations:
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
         # Display the resulting image
-        cv2.imshow('Video', frame)
-        cv2.waitKey(1)
+    cv2.imshow('Video', frame)
+    cv2.waitKey(1)
