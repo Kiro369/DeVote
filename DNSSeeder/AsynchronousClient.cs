@@ -39,15 +39,15 @@ namespace DNSSeeder
         /// <summary>
         /// Start the Seeder Client
         /// </summary>
-        /// <param name="joinSeeder">Set this to true, to add the address to the list in the Seeder</param>
-        public void StartClient(bool joinSeeder)
+        /// <param name="port">Set this to anything, to add the address to the list in the Seeder</param>
+        public void StartClient(int port = 0)
         {
             //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
             IPHostEntry ipHostInfo = Dns.GetHostEntry(SeederHost);
             IPAddress ipAddress = ipHostInfo.AddressList[0];
 
             // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, SeederPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), SeederPort);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(AddressFamily.InterNetwork,
@@ -59,7 +59,7 @@ namespace DNSSeeder
             connectDone.WaitOne();
 
             // Send test data to the remote device.  
-            Send(client, new byte[1] { joinSeeder ? (byte)1 : (byte)0 });
+            Send(client, BitConverter.GetBytes(port));
             sendDone.WaitOne();
 
             // Receive the response from the remote device.  

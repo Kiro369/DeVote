@@ -10,15 +10,18 @@ namespace DeVote.Network
 {
     class AsynchronousServer
     {
-        Dictionary<string, Node> Nodes = new Dictionary<string, Node>();
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
         // The port our DNS Seeder gonna be listening to
-        int Port;
-
-        public AsynchronousServer(int port)
+        public readonly int Port;
+        /// <summary>
+        /// Construct an Asynchronous Server
+        /// </summary>
+        /// <param name="port">Desired port</param>
+        /// <param name="f">Find another port if the desired is unavailable</param>
+        public AsynchronousServer(int port, bool f)
         {
-            Port = port;
+            Port = f ? FindPort(port) : port;
         }
         public void Start()
         {
@@ -28,6 +31,8 @@ namespace DeVote.Network
             // Create a TCP/IP socket.  
             Socket listener = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
+
+            listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
             // Bind the socket to the local endpoint and listen for incoming connections.  
             try
@@ -75,8 +80,19 @@ namespace DeVote.Network
             var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
             Program.Nodes[Address] = state;
 
-            handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
-                new AsyncCallback(ReceiveCallback), state);
+            try
+            {
+                handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                    new AsyncCallback(ReceiveCallback), state);
+            }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    Console.WriteLine(Address + " forcibly disconnected");
+                }
+                else throw e;
+            }
         }
         public void ReceiveCallback(IAsyncResult ar)
         {
@@ -99,9 +115,20 @@ namespace DeVote.Network
 
                 Array.Clear(state.buffer, 0, state.buffer.Length);
 
-                // Signal that all bytes have been received.  
-                handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
-                    new AsyncCallback(ReceiveCallback), state);
+                // Keep recieving.  
+                try
+                {
+                    handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+                }
+                catch (SocketException e)
+                {
+                    if (e.ErrorCode == 10054)
+                    {
+                        Console.WriteLine(Address + " forcibly disconnected");
+                    }
+                    else throw e;
+                }
             }
         }
         private void Send(Socket handler, String data)
@@ -129,6 +156,38 @@ namespace DeVote.Network
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+        int FindPort(int basePort)
+        {
+            var ip = GetPublicIP();
+            while (true)
+            {
+                using (var tcpClient = new TcpClient())
+                {
+                    try
+                    {
+                        tcpClient.Connect(ip, basePort);
+                        basePort++;
+                    }
+                    catch (Exception)
+                    {
+                        return basePort;
+                    }
+                }
+            }
+        }
+        string GetPublicIP()
+        {
+            string url = "http://checkip.dyndns.org/";
+            var req = WebRequest.Create(url);
+            var resp = req.GetResponse();
+            var sr = new System.IO.StreamReader(resp.GetResponseStream());
+            string response = sr.ReadToEnd().Trim();
+            string[] a = response.Split(':');
+            string a2 = a[1].Substring(1);
+            string[] a3 = a2.Split('<');
+            string a4 = a3[0];
+            return a4;
         }
     }
 }
