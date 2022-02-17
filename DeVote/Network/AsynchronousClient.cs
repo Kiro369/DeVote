@@ -65,7 +65,7 @@ namespace DeVote.Network
             // Create the state object.  
             Node = new Node();
             Node.Socket = client;
-            Program.Nodes[NodeHost] = Node;
+            Program.Nodes[remoteEndPoint.ToString()] = Node;
 
             // Receive the response from the remote device.  
             while (!Stop)

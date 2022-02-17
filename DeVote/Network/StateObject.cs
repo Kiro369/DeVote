@@ -20,7 +20,7 @@ namespace DeVote.Network
         {
             get
             {
-                return Socket == null ? "" : ((IPEndPoint)Socket.RemoteEndPoint).Address.ToString();
+                return Socket == null ? "" : ((IPEndPoint)Socket.RemoteEndPoint).ToString();
             }
         }
 

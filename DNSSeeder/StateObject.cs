@@ -9,7 +9,7 @@ namespace DNSSeeder
     public class StateObject
     {
         // Size of receive buffer. We only need 1 byte, 1 for seeding and adding the IP of the client to the list and others for seeding only.
-        public const int BufferSize = 1;
+        public const int BufferSize = 4;
 
         // Receive buffer.  
         public byte[] buffer = new byte[BufferSize];

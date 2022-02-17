@@ -77,8 +77,8 @@ namespace DeVote.Network
             // Create the state object.  
             Node state = new Node();
             state.Socket = handler;
-            var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
-            Program.Nodes[Address] = state;
+            var endPoint = ((IPEndPoint)handler.RemoteEndPoint).ToString();
+            Program.Nodes[endPoint] = state;
 
             try
             {
@@ -89,7 +89,7 @@ namespace DeVote.Network
             {
                 if (e.ErrorCode == 10054)
                 {
-                    Console.WriteLine(Address + " forcibly disconnected");
+                    Console.WriteLine(endPoint + " forcibly disconnected");
                 }
                 else throw e;
             }

@@ -90,14 +90,16 @@ namespace DNSSeeder
 
             if (bytesRead > 0)
             {
-                //if (Address == "127.0.0.1")
-                //    Address = "156.204.97.201";
-                Console.WriteLine("Seeding the Addresses to " + Address);
-                var addresses = Program.Addresses.ToArray();//Program.Addresses.Where(addr => !addr.Equals(Address)).ToArray();
-                Send(handler, string.Join(Environment.NewLine, addresses));
+                if (Address == "127.0.0.1")
+                    Address = "197.46.22.44";
 
                 var port = BitConverter.ToInt32(state.buffer, 0);
                 Address = Address + ":" + port;
+
+                Console.WriteLine("Seeding the Addresses to " + Address);
+                var addresses = Program.Addresses.Where(addr => !addr.Equals(Address)).ToArray();
+                Send(handler, string.Join(Environment.NewLine, addresses));
+
                 if (port != 0)
                 {
                     if (Program.Addresses.Contains(Address))
