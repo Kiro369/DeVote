@@ -11,7 +11,7 @@ cropped = test.id_crop(image)
 verif = idv.verify(cropped)
 print(verif)
 
-info = data_coords = {"front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
+info = {"front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
                       "back" : {"expire_date": ""}}
 data = test.id_read(cropped, data=info, face="front")
 print(info)
