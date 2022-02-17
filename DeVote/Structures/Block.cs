@@ -19,16 +19,31 @@ namespace DeVote.Structures
 
         public Block(List<Transaction> transactions)
         {
-            this.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            this.Transactions = transactions;
-            this.nTx = transactions.Count;
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            Transactions = transactions;
+            nTx = transactions.Count;
         }
 
+        // Save Block into LevelDB as byte array representation of Protobuf Encoding.
         public void Save(LevelDB.DB levelDB)
         {
-
+            byte[] SerializedBlock = SerializeBlock(this);
+            byte[] height = BitConverter.GetBytes(Height);
+            levelDB.Put(height, SerializedBlock);
         }
         
+        // Load Single Block from LevelDB
+        public static Block Load(int height,LevelDB.DB levelDB)
+        {
+            byte[] HeightByte = BitConverter.GetBytes(height);
+            var SerializedBlock = levelDB.Get(HeightByte);
+            if (SerializedBlock != null)
+            {
+                return DeserializeBlock(SerializedBlock) ;
+            }
+            else return new Block(new List<Transaction>());
+        }
+
         public static byte[] SerializeBlock(Block block)
         {
             using (MemoryStream stream = new MemoryStream())

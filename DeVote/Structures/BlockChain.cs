@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using DeVote.Cryptography;
 using LevelDB;
+using ProtoBuf;
+
 
 namespace DeVote.Structures
 {
+    [ProtoContract(SkipConstructor = true)]
     public class BlockChain
     {
-        public LinkedList<Block> VChain { set; get; }
+
+        [ProtoMember(1)] public LinkedList<Block> Blocks { set; get; }
         public DB LevelDB;
 
         public BlockChain()
         {
-            VChain = new LinkedList<Block>();
-            //Block GenesisBlock = CreateGenesisBlock();
-            //VChain.AddFirst(GenesisBlock);
-
+            Blocks = new LinkedList<Block>();
             // Create a new leveldb
             string dbPath = Directory.GetCurrentDirectory() + "\\dbTest";
             LevelDB = new DB(new Options { CreateIfMissing = true }, dbPath);
             //SaveBlock(GenesisBlock);
         }
 
-        private Block CreateGenesisBlock()
+        public Block CreateGenesisBlock()
         {
             Block GenesisBlock = new Block(new List<Transaction>{
                 new Transaction("","")
@@ -37,45 +38,20 @@ namespace DeVote.Structures
 
         public void AddBlock(Block block)
         {
-            Block latestBlock = VChain.Last.Value;
+            Block latestBlock = Blocks.Last.Value;
             block.Height = latestBlock.Height + 1;
             block.PrevHash = latestBlock.Hash;
             block.nTx = block.Transactions.Count;
             block.MerkleRoot = Argon2.ComputeMerkleRoot(block.Transactions);
-            string blockHeader = block.PrevHash+block.Timestamp.ToString()+block.MerkleRoot;
+            string blockHeader = block.PrevHash + block.Timestamp.ToString() + block.MerkleRoot;
             Console.WriteLine($"blockHeader {blockHeader}");
             block.Hash = Argon2.ComputeHash(blockHeader);
-            VChain.AddLast(block);
+            this.Blocks.AddLast(block);
         }
 
-        // Save Block into LevelDB as byte array representation of Protobuf Encoding.
-        public void SaveBlock(Block block)
+        // Load BlockChain from levelDB into memory
+        public void LoadBlockChain()
         {
-            block.Save(LevelDB);
-
-
-            byte[] SerializedBlock = Block.SerializeBlock(block);
-            byte[] Height = BitConverter.GetBytes(block.Height);
-            this.LevelDB.Put(Height, SerializedBlock);
-        }
-
-        // Load Single Block from LevelDB
-        public byte[] LoadBlock(int height)
-        {
-            byte[] HeightByte = BitConverter.GetBytes(height);
-            var SerializedBlock = LevelDB.Get(HeightByte);
-            if (SerializedBlock != null)
-            {
-                return SerializedBlock;
-            }
-            else return new byte[] { };
-        }
-
-        // Load Serialized BlockChain
-        public List<Byte[]> LoadBlockChain()
-        {
-            List<Byte[]> SerializedBlockChain = new List<Byte[]>();
-
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
 
@@ -84,26 +60,28 @@ namespace DeVote.Structures
                 for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
                 {
                     byte[] SerializedBlock = iterator.Value();
-                    // TODO: create index map
-                    SerializedBlockChain.Add(SerializedBlock);
+                    var block = Block.DeserializeBlock(SerializedBlock);
+                    this.Blocks.AddLast(block);
                 }
-                return SerializedBlockChain;
             }
         }
-
         // Save Serialized BlockChain
-        public void SaveBlockChain(List<Byte[]> BlockchainBytes)
+        public void SaveBlockChain()
         {
-            foreach (byte[] block in BlockchainBytes)
+            foreach (Block block in this.Blocks)
             {
-                Block SerializedBlock = Block.DeserializeBlock(block);
-                byte[] Height = BitConverter.GetBytes(SerializedBlock.Height);
-
-                // TODO: get height without deserialization
-                // var firstBytes = new byte[4];
-                // // copy the required number of bytes.
-                // Array.Copy(block, 0, firstBytes, 0, firstBytes.Length);
-                this.LevelDB.Put(Height,block);
+                byte[] SerializedBlock = Block.SerializeBlock(block);
+                byte[] Height = BitConverter.GetBytes(block.Height);
+                this.LevelDB.Put(Height, SerializedBlock);
+            }
+        }
+    
+        public byte[] SerializeBlockchain()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, this);
+                return stream.ToArray();
             }
         }
     }
