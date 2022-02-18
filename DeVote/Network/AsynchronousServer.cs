@@ -89,6 +89,7 @@ namespace DeVote.Network
             {
                 if (e.ErrorCode == 10054)
                 {
+                    Program.Nodes.Remove(state.Address);
                     Console.WriteLine(endPoint + " forcibly disconnected");
                 }
                 else throw e;
@@ -96,41 +97,44 @@ namespace DeVote.Network
         }
         public void ReceiveCallback(IAsyncResult ar)
         {
-            String content = String.Empty;
-
             // Retrieve the state object and the handler socket  
             // from the asynchronous state object.  
             Node state = (Node)ar.AsyncState;
-            Socket handler = state.Socket;
 
-            // Getting the Address of the Remote end point
-            var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
-            // Read data from the client socket.
-            int bytesRead = handler.EndReceive(ar);
-
-            if (bytesRead > 0)
+            try
             {
-                // Add the packet to the handler to be handled
-                PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(state, state.buffer.Take(bytesRead).ToArray()));
+                Socket handler = state.Socket;
 
-                Array.Clear(state.buffer, 0, state.buffer.Length);
+                // Getting the Address of the Remote end point
+                var Address = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
+                // Read data from the client socket.
+                int bytesRead = handler.EndReceive(ar);
 
-                // Keep recieving.  
-                try
+                if (bytesRead > 0)
                 {
+                    // Add the packet to the handler to be handled
+                    PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(state, state.buffer.Take(bytesRead).ToArray()));
+
+                    Array.Clear(state.buffer, 0, state.buffer.Length);
+
+                    // Keep recieving.  
                     handler.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
                         new AsyncCallback(ReceiveCallback), state);
-                }
-                catch (SocketException e)
-                {
-                    if (e.ErrorCode == 10054)
-                    {
-                        Console.WriteLine(Address + " forcibly disconnected");
-                    }
-                    else throw e;
+
+
                 }
             }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    Program.Nodes.Remove(state.Address);
+                    Console.WriteLine(state.Address + " forcibly disconnected");
+                }
+                else throw e;
+            }
         }
+
         private void Send(Socket handler, String data)
         {
             // Convert the string data to byte data using ASCII encoding.  

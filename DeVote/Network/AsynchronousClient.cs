@@ -121,11 +121,12 @@ namespace DeVote.Network
 
         private void ReceiveCallback(IAsyncResult ar)
         {
+            // Retrieve the state object and the client socket
+            // from the asynchronous state object.  
+            Node state = (Node)ar.AsyncState;
+
             try
             {
-                // Retrieve the state object and the client socket
-                // from the asynchronous state object.  
-                Node state = (Node)ar.AsyncState;
                 Socket client = state.Socket;
 
                 // Read data from the remote device.  
@@ -138,13 +139,18 @@ namespace DeVote.Network
 
                     Array.Clear(state.buffer, 0, state.buffer.Length);
 
-                    //// Signal that all bytes have been received.  
-                    //client.BeginReceive(state.buffer, 0, Node.BufferSize, 0,
-                    //    new AsyncCallback(ReceiveCallback), state);
-
                     receiveDone.Set();
 
                 }
+            }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    Program.Nodes.Remove(state.Address);
+                    Console.WriteLine(state.Address + " forcibly disconnected");
+                }
+                else throw e;
             }
             catch (Exception e)
             {
