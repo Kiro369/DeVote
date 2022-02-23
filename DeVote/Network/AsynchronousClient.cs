@@ -68,11 +68,12 @@ namespace DeVote.Network
             Program.Nodes[remoteEndPoint.ToString()] = Node;
 
             // Receive the response from the remote device.  
+            Receive(client);
             while (!Stop)
             {
-                receiveDone.Reset();
-                Receive(client);
-                receiveDone.WaitOne();
+                Task.Delay(100);
+                //receiveDone.Reset();
+                //receiveDone.WaitOne();
             }
 
             // Release the socket.  
@@ -140,9 +141,10 @@ namespace DeVote.Network
 
                     Array.Clear(state.buffer, 0, state.buffer.Length);
 
-                    receiveDone.Set();
+                    //receiveDone.Set();
 
                 }
+                Receive(client);
             }
             catch (SocketException e)
             {

@@ -91,7 +91,7 @@ namespace DNSSeeder
             if (bytesRead > 0)
             {
                 if (Address == "127.0.0.1")
-                    Address = "156.204.28.164";
+                    Address = GetPublicIP();
 
                 var port = BitConverter.ToInt32(state.buffer, 0);
                 Address = Address + ":" + port;
@@ -140,6 +140,19 @@ namespace DNSSeeder
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+        string GetPublicIP()
+        {
+            string url = "http://checkip.dyndns.org/";
+            var req = WebRequest.Create(url);
+            var resp = req.GetResponse();
+            var sr = new System.IO.StreamReader(resp.GetResponseStream());
+            string response = sr.ReadToEnd().Trim();
+            string[] a = response.Split(':');
+            string a2 = a[1].Substring(1);
+            string[] a3 = a2.Split('<');
+            string a4 = a3[0];
+            return a4;
         }
     }
 }
