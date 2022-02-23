@@ -76,6 +76,7 @@ namespace DeVote.Network
             }
 
             // Release the socket.  
+            Console.WriteLine("RELEASED");
             client.Shutdown(SocketShutdown.Both);
             client.Close();
         }

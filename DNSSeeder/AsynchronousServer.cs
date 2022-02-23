@@ -91,7 +91,7 @@ namespace DNSSeeder
             if (bytesRead > 0)
             {
                 if (Address == "127.0.0.1")
-                    Address = "197.46.22.44";
+                    Address = "156.204.28.164";
 
                 var port = BitConverter.ToInt32(state.buffer, 0);
                 Address = Address + ":" + port;

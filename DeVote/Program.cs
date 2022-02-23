@@ -27,7 +27,7 @@ namespace DeVote
             ////var x = new byte[] { 1, 1 };
             ////var y = x.Take(5).ToArray();
             ////PacketsHandler.Init();
-
+            System.Net.ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             ////AsynchronousServer server = new AsynchronousServer(4269);
             ////Task.Factory.StartNew(() => { server.Start(); });
             ////Task.Delay(5000).Wait();
@@ -133,6 +133,14 @@ namespace DeVote
                     }
                 }
             }
+            Task.Factory.StartNew(async () => {
+                while (true)
+                {
+                    var lines = Nodes.Values.Select(node => node.Address + "=" + node.Socket.Connected + "|");
+                    Console.Title = "|" + string.Join(Environment.NewLine, lines);
+                    await Task.Delay(1000);
+                }
+            });
             while (true)
             {
                 Console.WriteLine("Write a msg");
