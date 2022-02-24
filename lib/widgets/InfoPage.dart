@@ -16,6 +16,7 @@ class InfoPage extends StatelessWidget {
               width: MediaQuery.of(context).size.width/2.5,
               height:  MediaQuery.of(context).size.width/3,
               child: CircleAvatar(
+                backgroundColor: Colors.white,
                   backgroundImage:AssetImage(motrsh7e[index].image.toString())),
             ),
             Padding(

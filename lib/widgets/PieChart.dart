@@ -30,7 +30,6 @@ final List<people> motrsh7;
               },
               series: <CircularSeries<people, String>>[
                 PieSeries<people, String>(
-
                     selectionBehavior: SelectionBehavior(enable: true),
                     explode: true,
                     dataSource: motrsh7,

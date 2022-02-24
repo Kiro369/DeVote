@@ -37,6 +37,7 @@ dependencies:
   syncfusion_flutter_charts:
   animated_text_kit: ^4.2.1
   google_maps_flutter: ^2.1.1
+  location: ^4.2.0
   syncfusion_flutter_maps: ^19.4.47-beta
 
 dev_dependencies:
@@ -67,6 +68,10 @@ flutter:
     - assets/cc.jpg
     - assets/moussa.jpg
     - assets/egypt2.json
+    - assets/a1.png
+    - assets/a2.png
+    - assets/a3.png
+    - assets/a4.png
 
   #   - images/a_dot_ham.jpeg
 
