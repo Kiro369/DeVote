@@ -19,9 +19,9 @@ namespace DeVote.Network
         /// </summary>
         /// <param name="port">Desired port</param>
         /// <param name="f">Find another port if the desired is unavailable</param>
-        public AsynchronousServer(int port, bool f)
+        public AsynchronousServer(int port, DNSSeeder.AsynchronousClient seederClient = null)
         {
-            Port = f ? FindPort(port) : port;
+            Port = seederClient != null ? FindPort(port, seederClient) : port;
         }
         public void Start()
         {
@@ -161,23 +161,16 @@ namespace DeVote.Network
                 Console.WriteLine(e.ToString());
             }
         }
-        int FindPort(int basePort)
+        int FindPort(int basePort, DNSSeeder.AsynchronousClient seederClient)
         {
             var ip = GetPublicIP();
+            seederClient.StartClient();
             while (true)
             {
-                using (var tcpClient = new TcpClient())
-                {
-                    try
-                    {
-                        tcpClient.Connect(ip, basePort);
-                        basePort++;
-                    }
-                    catch (Exception)
-                    {
-                        return basePort;
-                    }
-                }
+                var endPoint = ip + ":" + basePort;
+                if (!seederClient.Addresses.Contains(endPoint))
+                    return basePort;
+                basePort++;
             }
         }
         string GetPublicIP()

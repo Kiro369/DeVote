@@ -44,14 +44,14 @@ namespace DeVote
             //return;
             #endregion
             #region Main
+            // Starting the seeder client to be able to connect to the network
+            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+
             // Start the server first, so anyone can connect after we get added to the seeder
-            AsynchronousServer server = new AsynchronousServer(4269, true);
+            AsynchronousServer server = new AsynchronousServer(4269, seederClient);
             Task.Factory.StartNew(() => { server.Start(); });
 
             PacketsHandler.Init();
-
-            // Starting the seeder client to be able to connect to the network
-            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
 
             // Get the addresses of all nodes, and add out IP to the seeder
             seederClient.StartClient(server.Port);

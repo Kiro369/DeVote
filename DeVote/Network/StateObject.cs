@@ -34,9 +34,16 @@ namespace DeVote.Network
         }
         public void Send(byte[] byteData)
         {
-            // Begin sending the data to the remote device.  
-            Socket.BeginSend(byteData, 0, byteData.Length, 0,
-                new AsyncCallback(SendCallback), Socket);
+            try
+            {
+                // Begin sending the data to the remote device.  
+                Socket.BeginSend(byteData, 0, byteData.Length, 0,
+                    new AsyncCallback(SendCallback), Socket);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
         private void SendCallback(IAsyncResult ar)
         {
