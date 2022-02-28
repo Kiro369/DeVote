@@ -42,6 +42,8 @@ namespace DNSSeeder
         /// <param name="port">Set this to anything, to add the address to the list in the Seeder</param>
         public void StartClient(int port = 0)
         {
+            connectDone.Reset(); sendDone.Reset(); receiveDone.Reset();
+
             //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
             IPHostEntry ipHostInfo = Dns.GetHostEntry(SeederHost);
             IPAddress ipAddress = ipHostInfo.AddressList[0];

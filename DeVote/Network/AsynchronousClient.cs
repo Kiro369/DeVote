@@ -45,7 +45,6 @@ namespace DeVote.Network
         public void StartClient()
         {
             // Parse string IP to an IPAddress object
-            
             IPAddress ipAddress = IPAddress.Parse(NodeHost);
 
             // Establish the remote endpoint for the socket. 
