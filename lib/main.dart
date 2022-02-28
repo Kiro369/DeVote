@@ -10,9 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DeVote',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+
       home: Bottom_bar(),
       debugShowCheckedModeBanner: false,
     );

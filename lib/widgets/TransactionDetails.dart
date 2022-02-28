@@ -12,38 +12,30 @@ class TransactionDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.arrow_back_ios_outlined,size:0,color: Colors.white,),
-        title: Text('تفاصيل العملية',style: TextStyle(color:Colors.white),),
+        title: Text('Transaction Details',style: TextStyle(color:Colors.white),),
         centerTitle: true,
         backgroundColor: Colors.red[700],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/a3.png"),
-              fit: BoxFit.cover,
-            ),
-            color: Colors.red[700],),
-        child: ListView(
-          children: [
-          ListTile(
-            title: Text(hash,style: TextStyle(color: Colors.white),),
-            subtitle: Text('Hash',style: TextStyle(color: Colors.white54),),
-          ),
-            ListTile(
-              title: Text(elector,style: TextStyle(color: Colors.white),),
-              subtitle: Text('From',style: TextStyle(color: Colors.white54),),
-            ),
-            ListTile(
-              title: Text(elected,style: TextStyle(color: Colors.white),),
-              subtitle: Text('To',style: TextStyle(color: Colors.white54),),
-            ),
-            ListTile(
-              title: Text(dateTime,style: TextStyle(color: Colors.white),),
-              subtitle: Text('DateTime',style: TextStyle(color: Colors.white54),),
-            ),
-            Center(child: Image.asset('assets/a4.png')),
-          ],
+      body: ListView(
+        children: [
+        ListTile(
+          title: Text(hash,style: TextStyle(color: Colors.blue),),
+          subtitle: Text('Hash',style: TextStyle(color: Colors.black45),),
         ),
+          ListTile(
+            title: Text(elector,style: TextStyle(color: Colors.blue),),
+            subtitle: Text('From',style: TextStyle(color: Colors.black45),),
+          ),
+          ListTile(
+            title: Text(elected,style: TextStyle(color: Colors.blue),),
+            subtitle: Text('To',style: TextStyle(color: Colors.black45),),
+          ),
+          ListTile(
+            title: Text(dateTime,style: TextStyle(color: Colors.blue),),
+            subtitle: Text('DateTime',style: TextStyle(color: Colors.black45),),
+          ),
+
+        ],
       ),
     );
   }

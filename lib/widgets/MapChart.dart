@@ -39,7 +39,7 @@ class MapChart extends StatelessWidget {
                         style: const TextStyle(color: Colors.white),
                       ),
                       Text(
-                        'موسي 24%',textAlign: TextAlign.right,
+                        'موسي 98937 صوت',textAlign: TextAlign.right,
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],
