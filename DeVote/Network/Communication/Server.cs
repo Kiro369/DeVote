@@ -43,10 +43,6 @@ namespace DeVote.Network.Communication
             {
                 Console.WriteLine(ex.Message);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
         }
 
         void Read(Node node)

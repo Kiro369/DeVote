@@ -22,7 +22,7 @@ namespace DeVote.Network.Communication
             _client = new TcpClient(ip, port);
         }
         public Client(IPEndPoint endPoint) {
-            _client = new TcpClient(endPoint);
+            _client = new TcpClient(endPoint.Address.ToString(), endPoint.Port);
         }
         protected Client(TcpClient client) {
             _client = client;

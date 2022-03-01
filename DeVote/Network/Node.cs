@@ -21,6 +21,8 @@ namespace DeVote.Network
             while (!Connected)
                 Console.WriteLine("Waiting to get connected to " + EndPoint);
 
+            Program.Nodes[EndPoint] = this;
+
             await Read();
         }
         async Task Read()
