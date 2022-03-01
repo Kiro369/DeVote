@@ -15,7 +15,7 @@ class BlockDetails extends StatelessWidget {
         leading: Icon(Icons.arrow_back_ios_outlined,size:0,color: Colors.white,),
         title: Text('Block Details',style: TextStyle(color:Colors.white),),
         centerTitle: true,
-        backgroundColor: Colors.red[700],
+        backgroundColor: Color(0xff26375f),
       ),
       body: ListView(
         children: [

@@ -72,7 +72,7 @@ List<Block> blocks=[
             size: 0,
           ),
           centerTitle: true,
-          backgroundColor: Colors.red[800],
+          backgroundColor: Color(0xff26375f),
           title: Column(children: [
             Text(
               "متابعة العملية الانتخابية",

@@ -49,7 +49,7 @@ class MapChart extends StatelessWidget {
             },
             dataLabelSettings: MapDataLabelSettings(
                 textStyle: TextStyle(
-                    color: Colors.black,
+                    color:Color(0xfff1f2f4),
                     // fontWeight: FontWeight.bold,
                     fontSize:7)),
           ),

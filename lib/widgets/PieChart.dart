@@ -20,7 +20,7 @@ final List<people> motrsh7;
             ),
               backgroundColor: Colors.white,
               palette: [
-                const Color(0xffd00a16),
+                const Color(0xff26375f),
                 const Color(0xff6ca0ff)
               ],
               borderColor: Colors.white,
@@ -50,7 +50,7 @@ final List<people> motrsh7;
             children: [
               ListTile(
                 title: Text(motrsh7[0].nickname,textAlign: TextAlign.right,),
-                trailing: Icon(Icons.circle,color: const Color(0xffd00a16) ,),
+                trailing: Icon(Icons.circle,color: const Color(0xff26375f) ,),
               ),
               ListTile(
                 title: Text(motrsh7[1].nickname,textAlign: TextAlign.right,),

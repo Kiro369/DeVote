@@ -47,7 +47,7 @@ class _BlockListState extends State<BlockList> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.red[800],
+        backgroundColor:Color(0xff26375f),
         title: Text('Latest Blocks'),
         leading: Icon(Icons.arrow_back_ios,size: 0),
       ),

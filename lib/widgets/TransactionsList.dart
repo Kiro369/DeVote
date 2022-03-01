@@ -46,7 +46,7 @@ void _runFilter(String enteredKeyword) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.red[800],
+        backgroundColor: Color(0xff26375f),
         title: Text('Latest Transactions'),
         leading: Icon(Icons.arrow_back_ios,size: 0),
       ),

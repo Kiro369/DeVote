@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 class Amaken extends StatefulWidget {
@@ -11,13 +10,9 @@ class Amaken extends StatefulWidget {
 }
 
 class _AmakenState extends State<Amaken> {
-  String dropdownValue='الفيوم';
-  var School =[
-    {'city': 'cairo', 'school': 'marymor2s'},
-    {'city': 'cairo', 'school': 'Aled'},
-  ];
- late LatLng location ;
-  List<String> cities =['الفيوم','الاسماعيلية','بورسعيد','شمال سيناء','جنوب سيناء','كفر الشيخ','الجيزة','دمياط','المنوفية','الاسكندرية','القاهرة'];
+
+  late LatLng location ;
+
   Future<void> _getlocation() async{
     final locdata= await Location.instance.getLocation();
   final  lat= locdata.latitude;
@@ -30,9 +25,8 @@ class _AmakenState extends State<Amaken> {
   @override
   void initState() {
     super.initState();
-    _getlocation().whenComplete((){
-      setState(() {});
-    });
+    location= LatLng(30.033333, 31.233334);
+    _getlocation();
   }
   @override
   Widget build(BuildContext context) {
@@ -47,12 +41,12 @@ class _AmakenState extends State<Amaken> {
         ],
         centerTitle: true,
         title: Text('اماكن الانتخابات',style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.red[800],
+        backgroundColor: Color(0xff26375f),
         bottom: PreferredSize(
             preferredSize: Size.fromHeight(40.0),
           child: Container(
             width: MediaQuery.of(context).size.width,
-            color: Colors.yellow[700],
+            color: Color(0xfff1f2f4),
             height: 40.0,
             child: DefaultTextStyle(
               textAlign: TextAlign.right,
@@ -75,25 +69,6 @@ class _AmakenState extends State<Amaken> {
     ),
         body: ListView(
             children: [
-            /*  Center(
-                child: DropdownButton<String>(
-                 alignment: Alignment.topRight,
-                  //hint: Text('اختر المحافظة',textAlign: TextAlign.right,),
-                  value: dropdownValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                      print(newValue);
-                    });
-                  },
-                  items: cities.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value,textAlign: TextAlign.right,),
-                    );
-                  }).toList(),
-                ),
-              ),*/ //dropdown
               FlatButton(onPressed: _getlocation,child: Text('Current Location'),),
               location ==null? Center(child: Text('Wait to get your location !'))
               : Center(
@@ -105,7 +80,7 @@ class _AmakenState extends State<Amaken> {
                    // onMapCreated: _onMapCreated,
                     initialCameraPosition: CameraPosition(
                        target: location,
-                       zoom: 10,
+                       zoom: 14,
                       ),
                     ),),)
             ],

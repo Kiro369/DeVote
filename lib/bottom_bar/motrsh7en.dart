@@ -43,9 +43,9 @@ class _Motrsh7enState extends State<Motrsh7en> {
           ],
           centerTitle: true,
           title: Text('المرشحون للانتخابات',style: TextStyle(color: Colors.white),),
-          backgroundColor: Colors.red[800],
+          backgroundColor: Color(0xff26375f),
           bottom: TabBar(
-            indicatorColor: Colors.yellow[700],
+            indicatorColor:Color(0xfff1f2f4),
             tabs: <Widget>[
               Tab(text: 'المرشح الثاني'),
               Tab(text: 'المرشح الاول'),
