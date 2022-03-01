@@ -20,7 +20,7 @@ namespace DeVote.Network.Messages
 
         public void Handle(Node client)
         {
-            Console.WriteLine($"[{client.Address}] says: {Message}");
+            Console.WriteLine($"[{client.EndPoint}] says: {Message}");
         }
 
         public bool Read(Node client)

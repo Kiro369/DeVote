@@ -52,7 +52,7 @@ namespace DeVote.Network
                                 var otherPartyPublicKey = packet.Skip(Constants.ECDHOperations[0].Length).ToArray();
 
                                 // Send an inital response containing our public key (we add an inital response header to the beginning of the packet as well)
-                                node.Send(Constants.ECDHOperations[1].Concat(Cryptography.ECDH.PublicKey.ToByteArray()).ToArray());
+                                node.Send(Constants.ECDHOperations[1].Concat(Cryptography.ECDH.PublicKey.ToByteArray()).ToArray(), false);
 
                                 // We seraialize our AES Key (Key and IV) using ProtoBuf
                                 byte[] serializedAesKey;
@@ -65,7 +65,7 @@ namespace DeVote.Network
                                 var encryptedAESKey = Cryptography.ECDH.Encrypt(serializedAesKey, otherPartyPublicKey, out byte[] IV);
 
                                 // Send the final response containing: Encrypted serialized AES Key, ECDH IV, and at the beginning of course the header
-                                node.Send(Constants.ECDHOperations[2].Concat(encryptedAESKey.Concat(IV)).ToArray());
+                                node.Send(Constants.ECDHOperations[2].Concat(encryptedAESKey.Concat(IV)).ToArray(), false);
                             }
                             else if (Cryptography.AES.Key != null) // If it's not an ECDH packet and we have our AES Key, then we handle it 
                             {

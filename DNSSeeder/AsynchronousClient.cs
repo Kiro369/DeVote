@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,7 +10,7 @@ namespace DNSSeeder
 {
     public class AsynchronousClient
     {
-        public string[] Addresses;
+        public List<string> EndPoints;
         // ManualResetEvent instances signal completion.  
         private static ManualResetEvent connectDone = 
             new ManualResetEvent(false), sendDone = 
@@ -31,7 +32,7 @@ namespace DNSSeeder
         /// <param name="port">DNS Seeder port</param>
         public AsynchronousClient(string host = "dnsseeder.ddns.net", int port = 6942)
         {
-            Addresses = new string[0];
+            EndPoints = new List<string>();
             SeederHost = host;
             SeederPort = port;
         }
@@ -68,9 +69,9 @@ namespace DNSSeeder
             Receive(client);
             receiveDone.WaitOne();
 
-            Addresses = string.IsNullOrEmpty(response) ? new string[] { } : response.Split(Environment.NewLine);
+            EndPoints = string.IsNullOrEmpty(response) ? new List<string>() : response.Split(Environment.NewLine).ToList();
             // Write the response to the console.  
-            Console.WriteLine("Addresses received : {0}", Addresses.Length);
+            Console.WriteLine("Addresses received : {0}", EndPoints.Count);
 
             // Release the socket.  
             client.Shutdown(SocketShutdown.Both);
