@@ -21,7 +21,7 @@ final List<people> motrsh7;
               backgroundColor: Colors.white,
               palette: [
                 const Color(0xff26375f),
-                const Color(0xff6ca0ff)
+                const Color(0xffd82148)
               ],
               borderColor: Colors.white,
               onDataLabelRender: (DataLabelRenderArgs args){
@@ -54,7 +54,7 @@ final List<people> motrsh7;
               ),
               ListTile(
                 title: Text(motrsh7[1].nickname,textAlign: TextAlign.right,),
-                trailing: Icon(Icons.circle,color: const Color(0xff6ca0ff) ,),
+                trailing: Icon(Icons.circle,color: const Color(0xffd82148) ,),
               )
             ],
           ),

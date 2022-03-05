@@ -43,7 +43,7 @@ class InfoPage extends StatelessWidget {
         ListTile(
           title: Text(motrsh7e[index].codestr.toString(),textAlign: TextAlign.right,),
           subtitle: Text('الرمز',textAlign: TextAlign.right,),
-          trailing: Icon(motrsh7e[index].code?.icon,color: Colors.yellow[700],size: 30,),
+          trailing: Icon(motrsh7e[index].code?.icon,color:Color(0xff26375f),size: 30,),
         ),
         Padding(
           padding: const EdgeInsets.all(10.0),

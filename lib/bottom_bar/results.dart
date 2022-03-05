@@ -1,13 +1,12 @@
 import 'package:devote/models/people.dart';
 import 'package:devote/widgets/MapChart.dart';
 import 'package:devote/widgets/PieChart.dart';
-import 'package:devote/widgets/TransactionDetails.dart';
 import 'package:devote/widgets/blockchain.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
-
 import '../models/mapModel.dart';
-import '../models/transaction.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 
 class Result extends StatefulWidget {
   const Result({Key? key}) : super(key: key);
@@ -23,8 +22,8 @@ class _ResultState extends State<Result> {
   ];
   late List<Model> data;
   late MapShapeSource _mapSource;
-final Color color1=Color(0xff26375f);
-final Color color2=Color(0xff6ca0ff);
+final Color color2=const Color(0xffd82148);
+final Color color1=const Color(0xff26375f);
 
   @override
   void initState() {
@@ -78,16 +77,16 @@ final Color color2=Color(0xff6ca0ff);
             padding: EdgeInsets.only(right: 10),
             child: Icon(
               Icons.check_box_outlined,
-              color: Colors.white,
+              color: Colors.black,
               size: 30,
             ),
           )
         ],
         title: const Text(
           'نتائج الانتخابات الرئاسية',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Color(0xff26375f),
+        backgroundColor: Colors.white,
       ),
       body: ListView(
         children: [
@@ -113,25 +112,26 @@ final Color color2=Color(0xff6ca0ff);
           MapChart(data: data, mapSource: _mapSource),
           Padding(
             padding: const EdgeInsets.all(12.0),
+
             child: RaisedButton.icon(
-              onPressed: () => Navigator.of(context).push(new MaterialPageRoute(
-                  builder: (BuildContext context) => new BlockChain())),
-              shape: RoundedRectangleBorder(
+              onPressed: () => Navigator.of(context).push( MaterialPageRoute(
+                  builder: (BuildContext context) =>const  BlockChain())),
+              shape:const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              label: Text(
+              label:const Text(
                 'متابعة العملية الانتخابية بشكل مباشر',
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
-              icon: Padding(
-                padding: const EdgeInsets.all(8.0),
+              icon: const Padding(
+                padding:  EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.how_to_vote_rounded,
                   color: Colors.white,
                 ),
               ),
               textColor: Colors.white,
-              splashColor:Color(0xff26375f),
-              color: Color(0xfff87c00),
+              splashColor:const Color(0xff26375f),
+              color:const Color(0xffd82148),
             ),
           ),
         ],

@@ -9,6 +9,7 @@ class Motrsh7en extends StatefulWidget {
   _Motrsh7enState createState() => _Motrsh7enState();
 }
 
+
 class _Motrsh7enState extends State<Motrsh7en> {
   List<people> motrsh7e=[
     people(
@@ -16,17 +17,18 @@ class _Motrsh7enState extends State<Motrsh7en> {
         ,296000,'65%',
         'عبد الفتاح سعد خليل ',
       'assets/cc.jpg','نجمة',
-      Icon(Icons.star,color: Colors.yellow[600],),
+      Icon(Icons.star,),
       'ولد في 19 نوفمبر 1954 في القاهرة ، متزوج وله 4 أبناء\n تخرج من الكليـة الحربيــة (بكالوريوس العلوم العسكرية) في إبريل 1977\n ترقى الى رتبة فريق أول وعين قائدا عاما للقوات المسلحة ووزيراً للدفاع والإنتاج الحربي منذ 12 أغسطس 2012'
     ),
     people('موسي مصطفي موسي'
         ,2400,'35%',
       'موسي مصطفي موسي محمد',
       'assets/moussa.jpg', 'طائرة',
-      Icon(Icons.airplanemode_on_sharp),
+        const Icon(Icons.airplanemode_on_sharp,),
       'ولد في إبريل 1952، متزوج ولديه ثلاثة أبناء\n وهو رجل أعمال ويرأس مجلس إدارة إحدى الشركات الكبرى في مصر\n يرأس موسى حزب الغد وإتحاد القبائل العربية والتحالف السياسى المصرى الذي يضم 18 حزبًا سياسيًا.'
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -35,16 +37,17 @@ class _Motrsh7enState extends State<Motrsh7en> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
+          actions: const [
+           Padding(
+              padding: EdgeInsets.only(right: 10),
               child: Icon(Icons.check_box_outlined,color: Colors.white,size: 30,),
             ),
           ],
           centerTitle: true,
-          title: Text('المرشحون للانتخابات',style: TextStyle(color: Colors.white),),
-          backgroundColor: Color(0xff26375f),
-          bottom: TabBar(
+          title: const Text('المرشحون للانتخابات',style: TextStyle(color: Colors.white),),
+          backgroundColor:const Color(0xff26375f),
+          bottom:const TabBar(
+
             indicatorColor:Color(0xfff1f2f4),
             tabs: <Widget>[
               Tab(text: 'المرشح الثاني'),

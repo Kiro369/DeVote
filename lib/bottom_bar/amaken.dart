@@ -12,21 +12,51 @@ class Amaken extends StatefulWidget {
 class _AmakenState extends State<Amaken> {
 
   late LatLng location ;
+  final Set<Marker> markers = new Set(); //markers for google map
+  static const LatLng showLocation = const LatLng(30.033333, 31.233334);
 
-  Future<void> _getlocation() async{
-    final locdata= await Location.instance.getLocation();
-  final  lat= locdata.latitude;
-    final  long=locdata.longitude;
+  Set<Marker> getmarkers() { //markers to place on map
     setState(() {
-      location = LatLng(lat!, long!);
-      print(locdata);
+      markers.add(Marker( //add first marker
+        markerId: MarkerId(showLocation.toString()),
+        position: showLocation, //position of marker
+        infoWindow: InfoWindow( //popup info
+          title: 'Cairo ',
+         // snippet: 'My Custom Subtitle',
+        ),
+        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+
+      markers.add(Marker( //add second marker
+        markerId: MarkerId(showLocation.toString()),
+        position: LatLng(26.549999	,31.700001), //position of marker
+        infoWindow: InfoWindow( //popup info
+          title: 'sohag ',
+         // snippet: 'My Custom Subtitle',
+        ),
+        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+
+      markers.add(Marker( //add third marker
+        markerId: MarkerId(showLocation.toString()),
+        position: LatLng(	29.952654,	30.921919), //position of marker
+        infoWindow: InfoWindow( //popup info
+          title: '6 october ',
+         // snippet: 'My Custom Subtitle',
+        ),
+        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+
+      //add more markers here
     });
+
+    return markers;
   }
   @override
   void initState() {
     super.initState();
     location= LatLng(30.033333, 31.233334);
-    _getlocation();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -67,14 +97,15 @@ class _AmakenState extends State<Amaken> {
           ),
         ),
     ),
-        body: ListView(
+        body: Column(
             children: [
-              FlatButton(onPressed: _getlocation,child: Text('Current Location'),),
+           //   FlatButton(onPressed: _getlocation,child: Text('Current Location'),),
               location ==null? Center(child: Text('Wait to get your location !'))
               : Center(
                          child: Container(
-                           height: MediaQuery.of(context).size.height/2,
+                           height: MediaQuery.of(context).size.height*0.76,
                            child: GoogleMap(
+                             markers: getmarkers(),
                              myLocationButtonEnabled: true,
                               myLocationEnabled: true,
                    // onMapCreated: _onMapCreated,
@@ -86,5 +117,6 @@ class _AmakenState extends State<Amaken> {
             ],
     ),
     );
+
   }
 }

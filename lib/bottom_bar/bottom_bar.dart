@@ -17,10 +17,10 @@ class _Bottom_barState extends State<Bottom_bar> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor:Color(0xff26375f),
+        backgroundColor:Colors.white,
         iconSize: 26,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black45,
         selectedFontSize: 14,
         unselectedFontSize: 12,
         currentIndex: current,
