@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:url_launcher/url_launcher.dart';
 class Amaken extends StatefulWidget {
   const Amaken({Key? key}) : super(key: key);
 
@@ -12,51 +13,48 @@ class Amaken extends StatefulWidget {
 class _AmakenState extends State<Amaken> {
 
   late LatLng location ;
+ // late BitmapDescriptor icon;
+
   final Set<Marker> markers = new Set(); //markers for google map
   static const LatLng showLocation = const LatLng(30.033333, 31.233334);
+ var locations =[
+    {'name':'Cairo','location':LatLng(30.033333, 31.233334)},
+   {'name':'Sohag','location':LatLng(26.549999	,31.700001)},
+   {'name':'6 october ','location':LatLng(29.952654,30.921919)},
+   {'name':'Giza ','location':LatLng(	30.013056,	31.208853)},
+   {'name':'Alex ','location':LatLng(31.205753	,29.924526)},
+  ];
+ /* getIcons() async {
+    var icon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 3.2),
+        "assets/images/markeruser.png");
+    setState(() {
+      this.icon = icon;
+    });
+  }*/
 
   Set<Marker> getmarkers() { //markers to place on map
-    setState(() {
-      markers.add(Marker( //add first marker
-        markerId: MarkerId(showLocation.toString()),
-        position: showLocation, //position of marker
-        infoWindow: InfoWindow( //popup info
-          title: 'Cairo ',
-         // snippet: 'My Custom Subtitle',
-        ),
-        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-      ));
+    for(var i=0;i<locations.length;i++){
+      final title=locations[i]['name'];
+      final loc=locations[i]['location'];
+        markers.add(Marker(//add first marker
+          markerId: MarkerId(showLocation.toString()),
+          position:  loc as LatLng, //position of marker
+          infoWindow: InfoWindow( //popup info
+            title:title.toString(),
+            // snippet: 'My Custom Subtitle',
+          ),
 
-      markers.add(Marker( //add second marker
-        markerId: MarkerId(showLocation.toString()),
-        position: LatLng(26.549999	,31.700001), //position of marker
-        infoWindow: InfoWindow( //popup info
-          title: 'sohag ',
-         // snippet: 'My Custom Subtitle',
-        ),
-        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-      ));
-
-      markers.add(Marker( //add third marker
-        markerId: MarkerId(showLocation.toString()),
-        position: LatLng(	29.952654,	30.921919), //position of marker
-        infoWindow: InfoWindow( //popup info
-          title: '6 october ',
-         // snippet: 'My Custom Subtitle',
-        ),
-        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-      ));
-
-      //add more markers here
-    });
-
+          icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+        ));
+    }
     return markers;
   }
   @override
   void initState() {
     super.initState();
     location= LatLng(30.033333, 31.233334);
-
+    //getIcons();
   }
   @override
   Widget build(BuildContext context) {

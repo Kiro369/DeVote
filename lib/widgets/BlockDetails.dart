@@ -21,8 +21,14 @@ class BlockDetails extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            title: const Text('Block Height:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-            subtitle: Text(blockHeight.toString(),style: const TextStyle(color: Colors.black),),
+            title: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: const Text('Block Height:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(blockHeight.toString(),style: const TextStyle(color: Colors.black),),
+            ),
           ),
           const Divider(
             height: 2,
@@ -30,7 +36,10 @@ class BlockDetails extends StatelessWidget {
           ),
           ListTile(
             title:const Text('Timestamp:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-            subtitle: Text(time,style: const TextStyle(color: Colors.black),),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(time,style: const TextStyle(color: Colors.black),),
+            ),
           ),
           const Divider(
             height: 2,
@@ -38,7 +47,10 @@ class BlockDetails extends StatelessWidget {
           ),
           ListTile(
             title:const Text('Transactions',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-            subtitle: Text(transactions.toString(),style:const TextStyle(color: Colors.black),),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(transactions.toString(),style:const TextStyle(color: Colors.black),),
+            ),
           ),
           const   Divider(
             height: 2,
@@ -46,21 +58,24 @@ class BlockDetails extends StatelessWidget {
           ),
           ListTile(
             title:const Text('Mined by:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-            subtitle: RichText(
-              maxLines: 2,
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              text: TextSpan(
-                text: miner,
-                style:const TextStyle(
-                    color: Colors.blue, fontSize: 13),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: ' in $transactionTime',
-                      style:const TextStyle(
-                          color: Colors.black,
-                          fontSize: 13)),
-                ],
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: RichText(
+                maxLines: 2,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+                text: TextSpan(
+                  text: miner,
+                  style:const TextStyle(
+                      color: Colors.blue, fontSize: 13),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: ' in $transactionTime',
+                        style:const TextStyle(
+                            color: Colors.black,
+                            fontSize: 13)),
+                  ],
+                ),
               ),
             ),),
 

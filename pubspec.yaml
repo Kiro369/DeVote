@@ -39,6 +39,7 @@ dependencies:
   google_maps_flutter: ^2.1.1
   location: ^4.2.0
   syncfusion_flutter_maps: ^19.4.47-beta
+  url_launcher: ^6.0.20
 
 dev_dependencies:
   flutter_test:

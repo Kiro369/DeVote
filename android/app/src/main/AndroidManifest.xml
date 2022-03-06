@@ -2,6 +2,9 @@
     package="com.samuel.devote">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
    <application
         android:label="devote"
         android:icon="@mipmap/ic_launcher">
