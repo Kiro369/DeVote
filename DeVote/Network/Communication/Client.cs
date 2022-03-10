@@ -12,7 +12,7 @@ namespace DeVote.Network.Communication
         public const int BufferSize = 1024;
 
         // Receive buffer.  
-        public byte[] buffer = new byte[BufferSize];
+        public byte[] Buffer = new byte[BufferSize];
 
         NetworkStream _n = null;
 
@@ -28,26 +28,10 @@ namespace DeVote.Network.Communication
             _client = client;
         }
 
-        public NetworkStream Stream
-        {
-            get
-            {
-                return _n == null ? _n = _client.GetStream() : _n;
-            }
-        }
-        public string EndPoint
-        {
-            get
-            {
-                return _client.Client.RemoteEndPoint.ToString();
-            }
-        }
-        public bool Connected
-        {
-            get
-            {
-                return _client.Client.Connected;
-            }
-        }
+        public NetworkStream Stream => _n ??= _client.GetStream();
+
+        public string EndPoint => _client.Client.RemoteEndPoint!.ToString();
+
+        public bool Connected => _client.Client.Connected;
     }
 }

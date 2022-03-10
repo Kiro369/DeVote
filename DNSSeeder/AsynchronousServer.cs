@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace DNSSeeder
         public void Start()
         {
             // Establish the local endpoint for the socket.  
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, Port);
+            IPEndPoint localEndPoint = new IPEndPoint(GetNebulaIP(), Port);
 
             // Create a TCP/IP socket.  
             Socket listener = new Socket(AddressFamily.InterNetwork,
@@ -143,16 +144,11 @@ namespace DNSSeeder
         }
         string GetPublicIP()
         {
-            string url = "http://checkip.dyndns.org/";
-            var req = WebRequest.Create(url);
-            var resp = req.GetResponse();
-            var sr = new System.IO.StreamReader(resp.GetResponseStream());
-            string response = sr.ReadToEnd().Trim();
-            string[] a = response.Split(':');
-            string a2 = a[1].Substring(1);
-            string[] a3 = a2.Split('<');
-            string a4 = a3[0];
-            return a4;
+            return new WebClient().DownloadString("https://api.ipify.org");
+        }
+        IPAddress GetNebulaIP()
+        {
+            return NetworkInterface.GetAllNetworkInterfaces().First(ni => ni.Name.Equals("nebula1")).GetIPProperties().UnicastAddresses.FirstOrDefault()!.Address;
         }
     }
 }

@@ -34,14 +34,14 @@ namespace DeVote.Network
                 {
                     if (Stream.CanRead)
                     {
-                        int bytesRead = Stream.Read(buffer, 0, BufferSize);
+                        int bytesRead = Stream.Read(Buffer, 0, BufferSize);
                         if (bytesRead > 0)
                         {
                             // Add the packet to the handler to be handled
-                            PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(this, buffer.Take(bytesRead).ToArray()));
+                            PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(this, Buffer.Take(bytesRead).ToArray()));
 
                             // Clear buffer 
-                            Array.Clear(buffer, 0, buffer.Length);
+                            Array.Clear(Buffer, 0, Buffer.Length);
 
                             // Keep recieving.  
                         }

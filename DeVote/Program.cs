@@ -1,15 +1,14 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using DeVote.Structures;
-using System.Text;
-using System.Security.Cryptography;
-using System.Linq;
-using DeVote.Network;
-using System.Threading.Tasks;
-using DeVote.Cryptography;
+﻿using DeVote.Cryptography;
 using DeVote.Extensions;
+using DeVote.Network;
 using DeVote.Network.Communication;
+using DeVote.Structures;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace DeVote
 {
@@ -18,21 +17,21 @@ namespace DeVote
         /// <summary>
         /// Connected Nodes
         /// </summary>
-        public static Dictionary<string, Node> Nodes = new Dictionary<string, Node>();
+        public static Dictionary<string, Node> Nodes = new();
         static void Main(string[] args)
         {
             #region Test
             #endregion
             #region Main
-            // Starting the seeder client to be able to connect to the network
-            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
-
             // Start the server first, so anyone can connect after we get added to the seeder
-            var server = new Server(4269, seederClient);
+            var server = new Server(4269);
             server.RunServerAsync();
 
-            //Initalize Packet Handler
+            //Initialize Packet Handler
             PacketsHandler.Init();
+
+            // Starting the seeder client to be able to connect to the network
+            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
 
             // Get the addresses of all nodes, and add out IP to the seeder
             seederClient.StartClient(server.Port);
@@ -53,7 +52,7 @@ namespace DeVote
                     };
                 }
                 // Start the packet Handler since we have our AES Key, we can Decrypt incoming packets from the network
-                Task.Factory.StartNew(() => PacketsHandler.Handle());
+                Task.Factory.StartNew(PacketsHandler.Handle);
             }
             else
             {
@@ -100,7 +99,7 @@ namespace DeVote
                 AES.Key = key;
 
                 // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
-                Task.Factory.StartNew(() => PacketsHandler.Handle());
+                Task.Factory.StartNew(PacketsHandler.Handle);
             }
 
             Task.Factory.StartNew(async () => {

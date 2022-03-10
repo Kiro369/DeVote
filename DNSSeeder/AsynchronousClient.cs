@@ -21,7 +21,7 @@ namespace DNSSeeder
         int SeederPort;
 
         // The response from the remote device.  
-        private static String response = String.Empty;
+        private static string response = string.Empty;
 
         /// <summary>
         /// The constructor for the Seeder Client, host and port for the DNS Seeder are required
@@ -43,6 +43,7 @@ namespace DNSSeeder
         /// <param name="port">Set this to anything, to add the address to the list in the Seeder</param>
         public void StartClient(int port = 0)
         {
+            var externalIP = new WebClient().DownloadString("https://api.ipify.org");
             connectDone.Reset(); sendDone.Reset(); receiveDone.Reset();
 
             //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
@@ -50,7 +51,7 @@ namespace DNSSeeder
             IPAddress ipAddress = ipHostInfo.AddressList[0];
 
             // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), SeederPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress.ToString().Equals(externalIP) ? IPAddress.Parse("127.0.0.1") : ipAddress, SeederPort);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(AddressFamily.InterNetwork,

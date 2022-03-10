@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,14 +12,8 @@ namespace DeVote.Network.Communication
     public class Server : TcpListener
     {
         bool _stop = false;
-        public int Port
-        {
-            get
-            {
-                return ((IPEndPoint)LocalEndpoint).Port;
-            }
-        }
-        public Server(int port = 4269, DNSSeeder.AsynchronousClient seederClient = null) : base(IPAddress.Any, FindPort(port, seederClient)) {}
+        public int Port => ((IPEndPoint)LocalEndpoint).Port;
+        public Server(int port = 4269) : base(Nebula.GetNebulaIP(), port) {}
 
         public async void RunServerAsync()
         {
@@ -49,7 +44,7 @@ namespace DeVote.Network.Communication
         {
             try
             {
-                node.Stream.BeginRead(node.buffer, 0, Client.BufferSize, new AsyncCallback(ReadCallback), node);
+                node.Stream.BeginRead(node.Buffer, 0, Client.BufferSize, ReadCallback, node);
             }
             catch (SocketException e)
             {
@@ -79,14 +74,20 @@ namespace DeVote.Network.Communication
                 if (bytesRead > 0)
                 {
                     // Add the packet to the handler to be handled
-                    PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(node, node.buffer.Take(bytesRead).ToArray()));
+                    PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(node, node.Buffer.Take(bytesRead).ToArray()));
 
                     // Clear buffer 
-                    Array.Clear(node.buffer, 0, node.buffer.Length);
+                    Array.Clear(node.Buffer, 0, node.Buffer.Length);
 
                     // Keep recieving.  
                     Read(node);
                 }
+            }
+            catch (System.IO.IOException e)
+            {
+                if (e.InnerException != null)
+                    throw e;
+                Console.WriteLine(e.ToString());
             }
             catch (SocketException e)
             {
@@ -103,17 +104,26 @@ namespace DeVote.Network.Communication
             }
         }
 
-        static int FindPort(int basePort, DNSSeeder.AsynchronousClient seederClient)
+        static int FindPort(int basePort)
         {
-            if (seederClient == null) return basePort;
-            var externalIP = new WebClient().DownloadString("https://api.ipify.org");
-            seederClient.StartClient();
+
+            var externalIP = new HttpClient().GetStringAsync("https://api.ipify.org").Result;
             while (true)
             {
-                var endPoint = externalIP + ":" + basePort;
-                if (!seederClient.EndPoints.Contains(endPoint))
+                try
+                {
+                    using (var client = new TcpClient())
+                    {
+                        var connected = client.ConnectAsync(externalIP, basePort).Wait(1000);
+                        if (connected)
+                            basePort++;
+                        else return basePort;
+                    }
+                }
+                catch
+                {
                     return basePort;
-                basePort++;
+                }
             }
         }
         public new void Stop()
