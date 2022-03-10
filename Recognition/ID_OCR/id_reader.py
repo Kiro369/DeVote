@@ -65,6 +65,7 @@ def id_crop(id_img, gray=False):
     image = id_img if gray else cv2.cvtColor(id_img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.bilateralFilter(image, 33, 40, 40)
     canny = cv2.Canny(blurred, 70, 200)
+    #cv2.imshow("canny", canny)
     contours = get_contours(canny)
     if list(contours):
         x, y, w, h = cv2.boundingRect(contours)
@@ -90,3 +91,17 @@ def id_crop_simple(id_img, gray=1):
     # crop ID and return it
     return id_img[y1:y2, x1:x2]
     pass
+
+def ocr_id(id_path, face):
+    id = img_load(id_path)
+    info = {"front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
+            "back": {"expire_date": ""}}
+
+    id = cv2.resize(id, (800, 600))
+    cropped = id_crop(id)
+    id_read(cropped, data=info, face="front")
+    return info
+    pass
+
+def img_load(img_path):
+    return cv2.imread(img_path)
