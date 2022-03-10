@@ -30,7 +30,7 @@ namespace DNSSeeder
         /// </summary>
         /// <param name="host">DNS Seeder host that the client will connect to</param>
         /// <param name="port">DNS Seeder port</param>
-        public AsynchronousClient(string host = "dnsseeder.ddns.net", int port = 6942)
+        public AsynchronousClient(string host = "192.168.100.1", int port = 6942)
         {
             EndPoints = new List<string>();
             SeederHost = host;
@@ -47,11 +47,15 @@ namespace DNSSeeder
             connectDone.Reset(); sendDone.Reset(); receiveDone.Reset();
 
             //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(SeederHost);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            if (!IPAddress.TryParse(SeederHost, out IPAddress ipAddress))
+            {
+                IPHostEntry ipHostInfo = Dns.GetHostEntry(SeederHost);
+                ipAddress = ipHostInfo.AddressList[0];
+            }
+
 
             // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress.ToString().Equals(externalIP) ? IPAddress.Parse("127.0.0.1") : ipAddress, SeederPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress.ToString().Equals(externalIP) ? IPAddress.Parse("192.168.100.1") : ipAddress, SeederPort);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(AddressFamily.InterNetwork,
