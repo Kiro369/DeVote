@@ -86,7 +86,7 @@ namespace DeVote.Network.Communication
             catch (System.IO.IOException e)
             {
                 if (e.InnerException != null)
-                    throw e;
+                    throw e.InnerException;
                 Console.WriteLine(e.ToString());
             }
             catch (SocketException e)
