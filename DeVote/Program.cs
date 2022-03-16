@@ -3,6 +3,7 @@ using DeVote.Extensions;
 using DeVote.Network;
 using DeVote.Network.Communication;
 using DeVote.Structures;
+using DeVote.PyRecognition;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,20 @@ namespace DeVote
         public static Dictionary<string, Node> Nodes = new();
         static void Main(string[] args)
         {
+            #region Embedding Python in .Net Test
+            var PythonDLLPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\python37.dll";
+            var SitePackagesPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\Lib\site-packages";
+
+            Recognition recognition = new Recognition();
+            recognition.InitPythonInterpreter(PythonDLLPath, SitePackagesPath);
+            var imgPath = @"";
+            dynamic IDInfo = recognition.ExtractIDInfo(imgPath, "front");
+            Console.WriteLine("IDInfo {0}",IDInfo);
+            // reg.verifyVoter(imgPath, "front");
+            recognition.EndPythonInterpreter();
+            return;
+            #endregion
+
             #region Test
             #endregion
             #region Main
