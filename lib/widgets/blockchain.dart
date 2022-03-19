@@ -2,6 +2,7 @@ import 'package:devote/widgets/BlockDetails.dart';
 import 'package:devote/widgets/BlockList.dart';
 import 'package:devote/widgets/TransactionsList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../models/block.dart';
 import '../models/transaction.dart';
@@ -59,7 +60,24 @@ List<Block> blocks=[
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+       backgroundColor: kIsWeb?Colors.white:Colors.grey[50],
+        appBar: kIsWeb?AppBar(
+          leading: Icon(Icons.arrow_back,color:Colors.white),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Column(children: [
+            Text(
+              "متابعة العملية الانتخابية",  style: TextStyle(color: Colors.black),
+            ),
+            GestureDetector(
+              child: Text(
+                'BlockChain Explorer',
+                style: TextStyle(fontSize: 12, color: Colors.black45),
+              ),
+            )
+          ]),
+        ):AppBar(
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -168,10 +186,7 @@ List<Block> blocks=[
                                         ),
                                       ),
                                       leading: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.4,
+                                          width: kIsWeb?MediaQuery.of(context).size.width /4:MediaQuery.of(context).size.width /2.4,
                                           child: ListTile(
                                             leading: CircleAvatar(
                                               backgroundColor: Colors.grey[300],
@@ -318,10 +333,7 @@ List<Block> blocks=[
                                         ),
                                       ),
                                       leading: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.4,
+                                          width: kIsWeb?MediaQuery.of(context).size.width /4:MediaQuery.of(context).size.width /2.4,
                                           child: ListTile(
                                             leading: CircleAvatar(
                                               backgroundColor: Colors.grey[300],

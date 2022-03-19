@@ -69,6 +69,7 @@ final Color color1=const Color(0xff26375f);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
@@ -88,7 +89,38 @@ final Color color1=const Color(0xff26375f);
         ),
         backgroundColor: Colors.white,
       ),
-      body: ListView(
+      body: kIsWeb? Row(
+        children: [
+          SizedBox(width: MediaQuery.of(context).size.width/2.2,child: BlockChain()),
+          Container(
+            width: MediaQuery.of(context).size.width/2,
+            child: ListView(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    'النتيجة الاجمالية',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                PieChart(
+                  motrsh7: motrsh7en,
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    'النتيجة علي الخريطة',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                MapChart(data: data, mapSource: _mapSource),
+              ],
+            ),
+          ),
+        ],
+      ):ListView(
         children: [
           const Padding(
             padding: EdgeInsets.all(12.0),

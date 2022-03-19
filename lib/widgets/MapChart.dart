@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../models/mapModel.dart';
 class MapChart extends StatelessWidget {
@@ -11,7 +12,7 @@ class MapChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height/2.5,
+      height: kIsWeb? MediaQuery.of(context).size.height/1.8:MediaQuery.of(context).size.height/2.5,
       child: SfMaps(
         layers: <MapShapeLayer>[
           MapShapeLayer(
@@ -38,7 +39,7 @@ class MapChart extends StatelessWidget {
                       ),
 
                       SizedBox(
-                        width: MediaQuery.of(context).size.width/2.2,
+                        width: kIsWeb? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
                         child: ListTile(
                           trailing: Icon(Icons.check_circle,color: const Color(0xff26375f),size: 16,),
                           title:  Text(
@@ -55,9 +56,10 @@ class MapChart extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width/2.2,
+                        width:kIsWeb? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
                         child: ListTile(
-                          trailing: Icon(Icons.check_circle,color: const Color(0xffd82148),size: 0,),
+                          trailing: Icon(Icons.check_circle,color: const Color(
+                              0xffffffff),size: 0,),
                           title:  Text(
                             'موسي ',textAlign: TextAlign.right,
                             style:  TextStyle(color: Colors.black,fontSize: 12),
