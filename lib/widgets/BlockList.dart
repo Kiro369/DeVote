@@ -7,24 +7,23 @@ class BlockList extends StatefulWidget {
   BlockList( this.blocks);
   @override
 
-  _BlockListState createState() => _BlockListState(blocks);
+  _BlockListState createState() => _BlockListState();
 }
 
 class _BlockListState extends State<BlockList> {
-
   List _foundsearch=[];
-  final List blocks;
+ // final List blocks;
 
-  _BlockListState(this.blocks);
+  //_BlockListState(this.blocks);
 
   void _runFilter(String enteredKeyword) {
     List results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
 
-      results = blocks;
+      results = widget.blocks;
     } else {
-      results = blocks
+      results = widget.blocks
           .where((block) =>
           block.blockHeight.toString().toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
@@ -38,7 +37,7 @@ class _BlockListState extends State<BlockList> {
   }
   @override
   void initState() {
-    _foundsearch=blocks;
+    _foundsearch=widget.blocks;
     super.initState();
   }
   @override
@@ -100,7 +99,7 @@ class _BlockListState extends State<BlockList> {
                               children: <TextSpan>[
                                 TextSpan(
                                     text:
-                                    blocks[index].miner,
+                                    _foundsearch[index].miner,
                                     style: const TextStyle(
                                         color: Colors.blue,
                                         fontSize: 13)),

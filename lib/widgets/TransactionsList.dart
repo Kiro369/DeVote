@@ -7,24 +7,21 @@ class TransactionsList extends StatefulWidget {
 
    TransactionsList( this.transactions);
 @override
-_TransactionsListState createState() => _TransactionsListState(transactions);
+_TransactionsListState createState() => _TransactionsListState();
 }
 
 class _TransactionsListState extends State<TransactionsList> {
 
   List _foundsearch=[];
- final List transactions;
-
-  _TransactionsListState(this.transactions);
 
 void _runFilter(String enteredKeyword) {
     List results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
 
-      results = transactions;
+      results = widget.transactions;
     } else {
-      results = transactions
+      results = widget.transactions
           .where((user) =>
               user.hash.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
@@ -38,7 +35,7 @@ void _runFilter(String enteredKeyword) {
   }
   @override
   void initState() {
-    _foundsearch=transactions;
+    _foundsearch=widget.transactions;
     super.initState();
   }
   @override

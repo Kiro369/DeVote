@@ -18,6 +18,7 @@ class _AmakenState extends State<Amaken> {
   final Set<Marker> markers = new Set(); //markers for google map
   static const LatLng showLocation = const LatLng(30.033333, 31.233334);
  var locations =[
+   {'name':'المعهد التكنولوجي العالي بالعاشر من رمضان','location':LatLng(30.286596, 31.740078)},
     {'name':'Cairo','location':LatLng(30.033333, 31.233334)},
    {'name':'Sohag','location':LatLng(26.549999	,31.700001)},
    {'name':'6 october ','location':LatLng(29.952654,30.921919)},
@@ -53,7 +54,7 @@ class _AmakenState extends State<Amaken> {
   @override
   void initState() {
     super.initState();
-    location= LatLng(30.033333, 31.233334);
+    location= LatLng(30.286596, 31.740078);
     //getIcons();
   }
   @override
