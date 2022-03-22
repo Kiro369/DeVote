@@ -49,7 +49,6 @@ namespace DNSSeeder
                     // Wait until a connection is made before continuing.  
                     allDone.WaitOne();
                 }
-
             }
             catch (Exception e)
             {
