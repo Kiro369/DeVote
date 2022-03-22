@@ -23,7 +23,7 @@ namespace DNSSeeder
         public void Start()
         {
             // Establish the local endpoint for the socket.  
-            IPEndPoint localEndPoint = new IPEndPoint(GetNebulaIP(), Port);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, Port);
 
             // Create a TCP/IP socket.  
             Socket listener = new Socket(AddressFamily.InterNetwork,

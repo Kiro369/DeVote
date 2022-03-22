@@ -13,7 +13,7 @@ namespace DeVote.Network.Communication
     {
         bool _stop = false;
         public int Port => ((IPEndPoint)LocalEndpoint).Port;
-        public Server(int port = 4269) : base(Nebula.GetNebulaIP(), port) {}
+        public Server(int port = 4269) : base(IPAddress.Any, port) {}
 
         public async void RunServerAsync()
         {
