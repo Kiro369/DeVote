@@ -76,3 +76,14 @@ def display_rec(frame, locations, scale=1):
         # Display the resulting image
     cv2.imshow('Video', frame)
     cv2.waitKey(1)
+
+
+def compare_faces_frame(ID_face, frame):
+    face_encodings = get_face_encodings(frame)[0]
+    face_distances = face_recognition.face_distance(ID_face, face_encodings[0])
+    return face_distances[0]
+    pass
+
+def frame_contains_faces(frame):
+
+    pass

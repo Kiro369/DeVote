@@ -26,6 +26,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="protobuf-net" Version="3.0.101" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
+    <PackageReference Include="pythonnet" Version="3.0.0-preview2022-03-03" />
   </ItemGroup>
 
   <ItemGroup>
