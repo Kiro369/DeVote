@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 class BlockDetails extends StatelessWidget {
   final String miner;
@@ -12,8 +13,9 @@ class BlockDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading:const Icon(Icons.arrow_back_ios_outlined,size:0,color: Colors.white,),
+        leading:const Icon(Icons.arrow_back_ios_outlined,size:0,color:const Color(0xff26375f),),
         title: const Text('Block Details',style: TextStyle(color:Colors.white),),
         centerTitle: true,
         backgroundColor: const Color(0xff26375f),
@@ -78,6 +80,11 @@ class BlockDetails extends StatelessWidget {
                 ),
               ),
             ),),
+          kIsWeb? Center(
+            child: Container(
+                height: 180,
+                width:180,child: Image.asset('assets/a4.png',color: const Color(0xff26375f))),
+          ):Text(''),
 
         ],
       ),

@@ -73,6 +73,7 @@ final Color color1=const Color(0xff26375f);
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
+        //  leading: ,
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 10),

@@ -9,12 +9,29 @@ class PieChart extends StatelessWidget {
   const PieChart({required this.motrsh7});
 
 
-  _buildChild(BuildContext context,int index) => Container(
-    height: MediaQuery.of(context).size.height / 1.7,
-    width:MediaQuery.of(context).size.width / 2 ,
-    child: InfoPage(index: index,motrsh7e: [
-      people('عبد الفتاح السيسي', 6589305, '65%'),
-      people(' موسي مصطفي موسي', 335555, '35%')
+  _buildChild(BuildContext context,int index,Color color) => Container(
+    height: MediaQuery.of(context).size.height / 1.2,
+    width:MediaQuery.of(context).size.width / 2,
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+    ),
+    child: InfoPage(index: index,motrsh7e:[
+      people(
+          'عبد الفتاح السيسي'
+          ,296000,'65%',
+          'عبد الفتاح سعد خليل ',
+          'assets/cc.jpg','نجمة',
+          Icon(Icons.star,),
+          'ولد في 19 نوفمبر 1954 في القاهرة ، متزوج وله 4 أبناء\n تخرج من الكليـة الحربيــة (بكالوريوس العلوم العسكرية) في إبريل 1977\n ترقى الى رتبة فريق أول وعين قائدا عاما للقوات المسلحة ووزيراً للدفاع والإنتاج الحربي منذ 12 أغسطس 2012'
+      ),
+      people('موسي مصطفي موسي'
+          ,2400,'35%',
+          'موسي مصطفي موسي محمد',
+          'assets/moussa.jpg', 'طائرة',
+          const Icon(Icons.airplanemode_on_sharp,),
+          'ولد في إبريل 1952، متزوج ولديه ثلاثة أبناء\n وهو رجل أعمال ويرأس مجلس إدارة إحدى الشركات الكبرى في مصر\n يرأس موسى حزب الغد وإتحاد القبائل العربية والتحالف السياسى المصرى الذي يضم 18 حزبًا سياسيًا.'
+      ),
     ]),
   );
 
@@ -66,9 +83,9 @@ class PieChart extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return Dialog(
-                                elevation: 0,
+                                elevation: 1,
                                 backgroundColor: Colors.transparent,
-                                child: _buildChild(context,0),
+                                child: _buildChild(context,0, Color(0xff26375f)),
                               );
                             });
                       },
@@ -93,14 +110,27 @@ class PieChart extends StatelessWidget {
                         color: const Color(0xff26375f),
                       ),
                     ),
-              ListTile(
-                title: Text(
-                  motrsh7[1].nickname,
-                  textAlign: TextAlign.right,
-                ),
-                trailing: Icon(
-                  Icons.circle,
-                  color: const Color(0xffd82148),
+              InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          elevation: 1,
+                          backgroundColor: Colors.transparent,
+                          child: _buildChild(context,1, Color(0xffd82148)),
+                        );
+                      });
+                },
+                child: ListTile(
+                  title: Text(
+                    motrsh7[1].nickname,
+                    textAlign: TextAlign.right,
+                  ),
+                  trailing: Icon(
+                    Icons.circle,
+                    color: const Color(0xffd82148),
+                  ),
                 ),
               )
             ],
