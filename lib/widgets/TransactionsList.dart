@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/transaction.dart';
@@ -38,6 +39,22 @@ void _runFilter(String enteredKeyword) {
     _foundsearch=widget.transactions;
     super.initState();
   }
+  _buildChild(BuildContext context, String dateTime, String elector,
+       String hash, String elected) =>
+      Container(
+          height: MediaQuery.of(context).size.height / 1.15,
+          width: MediaQuery.of(context).size.width / 2.8,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          child: TransactionDetails(
+            dateTime:dateTime ,
+            hash:hash ,
+            elected: elected,
+            elector: elector,
+
+          ));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +90,23 @@ void _runFilter(String enteredKeyword) {
                 itemCount: _foundsearch.length,
                 itemBuilder: (context, index) => Container(
                     child: InkWell(
-                      onTap: () => Navigator.of(context)
+                      onTap: () =>  kIsWeb
+                          ? showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              elevation: 1,
+                              backgroundColor: Colors.transparent,
+                              child: _buildChild(
+                                context,
+                                _foundsearch[index].dateTime,
+                                _foundsearch[index].elector,
+                                _foundsearch[index].hash,
+                                _foundsearch[index].elected,
+                              ),
+                            );
+                          })
+                          :Navigator.of(context)
                           .push(new MaterialPageRoute(
                         builder: (BuildContext context) =>
                         new TransactionDetails(

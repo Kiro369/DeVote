@@ -50,7 +50,7 @@ class _BlockListState extends State<BlockList> {
           int blockHeight, String time, String transactionTime) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.3,
-          width: MediaQuery.of(context).size.width / 2.6,
+          width: MediaQuery.of(context).size.width / 2.8,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(20)),

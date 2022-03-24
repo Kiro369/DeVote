@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 class TransactionDetails extends StatelessWidget {
   final String hash;
@@ -11,7 +12,7 @@ class TransactionDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_ios_outlined,size:0,color: Colors.white,),
+        leading: Icon(Icons.arrow_back_ios_outlined,size:0,color: Color(0xff26375f),),
         title: Text('Transaction Details',style: TextStyle(color:Colors.white),),
         centerTitle: true,
         backgroundColor: Color(0xff26375f),
@@ -68,6 +69,12 @@ class TransactionDetails extends StatelessWidget {
                 softWrap: false,),
             ),
           ),
+          kIsWeb? Center(
+            child: Container(
+                height: 180,
+                width:180,child: Image.asset('assets/a4.png',color: const Color(0xff26375f))),
+          ):Text(''),
+
         ],
       ),
     );

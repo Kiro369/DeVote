@@ -76,7 +76,7 @@ final Color color1=const Color(0xff26375f);
         //  leading: ,
         actions: const [
           Padding(
-            padding: EdgeInsets.only(right: 10),
+            padding: EdgeInsets.only(right: 18),
             child: Icon(
               Icons.check_box_outlined,
               color: Colors.black,
@@ -89,6 +89,39 @@ final Color color1=const Color(0xff26375f);
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
+        leading:kIsWeb?Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: IconButton(onPressed: () =>showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  elevation: 1,
+                  backgroundColor: Colors.transparent,
+                  child:Container(height: MediaQuery.of(context).size.height / 2.5,
+                      width: MediaQuery.of(context).size.width / 3.2,
+                      decoration: BoxDecoration(
+                        color: Colors.yellow[700],
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),child: Column(children: [
+                        Center(child: Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: Icon(Icons.warning,size: 50,),
+                        )),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text('يمكنك معرفة امكان مكن الانتخابات الالكترونية من خلال تطبيقنا الخاص DeVote علي GooglePlay او AppStore',style: TextStyle(
+                            fontSize: 18,
+                          ),textDirection: TextDirection.rtl,),
+                        ),
+                      Center(
+                        child: FlatButton(color: Colors.black,onPressed: ()=> Navigator.of(context)
+                          .pop(), child: Text('موافق',style: TextStyle(color: Colors.white),)),
+                      )
+                      ],))
+                );
+              })
+             , icon: Icon(Icons.location_on,size: 30,color: Colors.black,)),
+        ):Text('') ,
       ),
       body: kIsWeb? Row(
         children: [
