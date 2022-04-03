@@ -38,118 +38,118 @@ namespace DeVote
             #region Test
             #endregion
             #region Main
-            // Start the server first, so anyone can connect after we get added to the seeder
-            var server = new Server(4269);
-            server.RunServerAsync();
+            //// Start the server first, so anyone can connect after we get added to the seeder
+            //var server = new Server(4269);
+            //server.RunServerAsync();
 
-            //Initialize Packet Handler
-            PacketsHandler.Init();
+            ////Initialize Packet Handler
+            //PacketsHandler.Init();
 
-            // Starting the seeder client to be able to connect to the network
-            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+            //// Starting the seeder client to be able to connect to the network
+            //DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
 
-            // Get the addresses of all nodes, and add out IP to the seeder
-            seederClient.StartClient(server.Port);
+            //// Get the addresses of all nodes, and add out IP to the seeder
+            //seederClient.StartClient(server.Port);
 
-            // Check if there is anyone on network, if there is none, we create our own AES Key
-            if (seederClient.EndPoints.Count == 0)
-            {
-                using (Aes aes = Aes.Create())
-                {
-                    aes.KeySize = 256;
-                    aes.BlockSize = 128;
-                    aes.GenerateKey();
-                    aes.GenerateIV();
-                    AES.Key = new AESKey()
-                    {
-                        Key = aes.Key,
-                        IV = aes.IV
-                    };
-                }
-                // Start the packet Handler since we have our AES Key, we can Decrypt incoming packets from the network
-                Task.Factory.StartNew(PacketsHandler.Handle);
-            }
-            else
-            {
-                // If there is someone on the network, we connect to them, and we do a Key Exchange with the first one we connect to
-                seederClient.EndPoints.ForEach(endPoint => Task.Factory.StartNew(() => { new Node(endPoint).Start(); }));
+            //// Check if there is anyone on network, if there is none, we create our own AES Key
+            //if (seederClient.EndPoints.Count == 0)
+            //{
+            //    using (Aes aes = Aes.Create())
+            //    {
+            //        aes.KeySize = 256;
+            //        aes.BlockSize = 128;
+            //        aes.GenerateKey();
+            //        aes.GenerateIV();
+            //        AES.Key = new AESKey()
+            //        {
+            //            Key = aes.Key,
+            //            IV = aes.IV
+            //        };
+            //    }
+            //    // Start the packet Handler since we have our AES Key, we can Decrypt incoming packets from the network
+            //    Task.Factory.StartNew(PacketsHandler.Handle);
+            //}
+            //else
+            //{
+            //    // If there is someone on the network, we connect to them, and we do a Key Exchange with the first one we connect to
+            //    seederClient.EndPoints.ForEach(endPoint => Task.Factory.StartNew(() => { new Node(endPoint).Start(); }));
 
-                // Wait till we connect
-                while (Nodes.Count == 0) Task.Delay(100);
+            //    // Wait till we connect
+            //    while (Nodes.Count == 0) Task.Delay(100);
 
-                // Get the connection
-                var node = Nodes.FirstOrDefault().Value;
+            //    // Get the connection
+            //    var node = Nodes.FirstOrDefault().Value;
 
-                // Generate request by adding special request bytes to the beginning of the packet (so the other side can Identify the packet), and adding our public key
-                var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
+            //    // Generate request by adding special request bytes to the beginning of the packet (so the other side can Identify the packet), and adding our public key
+            //    var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
 
-                // Send the request
-                node.Send(request);
+            //    // Send the request
+            //    node.Send(request);
 
-                // Wait for an inital response containing other party public key
-                while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1]))) ;
+            //    // Wait for an inital response containing other party public key
+            //    while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1]))) ;
 
-                // Get that response
-                var responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1])).Value;
+            //    // Get that response
+            //    var responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[1].Length).SequenceEqual(Constants.ECDHOperations[1])).Value;
 
-                // Extract other party public key
-                var otherPartyPublicKey = responsePacket.Skip(Constants.ECDHOperations[1].Length).ToArray();
+            //    // Extract other party public key
+            //    var otherPartyPublicKey = responsePacket.Skip(Constants.ECDHOperations[1].Length).ToArray();
 
-                // Wait for the final response, containing the secret AES Key 
-                while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2]))) ;
+            //    // Wait for the final response, containing the secret AES Key 
+            //    while (!PacketsHandler.Packets.Any(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2]))) ;
 
-                // Get that response
-                responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2])).Value.Skip(Constants.ECDHOperations[2].Length).ToArray();
+            //    // Get that response
+            //    responsePacket = PacketsHandler.Packets.First(y => y.Value.Take(Constants.ECDHOperations[2].Length).SequenceEqual(Constants.ECDHOperations[2])).Value.Skip(Constants.ECDHOperations[2].Length).ToArray();
 
-                // Split the encrypted and serialized Key from ECDH AES IV 
-                responsePacket.Split(responsePacket.Length - 16, out byte[] encryptedSecretKey, out byte[] IV);
+            //    // Split the encrypted and serialized Key from ECDH AES IV 
+            //    responsePacket.Split(responsePacket.Length - 16, out byte[] encryptedSecretKey, out byte[] IV);
 
-                // Decrypt the Key
-                var aesKeySerialized = ECDH.Decrypt(encryptedSecretKey, otherPartyPublicKey, IV);
+            //    // Decrypt the Key
+            //    var aesKeySerialized = ECDH.Decrypt(encryptedSecretKey, otherPartyPublicKey, IV);
 
-                // Finally Deserialize the AES Key
-                var key = ProtoBuf.Serializer.Deserialize<AESKey>(new System.Buffers.ReadOnlySequence<byte>(aesKeySerialized));
+            //    // Finally Deserialize the AES Key
+            //    var key = ProtoBuf.Serializer.Deserialize<AESKey>(new System.Buffers.ReadOnlySequence<byte>(aesKeySerialized));
 
-                // Set the Key, so we can use it
-                AES.Key = key;
+            //    // Set the Key, so we can use it
+            //    AES.Key = key;
 
-                // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
-                Task.Factory.StartNew(PacketsHandler.Handle);
-            }
+            //    // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
+            //    Task.Factory.StartNew(PacketsHandler.Handle);
+            //}
 
-            Task.Factory.StartNew(async () => {
-                while (true)
-                {
-                    var lines = Nodes.Values.Select(node => node.EndPoint + "=" + node.Connected + "|");
-                    Console.Title = "|" + string.Join(Environment.NewLine, lines);
-                    await Task.Delay(1000);
-                }
-            });
-            while (true)
-            {
-                Console.WriteLine("Write a msg");
-                var msg = Console.ReadLine();
-                var test = Network.Messages.Test.Create(msg);
-                foreach (var node in Nodes.Values)
-                {
-                    node.Send(test);
-                }
-            }
+            //Task.Factory.StartNew(async () => {
+            //    while (true)
+            //    {
+            //        var lines = Nodes.Values.Select(node => node.EndPoint + "=" + node.Connected + "|");
+            //        Console.Title = "|" + string.Join(Environment.NewLine, lines);
+            //        await Task.Delay(1000);
+            //    }
+            //});
+            //while (true)
+            //{
+            //    Console.WriteLine("Write a msg");
+            //    var msg = Console.ReadLine();
+            //    var test = Network.Messages.Test.Create(msg);
+            //    foreach (var node in Nodes.Values)
+            //    {
+            //        node.Send(test);
+            //    }
+            //}
             #endregion
 
             #region BlockChain Test
-            return;
+            //return;
             BlockChain deVOTE = new BlockChain();
            
             // load form leveldb 
-            deVOTE.LoadBlockChain();
+            deVOTE.LoadStringifiedBlockChain();
 
             if(deVOTE.Blocks.Count==0){
-            Block GenesisBlock = deVOTE.CreateGenesisBlock();
-            deVOTE.Blocks.AddFirst(GenesisBlock);
+                Block GenesisBlock = deVOTE.CreateGenesisBlock();
+                deVOTE.Blocks.AddFirst(GenesisBlock);
+                GenesisBlock.SaveBlockAsString(deVOTE.LevelDB);
             }
            
-
             Console.WriteLine("current blocks");
             Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
 
@@ -171,19 +171,19 @@ namespace DeVote
             deVOTE.AddBlock(myBlock);
 
             // Save block into leveldb
-            deVOTE.SaveBlockChain();
+            deVOTE.SaveBlockChainAsString();
 
             Console.WriteLine("new blocks");
             Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
 
 
             //load a block
-            Block TargetBlock = Block.Load(2,deVOTE.LevelDB);
+            Block TargetBlock = Block.LoadStringifiedBlock(2,deVOTE.LevelDB);
             Console.WriteLine("TargetBlock");
             Console.WriteLine(JsonConvert.SerializeObject(TargetBlock, Formatting.Indented));
 
             // load null block 
-            Block NullBlock = Block.Load(600,deVOTE.LevelDB);
+            Block NullBlock = Block.LoadStringifiedBlock(600,deVOTE.LevelDB);
             Console.WriteLine("NullBlock");
             Console.WriteLine(JsonConvert.SerializeObject(NullBlock, Formatting.Indented));
 
