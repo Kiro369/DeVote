@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ProtoBuf;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace DeVote.Structures
 {
@@ -25,15 +26,22 @@ namespace DeVote.Structures
         }
 
         // Save Block into LevelDB as byte array representation of Protobuf Encoding.
-        public void Save(LevelDB.DB levelDB)
+        public void SaveBlockAsByteArray(LevelDB.DB levelDB)
         {
             byte[] SerializedBlock = SerializeBlock(this);
             byte[] height = BitConverter.GetBytes(Height);
             levelDB.Put(height, SerializedBlock);
         }
-        
-        // Load Single Block from LevelDB
-        public static Block Load(int height,LevelDB.DB levelDB)
+
+        // Save Block into LevelDB as string -json- representation.
+        public void SaveBlockAsString(LevelDB.DB levelDB)
+        {
+            string StringifiedBlock = JsonConvert.SerializeObject(this);
+            levelDB.Put(Height.ToString(), StringifiedBlock);
+        }
+
+        // Load Single Block saved as byte array representation from LevelDB.
+        public static Block LoadProtobuffedBlock(int height,LevelDB.DB levelDB)
         {
             byte[] HeightByte = BitConverter.GetBytes(height);
             var SerializedBlock = levelDB.Get(HeightByte);
@@ -43,7 +51,17 @@ namespace DeVote.Structures
             }
             else return new Block(new List<Transaction>());
         }
-
+        // Load Single Block saved as string representation from LevelDB.
+        public static Block LoadStringifiedBlock(int height, LevelDB.DB levelDB)
+        {
+            String StringifiedBlock = levelDB.Get(height.ToString());
+            if (StringifiedBlock != null)
+            {
+                Block LoadedBlock = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
+                return LoadedBlock;
+            }
+            else return new Block(new List<Transaction>());
+        }
         public static byte[] SerializeBlock(Block block)
         {
             using (MemoryStream stream = new MemoryStream())

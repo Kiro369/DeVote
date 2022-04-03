@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using DeVote.Cryptography;
 using LevelDB;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 
@@ -31,7 +32,7 @@ namespace DeVote.Structures
             });
             // Block GenesisBlock = new Block();
             GenesisBlock.Height = 1;
-            GenesisBlock.Miner = "";
+            GenesisBlock.Miner = "deVote";
             GenesisBlock.Hash = Argon2.ComputeHash(GenesisBlock.Timestamp.ToString());
             return GenesisBlock;
         }
@@ -49,8 +50,8 @@ namespace DeVote.Structures
             this.Blocks.AddLast(block);
         }
 
-        // Load BlockChain from levelDB into memory
-        public void LoadBlockChain()
+        // Load BlockChain saved in byte array representation from levelDB into memory
+        public void LoadProtobuffedBlockChain()
         {
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
@@ -65,8 +66,26 @@ namespace DeVote.Structures
                 }
             }
         }
-        // Save Serialized BlockChain
-        public void SaveBlockChain()
+
+        // Load BlockChain saved in string representation from levelDB into memory
+        public void LoadStringifiedBlockChain()
+        {
+            var snapShot = this.LevelDB.CreateSnapshot();
+            var readOptions = new ReadOptions { Snapshot = snapShot };
+
+            using (var iterator = this.LevelDB.CreateIterator(readOptions))
+            {
+                for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
+                {
+                    string StringifiedBlock = iterator.ValueAsString();
+                    Block block = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
+                    this.Blocks.AddLast(block);
+                }
+            }
+        }
+
+        // Save BlockChain as byte array representation of Protobuf Encoding.
+        public void SaveBlockChainAsByteArray()
         {
             foreach (Block block in this.Blocks)
             {
@@ -75,7 +94,17 @@ namespace DeVote.Structures
                 this.LevelDB.Put(Height, SerializedBlock);
             }
         }
-    
+
+        // Save BlockChain as string representation.
+        public void SaveBlockChainAsString()
+        {
+            foreach (Block block in this.Blocks)
+            {
+                string StringifiedBlock = JsonConvert.SerializeObject(block);
+                this.LevelDB.Put(block.Height.ToString(), StringifiedBlock);
+            }
+        }
+
         public byte[] SerializeBlockchain()
         {
             using (MemoryStream stream = new MemoryStream())
