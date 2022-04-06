@@ -11,7 +11,7 @@ const LEVELDB_PATH = process.env.LEVELDB_PATH;
     await myDBWrapper.initDBs(SQLITEDB_NAME, LEVELDB_PATH)
 
     setInterval(async () => {
-        myDBWrapper.syncDBs()
+        await myDBWrapper.syncDBs()
     }, 1000 * 30);
 
     const Blocks = await myDBWrapper.mylevelDB.getAllBlocks();
@@ -43,8 +43,8 @@ const LEVELDB_PATH = process.env.LEVELDB_PATH;
         res.send({ msg: "deVote BackEnd" })
     });
 
-    app.use('/block', blockRouter);
-    app.use('/tx', txRouter);
+    app.use('/blocks', blockRouter);
+    app.use('/txs', txRouter);
 
     app.listen(app.get('port'), function () {
         console.log(`App started on http://localhost:${app.get('port')}`);
