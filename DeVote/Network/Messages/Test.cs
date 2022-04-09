@@ -1,4 +1,6 @@
-﻿using ProtoBuf;
+﻿using DeVote.Extensions;
+using DeVote.Network.Transmission;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,28 +11,21 @@ namespace DeVote.Network.Messages
 {
     [ProtoContract(SkipConstructor = true)]
     [Handling.NodePacketHandler(PacketTypes.Test)]
-    class Test : IPacket
+    class Test : Packet
     {
-        byte[] incomingPacket;
         [ProtoMember(1)] public string Message { get; set; }
-        public Test(byte[] arr)
-        {
-            incomingPacket = arr.Skip(4).ToArray();
-        }
+        public Test(byte[] arr) :base(arr) { }
 
-        public void Handle(Node client)
+        public override void Handle(Node client)
         {
             Console.WriteLine($"[{client.EndPoint}] says: {Message}");
         }
 
-        public bool Read(Node client)
+        public override bool Read(Node client)
         {
             try
             {
-                using (MemoryStream stream = new MemoryStream(incomingPacket))
-                {
-                    Message =  Serializer.Deserialize<Test>(stream).Message;
-                }
+                Deserialize<Test>().CopyProperties(this);
                 return true;
             }
             catch
@@ -39,16 +34,12 @@ namespace DeVote.Network.Messages
             }
         }
 
-        public static byte[] Create(string msg)
+        public byte[] Create(string msg)
         {
-            var tst = new Test(new byte[] { });
-            tst.Message = msg;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, tst);
-                var srlzd = stream.ToArray();
-                return (BitConverter.GetBytes((short)PacketTypes.Test).Concat(BitConverter.GetBytes((short)srlzd.Length))).Concat(srlzd).ToArray();
-            }
+            Message = msg;
+            Serialize(this);
+            Finalize<Test>();
+            return Buffer;
         }
     }
 }
