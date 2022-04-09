@@ -10,18 +10,17 @@ using ProtoBuf;
 namespace DeVote.Structures
 {
     [ProtoContract(SkipConstructor = true)]
-    public class BlockChain
+    public class Blockchain
     {
 
         [ProtoMember(1)] public LinkedList<Block> Blocks { set; get; }
         public DB LevelDB;
 
-        public BlockChain()
+        public Blockchain()
         {
             Blocks = new LinkedList<Block>();
             // Create a new leveldb
-            string dbPath = Directory.GetCurrentDirectory() + "\\dbTest";
-            LevelDB = new DB(new Options { CreateIfMissing = true }, dbPath);
+            LevelDB = new DB(new Options { CreateIfMissing = true }, Constants.BlockchainPath);
             //SaveBlock(GenesisBlock);
         }
 
@@ -50,8 +49,8 @@ namespace DeVote.Structures
             this.Blocks.AddLast(block);
         }
 
-        // Load BlockChain saved in byte array representation from levelDB into memory
-        public void LoadProtobuffedBlockChain()
+        // Load Blockchain saved in byte array representation from levelDB into memory
+        public void LoadProtobuffedBlockchain()
         {
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
@@ -67,8 +66,8 @@ namespace DeVote.Structures
             }
         }
 
-        // Load BlockChain saved in string representation from levelDB into memory
-        public void LoadStringifiedBlockChain()
+        // Load Blockchain saved in string representation from levelDB into memory
+        public void LoadStringifiedBlockchain()
         {
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
@@ -84,8 +83,8 @@ namespace DeVote.Structures
             }
         }
 
-        // Save BlockChain as byte array representation of Protobuf Encoding.
-        public void SaveBlockChainAsByteArray()
+        // Save Blockchain as byte array representation of Protobuf Encoding.
+        public void SaveBlockchainAsByteArray()
         {
             foreach (Block block in this.Blocks)
             {
@@ -95,8 +94,8 @@ namespace DeVote.Structures
             }
         }
 
-        // Save BlockChain as string representation.
-        public void SaveBlockChainAsString()
+        // Save Blockchain as string representation.
+        public void SaveBlockchainAsString()
         {
             foreach (Block block in this.Blocks)
             {

@@ -23,6 +23,13 @@ namespace DeVote
         {
             #region Embedding Python in .Net Test
 
+            //var testID = "1020304050";
+            //var votedDLT = new VotedDLT();
+            ////votedDLT.Add(testID);
+
+            //var voted = votedDLT.Contains(testID);
+            //var voted2 = votedDLT.Contains("5040302010");
+
             //var test = new Network.Messages.Test(null);
             //var packet = test.Create("Testing new packet stuff");
 
@@ -144,12 +151,12 @@ namespace DeVote
             }
             #endregion
 
-            #region BlockChain Test
+            #region Blockchain Test
             ////return;
-            //BlockChain deVOTE = new BlockChain();
+            //Blockchain deVOTE = new Blockchain();
            
             //// load form leveldb 
-            //deVOTE.LoadStringifiedBlockChain();
+            //deVOTE.LoadStringifiedBlockchain();
 
             //if(deVOTE.Blocks.Count==0){
             //    Block GenesisBlock = deVOTE.CreateGenesisBlock();
@@ -174,11 +181,11 @@ namespace DeVote
             //myBlock.Miner = "Test33";
             //myBlock.Transactions = myTransactions;
 
-            //// add new block to current blockchain
+            //// add new block to current Blockchain
             //deVOTE.AddBlock(myBlock);
 
             //// Save block into leveldb
-            //deVOTE.SaveBlockChainAsString();
+            //deVOTE.SaveBlockchainAsString();
 
             //Console.WriteLine("new blocks");
             //Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
@@ -195,7 +202,7 @@ namespace DeVote
             //Console.WriteLine(JsonConvert.SerializeObject(NullBlock, Formatting.Indented));
 
             //// var SerializedBlockchain = deVOTE.SerializeBlockchain();
-            //// Console.WriteLine("SerializedBlockChain", SerializedBlockchain);
+            //// Console.WriteLine("SerializedBlockchain", SerializedBlockchain);
 
             //// Close the connection
             //deVOTE.LevelDB.Close();

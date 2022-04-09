@@ -1,4 +1,6 @@
-﻿using DeVote.Cryptography;
+﻿using DeviceId;
+using DeVote.Cryptography;
+using System.IO;
 using System.Text;
 
 namespace DeVote
@@ -12,5 +14,8 @@ namespace DeVote
             Argon2.Hash("DeVoteECDiffieHellmanFinalResponse")
         };
         public static byte[] Argon2Salt = Encoding.UTF8.GetBytes("DeVoteArgon2Salt");
+        public static readonly string BlockchainPath = Directory.GetCurrentDirectory() + "\\Blockchain",
+            VotedDLTPath = Directory.GetCurrentDirectory() + "\\VotedDLT",
+            MachineID = Argon2.ComputeHash(new DeviceIdBuilder().AddMacAddress().AddMachineName().AddOsVersion().ToString());
     }
 }
