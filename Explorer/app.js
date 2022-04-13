@@ -68,9 +68,6 @@ global.isDBsOpen = false;
 
     app.use(express.static('api-test'))
 
-    app.get('/test-pagination', (req, res) => {
-        res.sendFile('')
-    })
     app.listen(app.get('port'), function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
