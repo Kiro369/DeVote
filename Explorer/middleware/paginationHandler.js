@@ -72,14 +72,15 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
     // console.log("cursor", cursor)
 
     const host = req.headers.host;
+    let protocol = "https" || req.protocol
 
     // console.log("host", host)
     // console.log("req.secure ", req.secure)
     // console.log("req.protocol ", req.protocol)
 
     if (prev == minCursorValue) more = false;
-    if (prev != minCursorValue) pagination["prev"] = `${req.protocol}://${host}/${resourceType}s?limit=${limit}&${cursorParamName}=prev_${prev}`;
-    if (next != maxCursorValue) pagination["next"] = `${req.protocol}://${host}/${resourceType}s?limit=${limit}&${cursorParamName}=next_${next}`;
+    if (prev != minCursorValue) pagination["prev"] = `${protocol}://${host}/${resourceType}s?limit=${limit}&${cursorParamName}=prev_${prev}`;
+    if (next != maxCursorValue) pagination["next"] = `${protocol}://${host}/${resourceType}s?limit=${limit}&${cursorParamName}=next_${next}`;
 
     pagination["more"] = more;
     pagination["max"] = maxCursorValue;
