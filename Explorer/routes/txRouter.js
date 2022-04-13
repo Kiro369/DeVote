@@ -1,24 +1,27 @@
 const { Router } = require('express');
-const { SQLite } = require('../datastore/sqlite/sqlite.js');
+const { notFoundErrorHandler } = require('../middleware/errorRequestHandler.js');
+const { cursorBasedPaginationHandler } = require('../middleware/paginationHandler.js');
 
 const txRouter = Router();
-let mySQLite;
+const resourceType = "transaction";
+const mySQLite = global.SQLite;
 
-(async () => {
-    mySQLite = new SQLite();
-    await mySQLite.openSQLiteDB("deVote");
-})();
+txRouter.get('/', async (req, res) => {
+    cursorBasedPaginationHandler(req, res, "transaction")
+});
 
 txRouter.get('/tx-hash/:txHash', async (req, res) => {
     const { txHash } = req.params;
-    const tx = await mySQLite.getTxByHash(txHash) || `No Tx found for Hash ${txHash}`
-    res.send({ result: tx })
+    const tx = await mySQLite.getTxByHash(txHash);
+    if (!tx) notFoundErrorHandler(req, res, resourceType, "hash", txHash);
+    if (tx) res.send({ result: tx });
 });
 
 txRouter.get('/tx-block-height/:BlockHeight', async (req, res) => {
     const { BlockHeight } = req.params;
-    const txs = await mySQLite.getTxsByBlockHeight(BlockHeight) || `No Txs found for Block Height ${BlockHeight}`
-    res.send({ result: txs })
+    const txs = await mySQLite.getTxsByBlockHeight(BlockHeight);
+    if (!txs.length) notFoundErrorHandler(req, res, resourceType, "blockHeight", BlockHeight);
+    if (txs.length) res.send({ result: txs });
 });
 
 module.exports = txRouter;

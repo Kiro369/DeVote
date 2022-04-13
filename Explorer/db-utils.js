@@ -5,15 +5,13 @@ const BLOCK_HEIGHT_LIMIT = 10 ** 10;
 
 class DBWrapper {
     async initDBs(SQLiteDB_Name, LevelDB_Path) {
-        try {
-            this.mySQLite = new SQLite();
-            await this.mySQLite.openSQLiteDB(SQLiteDB_Name);
+        console.log("Opening Databases...")
 
-            this.mylevelDB = new levelDB();
-            await this.mylevelDB.openLevelDB(LevelDB_Path);
-        } catch (error) {
-            console.log(error)
-        }
+        this.mySQLite = new SQLite();
+        await this.mySQLite.openSQLiteDB(SQLiteDB_Name)
+
+        this.mylevelDB = new levelDB();
+        await this.mylevelDB.openLevelDB(LevelDB_Path)
     }
 
     async syncDBs() {
@@ -31,8 +29,9 @@ class DBWrapper {
         if (lbh_SQLite < lbh_LevelDB) {
             console.log("SQLiteDB is out of sync with LevelDB ")
             const myNewBlocks = await this.mylevelDB.getBlocksFromTo(lbh_SQLite, lbh_LevelDB)
-
-            console.log(`Syncing ${myNewBlocks.length}`)
+            // console.log(myNewBlocks.length)
+            // console.log(myNewBlocks.map(block => block.Height))
+            console.log(`Syncing ${myNewBlocks.length} Blocks`)
             await this.mySQLite.insertBlocks(myNewBlocks)
         }
     }

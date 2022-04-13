@@ -8,22 +8,20 @@ class SQLite {
         this.db = await open({
             filename: path.join(__dirname, `${dbName}.sqlite`),
             driver: sqlite3.Database
-        }).catch(err => console.log(err));
+        }).catch(err => { throw err; })
 
         await this.db.migrate({
             migrationsPath: path.join(__dirname, 'migrations'),
-        }).then(() => console.log("Connection to SQLiteDB is successful"))
+        }).catch(err => { throw err; })
 
+        console.log("Connection to SQLiteDB is successful.")
         return this
     };
 
     async closeSQLiteDB() {
-        this.db.close((err) => {
-            if (err) {
-                console.error(err.message);
-            }
-            console.log('Close the database connection.');
-        });
+        this.db.close()
+            .then(() => console.log('Connection to SQLiteDB is closed.'))
+            .catch(err => { throw err; })
     };
 
     async getLatestBlockHeight() {

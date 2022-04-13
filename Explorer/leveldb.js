@@ -1,13 +1,22 @@
 const { Level } = require('level');
+const path = require('path');
+const fs = require('fs');
 
 class levelDB {
-    async openLevelDB(path) {
-        this.db = new Level(path);
+    async openLevelDB(dbPath) {
+        const dir = path.join(__dirname, dbPath);
+
+        // check if LevelDB directory exists, since leveldb Create new database even if createIfMissing set to false 
+        if (!fs.existsSync(dir)) throw new Error(`LevelDB Directory not found. "${dir}"`);
+
+        this.db = new Level(dir);
 
         this.db.open({ createIfMissing: false }, (err) => {
-            if (err) console.log("Connection to LevelDB failed, database doesn't exist.")
-            if (!err) console.log("Connection to LevelDB is successful")
-        })
+            if (err) throw new Error("Connection to LevelDB failed.");
+        });
+
+        global.isDBsOpen = true;
+        console.log("Connection to LevelDB  is successful.")
 
         return this;
     }
@@ -31,8 +40,12 @@ class levelDB {
     }
 
     async getBlocksFromTo(start, end) {
+        let limit = end - start;
+        if (start == 0) limit = end;
+        console.log(`start : ${start} end : ${end} limit : ${limit} `)
+
         const Blocks = []
-        for await (const [key, value] of this.db.iterator({ gt: start, limit: start - end })) {
+        for await (const [key, value] of this.db.iterator({ gt: start, limit: limit })) {
             const block = JSON.parse(value)
             Blocks.push(block)
         }
