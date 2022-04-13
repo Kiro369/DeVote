@@ -68,12 +68,32 @@ class SQLite {
         return targetBlock
     };
 
+    async getLatestTxTimestamp() {
+        const ltt = await this.db.get("SELECT MAX(Date) FROM Transactions")
+        return ltt["MAX(Date)"] || 0
+    };
+
+    async getOldestTxTimestamp() {
+        const ltt = await this.db.get("SELECT MIN(Date) FROM Transactions")
+        return ltt["MIN(Date)"] || 0
+    };
+
+    async getTxsByTimestampCursorAndLimit(timestampCursor, limit, operator, order) {
+        const SQL_QUERY = `
+        SELECT * FROM Transactions
+        WHERE Date ${operator} ?
+		ORDER BY Date ${order}
+        LIMIT ?`
+        const txs = await this.db.all(SQL_QUERY, timestampCursor, limit);
+        return txs
+    }
 
     async insertTx(tx, blockHeight) {
-        const { Date, Hash, Elector, Elected } = tx;
+        const { Hash, Elector, Elected } = tx;
+        let date = new Date(tx["Date"]).getTime();
         this.db.run('PRAGMA foreign_keys = OFF;');
         await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?)",
-            Date, Hash, Elector, Elected, parseInt(blockHeight)
+            date, Hash, Elector, Elected, parseInt(blockHeight)
         )
         this.db.run('PRAGMA foreign_keys = ON;');
     };
