@@ -94,6 +94,21 @@ class SQLite {
         let targetTxs = await this.db.all("SELECT * FROM Transactions WHERE BlockHeight == ?", blockHeight)
         return targetTxs
     };
+
+    async insertVM(vm) {
+        console.log("vm", vm)
+        const { id, lat, lng, name } = vm;
+        await this.db.run(
+            "INSERT INTO VMachines  VALUES (?,?,?,?)",
+            id, name, lat, lng
+        )
+    };
+
+    async getVMs() {
+        let vms = await this.db.all("SELECT * FROM VMachines")
+        if (!vms.length) throw new Error("No VMs Found")
+        return vms
+    }
 }
 
 module.exports = { SQLite }
