@@ -31,17 +31,24 @@ class SQLite {
         return lbh["MAX(Height)"] || 0
     };
 
-    async getBlocksByHeightCursorAndLimit(heightCursor, limit) {
-        const blocks = await this.db.all(`
+    async getOldestBlockHeight() {
+        const lbh = await this.db.get("SELECT MIN(Height) FROM Blocks;")
+        return lbh["MIN(Height)"] || 0
+    };
+
+    async getBlocksByHeightCursorAndLimit(heightCursor, limit, operator, order) {
+        const SQL_QUERY = `
         SELECT * FROM Blocks
-        WHERE Height < ?
-        ORDER BY Height DESC
-        LIMIT ?;`, heightCursor, limit);
+        WHERE Height ${operator} ?
+		ORDER BY Height ${order}
+        LIMIT ?`
+        const blocks = await this.db.all(SQL_QUERY, heightCursor, limit);
         return blocks
     }
 
     async insertBlock(block) {
         const { Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx } = block;
+        console.log(`Inserting Block : Hash ${Hash} -  Height ${Height}`)
         await this.db.run(
             "INSERT INTO Blocks VALUES (?,?,?,?,?,?,?)",
             Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx
