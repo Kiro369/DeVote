@@ -31,7 +31,7 @@ namespace DeVote.Network.Communication
             try
             {
                 var node = (Node)client;
-                NetworkManager.Nodes[node.EndPoint] = node;
+                NetworkManager.AddNode(node.EndPoint, node);
                 Read(node);
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace DeVote.Network.Communication
             {
                 if (e.ErrorCode == 10054)
                 {
-                    NetworkManager.Nodes.Remove(node.EndPoint);
+                    NetworkManager.RemoveNode(node.EndPoint);
                     Console.WriteLine(node.EndPoint + " forcibly disconnected");
                 }
                 else throw e;
@@ -93,7 +93,7 @@ namespace DeVote.Network.Communication
             {
                 if (e.ErrorCode == 10054)
                 {
-                    NetworkManager.Nodes.Remove(node.EndPoint);
+                    NetworkManager.RemoveNode(node.EndPoint);
                     Console.WriteLine(node.EndPoint + " forcibly disconnected");
                 }
                 else throw e;

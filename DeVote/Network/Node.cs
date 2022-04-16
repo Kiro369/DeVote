@@ -24,7 +24,7 @@ namespace DeVote.Network
             while (!Connected)
                 Console.WriteLine("Waiting to get connected to " + EndPoint);
 
-            NetworkManager.Nodes[EndPoint] = this;
+            NetworkManager.AddNode(EndPoint, this);
 
             await Read();
         }
@@ -55,7 +55,7 @@ namespace DeVote.Network
             {
                 if (e.ErrorCode == 10054)
                 {
-                    NetworkManager.Nodes.Remove(EndPoint);
+                    NetworkManager.RemoveNode(EndPoint);
                     Console.WriteLine(EndPoint + " forcibly disconnected");
                 }
                 else throw e;

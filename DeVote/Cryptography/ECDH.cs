@@ -8,22 +8,8 @@ namespace DeVote.Cryptography
     class ECDH
     {
         static ECDiffieHellman _ecdh = ECDiffieHellman.Create();
-        public static ECDiffieHellmanPublicKey PublicKey { get { return _ecdh.PublicKey; } }
-        public static void test()
-        {
-            using (ECDiffieHellman alice = ECDiffieHellman.Create())
-            {
-                using (ECDiffieHellman bob = ECDiffieHellman.Create())
-                {
-                    var aliceSharedKey = alice.DeriveKeyMaterial(bob.PublicKey);
-                    var bobSharedKey = bob.DeriveKeyMaterial(alice.PublicKey);
-                    var ar = bob.PublicKey.ToByteArray();
-                    ECDiffieHellmanPublicKey key = ECDiffieHellmanCngPublicKey.FromByteArray(ar, CngKeyBlobFormat.EccPublicBlob);
-                    Encrypt(new byte[] { 1, 1, 1, 1 }, key, out byte[] IV);
-                }
-            }
-        }
-    
+        public static byte[] PublicKey { get { return _ecdh.PublicKey.ExportSubjectPublicKeyInfo(); } }
+
         public static byte[] Encrypt(byte[] data, ECDiffieHellmanPublicKey otherPartyPublicKey, out byte[] IV)
         {
             var _aes = CreateAES(otherPartyPublicKey, out IV);
@@ -32,7 +18,13 @@ namespace DeVote.Cryptography
         }
         public static byte[] Encrypt(byte[] data, byte[] otherPartyPublicKey, out byte[] IV)
         {
-            return Encrypt(data, ECDiffieHellmanCngPublicKey.FromByteArray(otherPartyPublicKey, CngKeyBlobFormat.EccPublicBlob), out IV);
+            var tempECDH = ECDiffieHellman.Create();
+            tempECDH.ImportSubjectPublicKeyInfo(otherPartyPublicKey, out int bytesRead);
+
+            if (bytesRead != otherPartyPublicKey.Length)
+                throw new CryptographicException("Failed to import subject public key");
+
+            return Encrypt(data, tempECDH.PublicKey, out IV);
         }
         public static byte[] Decrypt(byte[] data, ECDiffieHellmanPublicKey otherPartyPublicKey, byte[] IV)
         {
@@ -42,7 +34,13 @@ namespace DeVote.Cryptography
         }
         public static byte[] Decrypt(byte[] data, byte[] otherPartyPublicKey, byte[] IV)
         {
-            return Decrypt(data, ECDiffieHellmanCngPublicKey.FromByteArray(otherPartyPublicKey, CngKeyBlobFormat.EccPublicBlob), IV);
+            var tempECDH = ECDiffieHellman.Create();
+            tempECDH.ImportSubjectPublicKeyInfo(otherPartyPublicKey, out int bytesRead);
+
+            if (bytesRead != otherPartyPublicKey.Length)
+                throw new CryptographicException("Failed to import subject public key");
+
+            return Decrypt(data, tempECDH.PublicKey, IV);
         }
         #region AES
         static Aes CreateAES(ECDiffieHellmanPublicKey otherPartyPublicKey, out byte[] IV)

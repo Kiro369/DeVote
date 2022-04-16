@@ -52,7 +52,7 @@ namespace DeVote.Network
                                 var otherPartyPublicKey = packet.Skip(Constants.ECDHOperations[0].Length).ToArray();
 
                                 // Send an inital response containing our public key (we add an inital response header to the beginning of the packet as well)
-                                node.Send(Constants.ECDHOperations[1].Concat(Cryptography.ECDH.PublicKey.ToByteArray()).ToArray(), false);
+                                node.Send(Constants.ECDHOperations[1].Concat(Cryptography.ECDH.PublicKey).ToArray(), false);
 
                                 // We seraialize our AES Key (Key and IV) using ProtoBuf
                                 byte[] serializedAesKey;

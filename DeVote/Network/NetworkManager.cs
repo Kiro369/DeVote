@@ -67,6 +67,18 @@ namespace DeVote.Network
                 Nodes[endPoint] = node;
             }
         }
+        /// <summary>
+        /// Removed a node from the collection by its end point
+        /// </summary>
+        /// <param name="endPoint">the end point of the node to be removed</param>
+        public static void RemoveNode(string endPoint)
+        {
+            lock (lockable)
+            {
+                if (Nodes.ContainsKey(endPoint))
+                    Nodes.Remove(endPoint);
+            }
+        }
 
         /// <summary>
         /// Gets all the connected Nodes

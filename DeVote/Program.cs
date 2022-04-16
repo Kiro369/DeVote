@@ -90,7 +90,7 @@ namespace DeVote
                 var node = NetworkManager.GetNodes().FirstOrDefault();
 
                 // Generate request by adding special request bytes to the beginning of the packet (so the other side can Identify the packet), and adding our public key
-                var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
+                var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey).ToArray();
 
                 // Send the request
                 node.Send(request);
