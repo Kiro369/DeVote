@@ -1,0 +1,20 @@
+syntax = "proto3";
+package blockPackage;
+
+message Block {
+    int32 Height = 1;
+    string PrevHash = 2;
+    string Hash = 3;
+    int64 Timestamp = 4;
+    string Miner = 5;
+    repeated Transaction Transactions = 6;
+    int32 nTx = 7;
+    string MerkleRoot = 8;
+ }
+
+ message Transaction {
+    string Hash = 1;
+    int64 Date = 2;
+    string Elector = 3;
+    string Elected = 4;
+}
