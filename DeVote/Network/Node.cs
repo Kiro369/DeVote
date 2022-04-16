@@ -12,6 +12,9 @@ namespace DeVote.Network
 {
     public class Node : Client
     {
+        public long ConsensusRN = long.MaxValue;
+        public string MachineID = string.Empty;
+
         public Node(string ip, int port) : base(ip, port) { }
         public Node(string endPoint) : base(IPEndPoint.Parse(endPoint)) { }
         private Node(TcpClient client) : base(client) { }
@@ -21,7 +24,7 @@ namespace DeVote.Network
             while (!Connected)
                 Console.WriteLine("Waiting to get connected to " + EndPoint);
 
-            Program.Nodes[EndPoint] = this;
+            NetworkManager.Nodes[EndPoint] = this;
 
             await Read();
         }
@@ -52,7 +55,7 @@ namespace DeVote.Network
             {
                 if (e.ErrorCode == 10054)
                 {
-                    Program.Nodes.Remove(EndPoint);
+                    NetworkManager.Nodes.Remove(EndPoint);
                     Console.WriteLine(EndPoint + " forcibly disconnected");
                 }
                 else throw e;

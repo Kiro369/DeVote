@@ -15,10 +15,6 @@ namespace DeVote
 {
     class Program
     {
-        /// <summary>
-        /// Connected Nodes
-        /// </summary>
-        public static Dictionary<string, Node> Nodes = new();
         static void Main(string[] args)
         {
             #region Embedding Python in .Net Test
@@ -88,10 +84,10 @@ namespace DeVote
                 seederClient.EndPoints.ForEach(endPoint => Task.Factory.StartNew(() => { new Node(endPoint).Start(); }));
 
                 // Wait till we connect
-                while (Nodes.Count == 0) Task.Delay(100);
+                while (NetworkManager.NodesCount == 0) Task.Delay(100);
 
                 // Get the connection
-                var node = Nodes.FirstOrDefault().Value;
+                var node = NetworkManager.GetNodes().FirstOrDefault();
 
                 // Generate request by adding special request bytes to the beginning of the packet (so the other side can Identify the packet), and adding our public key
                 var request = Constants.ECDHOperations[0].Concat(ECDH.PublicKey.ToByteArray()).ToArray();
@@ -134,7 +130,7 @@ namespace DeVote
             {
                 while (true)
                 {
-                    var lines = Nodes.Values.Select(node => node.EndPoint + "=" + node.Connected + "|");
+                    var lines = NetworkManager.GetNodes().Select(node => node.EndPoint + "=" + node.Connected + "|");
                     Console.Title = "|" + string.Join(Environment.NewLine, lines);
                     await Task.Delay(1000);
                 }
@@ -144,7 +140,7 @@ namespace DeVote
                 Console.WriteLine("Write a msg");
                 var msg = Console.ReadLine();
                 var test = new Network.Messages.Test(null);
-                foreach (var node in Nodes.Values)
+                foreach (var node in NetworkManager.GetNodes())
                 {
                     node.Send(test.Create(msg));
                 }

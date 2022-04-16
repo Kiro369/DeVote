@@ -19,7 +19,6 @@ namespace DeVote.Cryptography
                     var bobSharedKey = bob.DeriveKeyMaterial(alice.PublicKey);
                     var ar = bob.PublicKey.ToByteArray();
                     ECDiffieHellmanPublicKey key = ECDiffieHellmanCngPublicKey.FromByteArray(ar, CngKeyBlobFormat.EccPublicBlob);
-                    //ECDiffieHellmanPublicKey key = (new ECDHPublicKey(ar)).Base();
                     Encrypt(new byte[] { 1, 1, 1, 1 }, key, out byte[] IV);
                 }
             }

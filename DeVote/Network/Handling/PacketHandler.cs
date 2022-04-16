@@ -25,7 +25,6 @@ namespace DeVote.Network.Handling
             if (processor.Read(client))
                 processor.Handle(client);
 
-            //processor.Dispose();
         }
     }
 }
