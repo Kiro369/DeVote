@@ -2,15 +2,18 @@ const { DBWrapper } = require('./db-utils');
 require('dotenv').config();
 
 const SQLITEDB_NAME = process.env.SQLITEDB_NAME;
-const LEVELDB_PATH = process.env.LEVELDB_PATH;
+const LevelDB_NAME = process.env.LevelDB_NAME;
+const PROTO_FILE_NAME = process.env.PROTO_FILE_NAME;
 const MINS_TO_SYNC_DBS = parseInt(process.env.MINS_TO_SYNC_DBS);
 const SYNC_DELAY_TIME = 1000 * 60 * MINS_TO_SYNC_DBS;
+
 global.isDBsOpen = false;
+global.isProtoFileLoaded = false;
 
 (async () => {
 
     const myDBWrapper = new DBWrapper();
-    await myDBWrapper.initDBs(SQLITEDB_NAME, LEVELDB_PATH)
+    await myDBWrapper.initDBs(SQLITEDB_NAME, LevelDB_NAME, PROTO_FILE_NAME)
         .then(async () => {
             // share a single global DB connection with routes.
             global.SQLite = myDBWrapper.mySQLite;
@@ -21,23 +24,27 @@ global.isDBsOpen = false;
             return;
         });
 
-    if (!global.isDBsOpen) return;
+    if (!global.isDBsOpen || !isProtoFileLoaded) return;
 
     console.log("Opening Databases succeed.");
-    console.log(`Syncing Databases every ${MINS_TO_SYNC_DBS} Minutes`)
+    console.log(`Syncing Databases every ${MINS_TO_SYNC_DBS} minutes`)
     console.log("===============================================");
 
-
     console.log("App is ready to start.")
+
+    setTimeout(async () => {
+        console.log(`${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
+        await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS)
+    }, 1000 * 10)
 
     setInterval(async () => {
         console.log("===============================================");
         console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
-        await myDBWrapper.syncDBs()
+        await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS);
         console.log("===============================================");
 
-    }, 1000 * 30);
-    //SYNC_DELAY_TIME
+    }, SYNC_DELAY_TIME);
+
     const express = require('express');
     const cors = require('cors')
     const blockRouter = require('./routes/blockRouter.js');
@@ -71,6 +78,8 @@ global.isDBsOpen = false;
     app.listen(app.get('port'), function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
+        console.log(`App will start the initial database sync in 10s`);
+        console.log("===============================================");
     })
 })()
 

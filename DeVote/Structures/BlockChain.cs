@@ -27,7 +27,7 @@ namespace DeVote.Structures
         public Block CreateGenesisBlock()
         {
             Block GenesisBlock = new Block(new List<Transaction>{
-                new Transaction("","")
+                new Transaction("test","test")
             });
             // Block GenesisBlock = new Block();
             GenesisBlock.Height = 1;

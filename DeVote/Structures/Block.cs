@@ -76,7 +76,13 @@ namespace DeVote.Structures
             using (MemoryStream stream = new MemoryStream(data))
             {
                 return Serializer.Deserialize<Block>(stream);
+
             }
+        }
+
+        public static string GetBlockProto()
+        {
+                return Serializer.GetProto<Block>();
         }
     }
 }

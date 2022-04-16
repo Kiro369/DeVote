@@ -149,59 +149,69 @@ namespace DeVote
 
             #region Blockchain Test
             ////return;
-            //Blockchain deVOTE = new Blockchain();
-           
-            //// load form leveldb 
-            //deVOTE.LoadStringifiedBlockchain();
 
-            //if(deVOTE.Blocks.Count==0){
-            //    Block GenesisBlock = deVOTE.CreateGenesisBlock();
-            //    deVOTE.Blocks.AddFirst(GenesisBlock);
-            //    GenesisBlock.SaveBlockAsString(deVOTE.LevelDB);
-            //}
-           
-            //Console.WriteLine("current blocks");
-            //Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
+            // Blockchain deVOTE = new Blockchain();
 
+            // // load form leveldb 
+            // // deVOTE.LoadStringifiedBlockchain();
+            // deVOTE.LoadProtobuffedBlockchain();
 
-            //List<Transaction> myTransactions = new List<Transaction>();
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    Transaction newTX = new Transaction("elector" + i, "elected" + i);
-            //    myTransactions.Add(newTX);
-            //}
+            // if (deVOTE.Blocks.Count == 0)
+            // {
+            //     Block GenesisBlock = deVOTE.CreateGenesisBlock();
+            //     deVOTE.Blocks.AddFirst(GenesisBlock);
+            //     //GenesisBlock.SaveBlockAsString(deVOTE.LevelDB);
+            //     GenesisBlock.SaveBlockAsByteArray(deVOTE.LevelDB);
+            // }
 
-            //// Console.WriteLine(JsonConvert.SerializeObject(myTransactions, Formatting.Indented));
-
-            //Block myBlock = new Block(myTransactions);
-            //myBlock.Miner = "Test33";
-            //myBlock.Transactions = myTransactions;
-
-            //// add new block to current Blockchain
-            //deVOTE.AddBlock(myBlock);
-
-            //// Save block into leveldb
-            //deVOTE.SaveBlockchainAsString();
-
-            //Console.WriteLine("new blocks");
-            //Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
+            // Console.WriteLine("current blocks");
+            // Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
 
 
-            ////load a block
-            //Block TargetBlock = Block.LoadStringifiedBlock(2,deVOTE.LevelDB);
-            //Console.WriteLine("TargetBlock");
-            //Console.WriteLine(JsonConvert.SerializeObject(TargetBlock, Formatting.Indented));
+            // for (int t = 0; t < 149; t++)
+            // {
+            //     List<Transaction> myTransactions = new List<Transaction>();
+            //     for (int i = 0; i < 4; i++)
+            //     {
+            //         Transaction newTX = new Transaction("elector" + i + t, "elected" + i + t);
+            //         myTransactions.Add(newTX);
+            //     }
+            //     Block myBlock = new Block(myTransactions);
+            //     myBlock.Miner = "Test33";
+            //     myBlock.Transactions = myTransactions;
 
-            //// load null block 
-            //Block NullBlock = Block.LoadStringifiedBlock(600,deVOTE.LevelDB);
-            //Console.WriteLine("NullBlock");
-            //Console.WriteLine(JsonConvert.SerializeObject(NullBlock, Formatting.Indented));
+            //     // add new block to current blockchain
+            //     deVOTE.AddBlock(myBlock);
+            // }
 
-            //// var SerializedBlockchain = deVOTE.SerializeBlockchain();
-            //// Console.WriteLine("SerializedBlockchain", SerializedBlockchain);
 
-            //// Close the connection
-            //deVOTE.LevelDB.Close();
+            // // Console.WriteLine(JsonConvert.SerializeObject(myTransactions, Formatting.Indented));
+
+            // // Save block into leveldb
+            // //deVOTE.SaveBlockchainAsString();
+            // deVOTE.SaveBlockchainAsByteArray();
+
+            // Console.WriteLine("new blocks");
+            // Console.WriteLine(JsonConvert.SerializeObject(deVOTE.Blocks, Formatting.Indented));
+
+
+            // //load a block
+            // // Block TargetBlock = Block.LoadStringifiedBlock(2, deVOTE.LevelDB);
+            // Block TargetBlock = Block.LoadProtobuffedBlock(2, deVOTE.LevelDB);
+            // Console.WriteLine("TargetBlock");
+            // Console.WriteLine(JsonConvert.SerializeObject(TargetBlock, Formatting.Indented));
+
+            // // load null block 
+            // // Block NullBlock = Block.LoadStringifiedBlock(600, deVOTE.LevelDB);
+            // Block NullBlock = Block.LoadProtobuffedBlock(600, deVOTE.LevelDB);
+            // Console.WriteLine("NullBlock");
+            // Console.WriteLine(JsonConvert.SerializeObject(NullBlock, Formatting.Indented));
+
+            // // var SerializedBlockchain = deVOTE.SerializeBlockchain();
+            // // Console.WriteLine("SerializedBlockchain", SerializedBlockchain);
+
+            // // Close the connection
+            // deVOTE.LevelDB.Close();
             #endregion
 
             #region Prev tests

@@ -10,13 +10,13 @@ namespace DeVote.Structures
     public class Transaction
     {
         [ProtoMember(1)] public string Hash { get; set; }
-        [ProtoMember(2)] public DateTime Date = DateTime.UtcNow;
+        [ProtoMember(2)] public long Date;
         [ProtoMember(3)] public string Elector { get; set; }
         [ProtoMember(4)] public string Elected { get; set; }
 
         public Transaction(string elector, string elected)
         {
-            Date = DateTime.UtcNow;
+            Date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             Elector = elector;
             Elected = elected;
 

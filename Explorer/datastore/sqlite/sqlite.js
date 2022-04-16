@@ -14,7 +14,7 @@ class SQLite {
             migrationsPath: path.join(__dirname, 'migrations'),
         }).catch(err => { throw err; })
 
-        console.log("Connection to SQLiteDB is successful.")
+        console.log(`Connection to ${dbName} SQLiteDB is successful.`)
         return this
     };
 
@@ -94,11 +94,11 @@ class SQLite {
     }
 
     async insertTx(tx, blockHeight) {
-        const { Hash, Elector, Elected } = tx;
-        let date = new Date(tx["Date"]).getTime();
+        const { Hash, Date, Elector, Elected } = tx;
+
         this.db.run('PRAGMA foreign_keys = OFF;');
         await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?)",
-            date, Hash, Elector, Elected, parseInt(blockHeight)
+            Date, Hash, Elector, Elected, parseInt(blockHeight)
         )
         this.db.run('PRAGMA foreign_keys = ON;');
     };
@@ -131,7 +131,7 @@ class SQLite {
 
     async getVMs() {
         let vms = await this.db.all("SELECT * FROM VMachines")
-        if (!vms.length) throw new Error("No VMs Found")
+        // if (!vms.length) throw new Error("No VMs Found")
         return vms
     }
 }

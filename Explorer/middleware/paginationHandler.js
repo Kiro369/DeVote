@@ -47,7 +47,6 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
     // other cases : subsequent requests
     if (cursor < maxCursorValue) {
         console.log("Case 2 : Subsequent requests by client")
-        next = cursor + limit;
     }
 
     console.log(`cursor : ${cursor}  limit : ${limit}  operator : ${operator} `)
@@ -73,6 +72,7 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
 
     const host = req.headers.host;
     let protocol = "https" || req.protocol
+    if (host.includes("localhost")) protocol = "http"
 
     // console.log("host", host)
     // console.log("req.secure ", req.secure)

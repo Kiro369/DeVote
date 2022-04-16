@@ -9,7 +9,7 @@ CREATE TABLE  Blocks (
 );
 
 CREATE TABLE Transactions (
-    Date       INTEGER,
+    Date  INTEGER,
     Hash       TEXT PRIMARY KEY,
     Elector    TEXT,
     Elected    TEXT,
