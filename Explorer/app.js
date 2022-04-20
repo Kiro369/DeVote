@@ -2,7 +2,7 @@ const { DBWrapper } = require('./db-utils');
 require('dotenv').config();
 
 const SQLITEDB_NAME = process.env.SQLITEDB_NAME;
-const LevelDB_NAME = process.env.LevelDB_NAME;
+const LEVELDB_NAME = process.env.LEVELDB_NAME;
 const PROTO_FILE_NAME = process.env.PROTO_FILE_NAME;
 const MINS_TO_SYNC_DBS = parseInt(process.env.MINS_TO_SYNC_DBS);
 const SYNC_DELAY_TIME = 1000 * 60 * MINS_TO_SYNC_DBS;
@@ -13,7 +13,7 @@ global.isProtoFileLoaded = false;
 (async () => {
 
     const myDBWrapper = new DBWrapper();
-    await myDBWrapper.initDBs(SQLITEDB_NAME, LevelDB_NAME, PROTO_FILE_NAME)
+    await myDBWrapper.initDBs(SQLITEDB_NAME, LEVELDB_NAME, PROTO_FILE_NAME)
         .then(async () => {
             // share a single global DB connection with routes.
             global.SQLite = myDBWrapper.mySQLite;

@@ -7,7 +7,7 @@ Query JSON data for blocks and transactions.
 
 ### /blocks/block-height/:blockHeight : Get block metadata by block height.
 ```js
-/blocks/block-height/50
+GET /blocks/block-height/50
 ```
 ```json
 {
@@ -24,7 +24,7 @@ Query JSON data for blocks and transactions.
 ```
 ### /blocks/block-hash/:blockHash : Get block metadata by block hash.
 ```js
-/blocks/block-hash/81D10DABE0F6C51D097DAFA7675473DFC1370621D13C46274706CC457629CFAE
+GET /blocks/block-hash/81D10DABE0F6C51D097DAFA7675473DFC1370621D13C46274706CC457629CFAE
 ```
 ```json
 {
@@ -39,123 +39,11 @@ Query JSON data for blocks and transactions.
   }
 }
 ```
-### /blocks : Get subset of blocks per request.
 
+## /transactions Endpoints
+### /transactions/tx-hash/:txHash : Get single transaction by tx hash.
 ```js
-/blocks/?limit=10&heightCursor=40
-```
-
-- `int limit` - The maximum number of blocks to fetch.
- The default limit value is 20.
- The maximum limit value is 50.
-
-- `int heightCursor` - The cursor serving as a pointer to a specific block,  where last request left off.
-
-We are using the unique, sequential column : **blockHeight**.
-
-**Note that the client is responsible for sending back the last block height it fetched to be used as the starting point to fetch the next set of blocks.**
-
-#### How to use /blocks Endpoint:
-##### **1- On the initial request, you don't pass a heightCursor parameter :**
-```js
-/blocks/?limit=20
-```
-you also may not pass a limit parameter and the default value retrieves the latest 20 blocks.
-
-**The server's response to the *initial request* will include a pagination object that includes a prev property when there are additional blocks to be retrieved.**
-
-**Note that you have to save prev value.**
-
-**Response :**
-```json
-{
-  "pagination": {
-    "prev": 31,
-    "more": true,
-    "total": 50
-  },
-  "result": [
-    {
-      "Height": 50,
-      "PrevHash": "2B3CA86D514B5A27D4C1D2365E04A1A7D59E14CFCDF8935677738E301BF692F2",
-      "Timestamp": 1649069215442,
-      "MerkleRoot": "514E4FC4D7BF898C4694EF88F99EE88069778D307032097AD4112ED62849F1DD",
-      "Hash": "81D10DABE0F6C51D097DAFA7675473DFC1370621D13C46274706CC457629CFAE",
-      "Miner": "Test33",
-      "nTx": 4
-    },
-    ...
-    {
-      "Height": 31,
-      "PrevHash": "3404A2ECA5E5BD60A770EDAC80920E4D1572E0A436C471E004555652842AF3AF",
-      "Timestamp": 1649069214300,
-      "MerkleRoot": "CCC2F3778B3A4116BE79B5B1634E3DF516E022A2BE41A99F8FFB63FA5F85BB5D",
-      "Hash": "18C329DE5A0EDD5A47143F3965F8B206BE87669818D6CCC4878E53845E49BEB5",
-      "Miner": "Test33",
-      "nTx": 4
-    }
-  ]
-}
-```
-
-##### **2- On subsequent requests, you have to pass a heightCursor parameter :**
-```js
-/blocks/?limit=20&heightCursor=31
-```
-**Response :**
-```json
-{
-  "pagination": {
-    "prev": 11,
-    "next": 50,
-    "more": true,
-    "total": 50
-  },
-  "result": [
-    {
-      "Height": 30,
-      "PrevHash": "651474BCC0D390A7343BC57318F8447D5285FE2E3AD3D67A728DB634DCE0167A",
-      "Timestamp": 1649069214254,
-      "MerkleRoot": "38576957B576E5AD36DD60CE11F34E565B79E437E1F8F243769B2D947173DE6B",
-      "Hash": "3404A2ECA5E5BD60A770EDAC80920E4D1572E0A436C471E004555652842AF3AF",
-      "Miner": "Test33",
-      "nTx": 4
-    },
-    ...
-    {
-      "Height": 11,
-      "PrevHash": "2593071FAE0F68DD714FACB5DE8C54E1FE7FF73F96F967CB418FC7F514205115",
-      "Timestamp": 1649069213262,
-      "MerkleRoot": "E5193DD7E3F1355811584FFE754BC2F3A222D19D58ED1783714A21AD645E2963",
-      "Hash": "E2E03051CBE99F2013FA2850B9149ABED8DB89DA34442960E2ADB9590AC10315",
-      "Miner": "Test33",
-      "nTx": 4
-    }
-  ]
-}
-```
-**Note that the pagination's object includes a ***next*** property, which points to block height of the next page.**
-
-**On your next request, you can either fetch prev or next set of blocks**
-
-**For example, to retrieve the next ***older*** set of the blocks [Block 10 : Block 1] .** 
-- Set the heightCursor parameter to the *prev* value you received on the last request.
-```js
-/blocks/?limit=20&heightCursor=11
-```
-
-**to retrieve the next ***newer*** set of the blocks [Block 50 : Block 31].**
-- Set the heightCursor parameter to the *next* value you received on the last request.
-```js
-/blocks/?limit=20&heightCursor=50
-```
-</br>
-</br>
-
-## /txs Endpoints
-### /txs/tx-hash/:txHash : Get single tx by tx hash.
-```js
-/txs/tx-hash/913756634CDB1FEF198557F83FC976D8D54960B539603D3CC6BE9E4B2B5AF299
+GET /transactions/tx-hash/913756634CDB1FEF198557F83FC976D8D54960B539603D3CC6BE9E4B2B5AF299
 ```
 ```json
 {
@@ -168,10 +56,10 @@ you also may not pass a limit parameter and the default value retrieves the late
   }
 }
 ```
-###  /txs/tx-block-height/:blockHight  : Get list of block's txs by block height.
+###  /transactions/tx-block-height/:blockHight  : Get list of block's txs by block height.
 
 ```js
-/txs/tx-block-height/50
+GET /transactions/tx-block-height/50
 ```
 ```json
 {
@@ -203,6 +91,331 @@ you also may not pass a limit parameter and the default value retrieves the late
       "Elector": "elector348",
       "Elected": "elected348",
       "BlockHeight": 50
+    }
+  ]
+}
+```
+
+</br>
+
+## Get subset of blocks/transactions per request.
+Rather than retrieving a complete set of blocks/transactions using a single request which its response will be slow, we are using **bi-directional cursor based pagination technique** that allows the client to ask for one subset at a time and the API responds with the corresponding subset, along with a pagination object for how the clinet can retrieve the next/previous subset of blocks/transactions.
+
+The complete endpoint has the following parameters.
+```js
+GET /blocks/?limit=20&heightCursor=prev_131
+GET /transactions/?limit=20&timestampCursor=prev_1650144307329
+```
+
+- `limit` - The maximum number of blocks to fetch.
+ The default limit value is 20.
+ The maximum limit value is 50.
+
+- `heightCursor/timestampCursor` - The cursor serving as 
+  - a pointer to a specific block/transaction,  where last request left off.
+  - an indicator for whether we want set of blocks/transaction next or previous to the pointer.
+
+We are using the unique, sequential columns : **blockHeight** and **transactionTimestamp**.
+
+
+#### How to use /blocks and /transactions Endpoints:
+##### **1- Initial request**
+On the initial request, you don't pass a heightCursor/timestampCursor parameter.
+You just request the endpoint without parameters.
+```js
+GET /blocks
+GET /transactions
+```
+
+Or you can set a limit parameter to specify how many blocks/transactions to retrieve per request.
+```js
+GET /blocks/?limit=50
+GET /transactions/?limit=50
+```
+
+**The server's response to the *initial request* will include a pagination object that includes a prev property when there are additional blocks/transactions to be retrieved.**
+
+**You use prev's link to request more previous blocks/transactions.**
+
+```json
+ "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/blocks?limit=20&heightCursor=prev_131",
+    "more": true,
+    "max": 150
+  }
+
+  "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307329",
+    "more": true,
+    "max": 1650144307640
+  }
+```
+
+<details>
+  <summary>Show full response for /blocks</summary>
+
+```json
+{
+  "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/blocks?limit=20&heightCursor=prev_131",
+    "more": true,
+    "max": 150
+  },
+  "result": [
+    {
+      "Height": 150,
+      "PrevHash": "6ED794D084F6B99B5088798F0E62FA5AA537D673665B79FFC018B08A95446535",
+      "Timestamp": 1650144307652,
+      "MerkleRoot": "6BEFEC9C11B0B02C27BC1E68A1CDD2C7919832FC8AC3B887E140D3AE51856534",
+      "Hash": "43034489A9AEDE4150562E244C3D4CC526B8E7597E444A5D78965ECF653EB020",
+      "Miner": "Test33",
+      "nTx": 4
+    },...
+    {
+      "Height": 131,
+      "PrevHash": "9321074BEE883F85B7977A750857E569E4E497E336B7029CDBFE37754FD32101",
+      "Timestamp": 1650144306527,
+      "MerkleRoot": "9D66249A7A1D2778744C8DDF695C416F2C40FD294EFCF12C12544E363C436ED9",
+      "Hash": "F2AAA55AD5A6C9C002DB70E0BBCC4C3602E5A86E481697B8B22F60BDB0AFA334",
+      "Miner": "Test33",
+      "nTx": 4
+    }
+  ]
+}
+```
+</details>
+
+
+<details>
+  <summary>Show full response for /transactions </summary>
+
+```json
+{
+  "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307329",
+    "more": true,
+    "max": 1650144307640
+  },
+  "result": [
+    {
+      "Date": 1650144307640,
+      "Hash": "66FEF9BBE3B5924923114CC84D46DFE333C3E8F928FF6472108B2FCAC036EE37",
+      "Elector": "elector3148",
+      "Elected": "elected3148",
+      "BlockHeight": 150
+    },...
+    {
+      "Date": 1650144307329,
+      "Hash": "00DE2585B9FA5208A020F942B548327AC03C4B2A8B00F5C50F39D712BF0DADF7",
+      "Elector": "elector0144",
+      "Elected": "elected0144",
+      "BlockHeight": 146
+    }
+  ]
+}
+```
+</details>
+
+<br>
+
+##### **2- Subsequent requests  :**
+On subsequent requests, there should be a heightCursor/timestampCursor parameter
+```js
+GET /blocks?limit=20&heightCursor=prev_131
+GET /transactions?limit=20&timestampCursor=prev_1650144307329
+```
+**The server's response to the *subsequent request* will include a pagination object that includes prev and next properties when there are additional blocks/transactions to be retrieved.**
+
+**Response :**
+```json
+
+  "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/blocks?limit=20&heightCursor=prev_111",
+    "next": "https://devote-explorer-backend.herokuapp.com/blocks?limit=20&heightCursor=next_130",
+    "more": true,
+    "max": 150
+  }
+
+ "pagination": {
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307018",
+    "next": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=next_1650144307287",
+    "more": true,
+    "max": 1650144307640
+  }
+```
+**Note that the pagination's object includes a ***next*** property, which points to block height of the next page.**
+
+**On your next request, you can either fetch prev or next set of blocks/transactions**
+
+**For example, to retrieve the next ***older*** set of the blocks [Block 110 : Block 91] .** 
+- Request the link of the *prev* property you received on the last request.
+```js
+GET /blocks?limit=20&heightCursor=prev_111
+```
+
+**to retrieve the next ***newer*** set of the blocks [Block 150 : Block 131].**
+- Request the link of the *next* property you received on the last request.
+```js
+GET /blocks?limit=20&heightCursor=next_130
+```
+<br>
+
+##### **3- Final request  :**
+
+**As you make more subsequent requests to retrieve previous blocks/transactions, you will eventually receive a response with ```more``` as ```false```, indicating the end of the entire set.**
+
+```json
+{
+  "pagination": {
+    "next": "https://devote-explorer-backend.herokuapp.com/blocks?limit=20&heightCursor=next_10",
+    "more": false,
+    "max": 150
+  },
+  "result": [
+    {
+      "Height": 10,
+      "PrevHash": "25C651CA1EA3C903E01D7F945F833202495690358EB1882EA15FC491EA322AB1",
+      "Timestamp": 1650144300173,
+      "MerkleRoot": "5A3EFD3316319EB0953EE5DAA4B7848CCAC6AFF35EF2B4642FD7BC9837E6D77E",
+      "Hash": "9F9982478BF2AF82085061D58ECFB7EA4DD12B40CB9B1BC5E524BBE9D1A5F0E7",
+      "Miner": "Test33",
+      "nTx": 4
+    },...
+    {
+      "Height": 1,
+      "PrevHash": null,
+      "Timestamp": 1650144298861,
+      "MerkleRoot": null,
+      "Hash": "B60D6D9A62B48D4B48D3F6500B6552F3A6C2B772949E94C5C3BAB0F6CF9BE77B",
+      "Miner": "deVote",
+      "nTx": 1
+    }
+  ]
+}
+```
+
+## Errors of /blocks /transactions endpoints 
+If there are any errors, the server's response will includes an errors object having a list of errors.
+
+```js
+/blocks/block-height/200
+```
+```json
+{
+  "errors": [
+    {
+      "code": "404",
+      "status": "Not Found",
+      "detail": "No block was found for height : 200"
+    }
+  ]
+}
+```
+```js
+/blocks/block-hash/RT0D6D9A62B48D4B48D3F6500B6552F3A6C2B772949E94C5C3BAB0F6CF9BE77B
+```
+```json
+{
+  "errors": [
+    {
+      "code": "404",
+      "status": "Not Found",
+      "detail": "No block was found for hash : RT0D6D9A62B48D4B48D3F6500B6552F3A6C2B772949E94C5C3BAB0F6CF9BE77B"
+    }
+  ]
+}
+```
+
+```js
+/transactions/tx-block-height/200
+```
+```json
+{
+  "errors": [
+    {
+      "code": "404",
+      "status": "Not Found",
+      "detail": "No transaction was found for blockHeight : 200"
+    }
+  ]
+}
+```
+```js
+/transactions/tx-hash/RT0D6D9A62B48D4B48D3F6500B6552F3A6C2B772949E94C5C3BAB0F6CF9BE77B
+```
+```json
+{
+  "errors": [
+    {
+      "code": "404",
+      "status": "Not Found",
+      "detail": "No transaction was found for hash : RT0D6D9A62B48D4B48D3F6500B6552F3A6C2B772949E94C5C3BAB0F6CF9BE77B"
+    }
+  ]
+}
+```
+
+## /vms Endpoints
+
+### POST /vms  : Add a new voting machine.
+**The required parameters are**
+  - id 
+  - name
+  - lat
+  - lng
+
+```js
+POST /vms?id=500&name=VM1&lat=30.286548&lng=31.73985
+```
+
+```json
+{
+  "result": {
+    "id": "500",
+    "lat": "30.286548",
+    "lng": "31.73985",
+    "name": "VM1"
+  }
+}
+```
+
+### GET /vms  : Get list of voting machines.
+
+```js
+GET /vms
+```
+
+```json
+{
+  "result": [
+    {
+      "ID": "500",
+      "Name": "VM1",
+      "Lat": 30.286548,
+      "Lng": 31.73985
+    }
+  ]
+}
+```
+
+### Errors of adding invalid voting machine.
+```js
+POST /vms?id=500&name=VM1&lat=30.286548&lng=31.73985
+```
+
+```json
+{
+  "request": {
+    "id": "500",
+    "name": "VM1",
+    "lat": "30.286548",
+    "lng": "31.73985"
+  },
+  "errors": [
+    {
+      "code": "400",
+      "status": "Bad Request",
+      "detail": "Your request parameters values are invalid"
     }
   ]
 }
