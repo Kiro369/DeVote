@@ -2,7 +2,7 @@
 deVote Explorer interfaces with a blockchain node to first extract all the levelDB data. It then stores it in a SQLite database to present the data in a searchable format.
 
 # Using the deVote Explorer API
-Query JSON data for blocks and transactions.
+Query JSON data for blocks, transactions, location of voting machines. 
 ## /blocks Endpoints
 
 ### /blocks/block-height/:blockHeight : Get block metadata by block height.
@@ -43,54 +43,54 @@ GET /blocks/block-hash/81D10DABE0F6C51D097DAFA7675473DFC1370621D13C46274706CC457
 ## /transactions Endpoints
 ### /transactions/tx-hash/:txHash : Get single transaction by tx hash.
 ```js
-GET /transactions/tx-hash/913756634CDB1FEF198557F83FC976D8D54960B539603D3CC6BE9E4B2B5AF299
+GET /transactions/tx-hash/66FEF9BBE3B5924923114CC84D46DFE333C3E8F928FF6472108B2FCAC036EE37
 ```
 ```json
 {
   "result": {
-    "Date": "2022-04-04T10:46:49.8465773Z",
-    "Hash": "4E2CF16853AFCAD5E881480D1E86E971ABC6BE1BEA17E9CFBED6C7960A1903E4",
-    "Elector": "",
-    "Elected": "",
-    "BlockHeight": 1
+    "Date": 1650144307640,
+    "Hash": "66FEF9BBE3B5924923114CC84D46DFE333C3E8F928FF6472108B2FCAC036EE37",
+    "Elector": "elector3148",
+    "Elected": "elected3148",
+    "BlockHeight": 150
   }
 }
 ```
 ###  /transactions/tx-block-height/:blockHight  : Get list of block's txs by block height.
 
 ```js
-GET /transactions/tx-block-height/50
+GET /transactions/tx-block-height/150
 ```
 ```json
 {
   "result": [
     {
-      "Date": "2022-04-04T10:46:55.412525Z",
-      "Hash": "913756634CDB1FEF198557F83FC976D8D54960B539603D3CC6BE9E4B2B5AF299",
-      "Elector": "elector048",
-      "Elected": "elected048",
-      "BlockHeight": 50
+      "Date": 1650144307611,
+      "Hash": "672C625CE5F4499088C2D5305BD3752255B882434F73D4FAD1C2D2806E243F34",
+      "Elector": "elector0148",
+      "Elected": "elected0148",
+      "BlockHeight": 150
     },
     {
-      "Date": "2022-04-04T10:46:55.4200758Z",
-      "Hash": "EC7F0C3D127EAAD71931471EBED41E3B5895D144E02BDD733A7D5FA2F1689551",
-      "Elector": "elector148",
-      "Elected": "elected148",
-      "BlockHeight": 50
+      "Date": 1650144307622,
+      "Hash": "32A493456E2EAF3530A4954D42F97A4E0AFE88814B8F6484B039BBCCC79EE4C7",
+      "Elector": "elector1148",
+      "Elected": "elected1148",
+      "BlockHeight": 150
     },
     {
-      "Date": "2022-04-04T10:46:55.425978Z",
-      "Hash": "9D891D6614616E597926961D510E627B8FC8B757522515C7128505C2305BB6D6",
-      "Elector": "elector248",
-      "Elected": "elected248",
-      "BlockHeight": 50
+      "Date": 1650144307629,
+      "Hash": "DBAFE2FAA90FC4073D8E8AA3C38DA754D9B4A06B06A687DC4F37AF7CDECE7C99",
+      "Elector": "elector2148",
+      "Elected": "elected2148",
+      "BlockHeight": 150
     },
     {
-      "Date": "2022-04-04T10:46:55.4308354Z",
-      "Hash": "AAF90C19FEA9FC7D05B058ACA866AF73B982FD9EEC7447B9E024EB6AEAEAF5B8",
-      "Elector": "elector348",
-      "Elected": "elected348",
-      "BlockHeight": 50
+      "Date": 1650144307640,
+      "Hash": "66FEF9BBE3B5924923114CC84D46DFE333C3E8F928FF6472108B2FCAC036EE37",
+      "Elector": "elector3148",
+      "Elected": "elected3148",
+      "BlockHeight": 150
     }
   ]
 }
@@ -366,23 +366,23 @@ If there are any errors, the server's response will includes an errors object ha
 
 ```js
 POST /vms
-request body 
+request body : (application/json)
 {
   "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
-  "name": "dansant57"
-  "lat": "30.864303166666662",
-  "lng": "31.316472250000007",
+  "name": "Machine1",
+  "lat": "39.354503136666662",
+  "lng": "33.313432350000007"
 }
 ```
 
 ```json
 {
-  "result": {
-   "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
-   "lat": "30.864303166666662",
-   "lng": "31.316472250000007",
-   "name": "dansant57"
-  }
+    "result": {
+        "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
+        "lat": "39.354503136666662",
+        "lng": "33.313432350000007",
+        "name": "Machine1"
+    }
 }
 ```
 
@@ -395,11 +395,11 @@ GET /vms
 ```json
 {
   "result": [
-    {
-      "ID": "500",
-      "Name": "VM1",
-      "Lat": 30.286548,
-      "Lng": 31.73985
+ {
+        "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
+        "lat": "39.354503136666662",
+        "lng": "33.313432350000007",
+        "name": "Machine1"
     }
   ]
 }
@@ -407,7 +407,14 @@ GET /vms
 
 ### Errors of adding invalid voting machine.
 ```js
-POST /vms?id=500&name=VM1&lat=30.286548&lng=31.73985
+POST /vms
+request body : (application/json)
+{
+    "id": "500",
+    "name": "VM1",
+    "lat": "40.286548",
+    "lng": "44.739853"
+}
 ```
 
 ```json
@@ -415,8 +422,8 @@ POST /vms?id=500&name=VM1&lat=30.286548&lng=31.73985
   "request": {
     "id": "500",
     "name": "VM1",
-    "lat": "30.286548",
-    "lng": "31.73985"
+    "lat": "40.286548",
+    "lng": "44.739853"
   },
   "errors": [
     {

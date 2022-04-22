@@ -22,6 +22,7 @@ namespace DeVote.VMachineGeoLocation
         public string Title = Environment.MachineName;
         public string ID = Constants.MachineID;
 
+        // Start acquiring location data.
         public void StartGeoWatcher()
         {
             Watcher = new GeoCoordinateWatcher();
@@ -53,6 +54,8 @@ namespace DeVote.VMachineGeoLocation
 
         public void TryGetLocation()
         {
+            //  When watcher has started, the location data does not become available instantly.
+            //  The geoCoordinate's IsUnknown property can be checked to determine if location data is available. 
             GeoCoordinate geoCoordinate = Watcher.Position.Location;
 
             // keep trying to acquire location data as long as geoCoordinate contains no data.
@@ -85,9 +88,9 @@ namespace DeVote.VMachineGeoLocation
             }
         }
 
-        public async Task SendLocation(bool isTest = false)
+        public Task SendLocation(bool isTest = false)
         {
-            HttpClient client = new HttpClient();
+            string endpoint = "http://localhost:3000/vms";
 
             var values = new Dictionary<string, string> { };
             values["id"] = this.ID;
@@ -101,22 +104,27 @@ namespace DeVote.VMachineGeoLocation
                 Random rnd = new Random();
                 values["id"] += rnd.Next(1, 100);
                 values["name"] += rnd.Next(1, 100);
+                endpoint = "https://devote-explorer-backend.herokuapp.com/vms";
             }
 
-            var requestBody = new StringContent(JsonConvert.SerializeObject(values).ToString(), Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync("https://devote-explorer-backend.herokuapp.com/vms", requestBody);
-
-            if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
-
-            else
+            using (var client = new HttpClient())
             {
-                Console.WriteLine(response.StatusCode.ToString());
-                Console.WriteLine("Sending machine's location failed");
-                // var responseString = await response.Content.ReadAsStringAsync();
-                // JObject responseObj = JObject.Parse(responseString);
-                // Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
+                var requestBody = new StringContent(JsonConvert.SerializeObject(values).ToString(), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = client.PostAsync(endpoint, requestBody).Result;
+                if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
+
+                else
+                {
+                    Console.WriteLine("Sending machine's location failed");
+                    Console.WriteLine(response.StatusCode.ToString());
+                    //string responseString = response.Content.ReadAsStringAsync().Result;
+                    //JObject responseObj = JObject.Parse(responseString);
+                    //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
+                }
             }
+
+            return Task.CompletedTask;
         }
 
         public void StopGeoWatcher()

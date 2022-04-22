@@ -16,7 +16,7 @@ namespace DeVote
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
 
             #region MachineGeoLocation Test
@@ -27,7 +27,7 @@ namespace DeVote
 
             if (machineGeoLocation.Latitude != 0 && machineGeoLocation.Longitude != 0)
             {
-                await machineGeoLocation.SendLocation(true);
+                machineGeoLocation.SendLocation(true).Wait();
             }
 
             machineGeoLocation.StopGeoWatcher();
