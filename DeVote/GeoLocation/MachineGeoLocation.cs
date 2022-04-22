@@ -53,10 +53,10 @@ namespace DeVote.VMachineGeoLocation
 
         public void TryGetLocation()
         {
-            GeoCoordinate GeoCoordinate = Watcher.Position.Location;
+            GeoCoordinate geoCoordinate = Watcher.Position.Location;
 
-            // keep trying to acquire location data as long as GeoCoordinate contains no data.
-            while (GeoCoordinate.IsUnknown == true)
+            // keep trying to acquire location data as long as geoCoordinate contains no data.
+            while (geoCoordinate.IsUnknown == true)
             {
                 // keep tracking the permission's status to access location data.
                 GeoPositionPermission Permission = this.GetPermissionStatus();
@@ -72,13 +72,13 @@ namespace DeVote.VMachineGeoLocation
                 // try to acquire location data only when permission is granted.
                 if (Permission == GeoPositionPermission.Granted)
                 {
-                    GeoCoordinate = Watcher.Position.Location;
-                    this.Latitude = GeoCoordinate.Latitude;
-                    this.Longitude = GeoCoordinate.Longitude;
+                    geoCoordinate = Watcher.Position.Location;
+                    this.Latitude = geoCoordinate.Latitude;
+                    this.Longitude = geoCoordinate.Longitude;
                 }
             }
             // latitude and longitude data is available.
-            if (GeoCoordinate.IsUnknown != true)
+            if (geoCoordinate.IsUnknown != true)
             {
                 Console.WriteLine($"Lat: {this.Latitude}, Long: {this.Longitude}");
                 return;
@@ -88,10 +88,9 @@ namespace DeVote.VMachineGeoLocation
         public async Task SendLocation(bool isTest = false)
         {
             HttpClient client = new HttpClient();
-            Random rnd = new Random();
 
             var values = new Dictionary<string, string> { };
-            values["id"] = this.ID + rnd.Next(1, 100);
+            values["id"] = this.ID;
             values["name"] = this.Title;
             values["lat"] = this.Latitude.ToString();
             values["lng"] = this.Longitude.ToString();
@@ -99,6 +98,7 @@ namespace DeVote.VMachineGeoLocation
             // for the sake of testing and avoiding endpoint error.
             if (isTest)
             {
+                Random rnd = new Random();
                 values["id"] += rnd.Next(1, 100);
                 values["name"] += rnd.Next(1, 100);
             }
@@ -107,7 +107,7 @@ namespace DeVote.VMachineGeoLocation
 
             var response = await client.PostAsync("https://devote-explorer-backend.herokuapp.com/vms", requestBody);
 
-            if (response.IsSuccessStatusCode) Console.WriteLine("Machine added successfully");
+            if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
 
             else
             {
