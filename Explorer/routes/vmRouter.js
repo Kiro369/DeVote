@@ -11,7 +11,7 @@ vmRouter.get('/', async (req, res) => {
 });
 
 vmRouter.post('/', async (req, res) => {
-    const { id, name, lat, lng } = req.query;
+    const { id, name, lat, lng } = req.body;
     console.log({ id, name, lat, lng });
 
     let insertVM = handleErrors(mySQLite.insertVM, { id, lat, lng, name });

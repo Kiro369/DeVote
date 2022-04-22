@@ -103,8 +103,8 @@ Rather than retrieving a complete set of blocks/transactions using a single requ
 
 The complete endpoint has the following parameters.
 ```js
-GET /blocks/?limit=20&heightCursor=prev_131
-GET /transactions/?limit=20&timestampCursor=prev_1650144307329
+GET /blocks?limit=20&heightCursor=prev_131
+GET /transactions?limit=20&timestampCursor=prev_1650144307329
 ```
 
 - `limit` - The maximum number of blocks to fetch.
@@ -358,23 +358,30 @@ If there are any errors, the server's response will includes an errors object ha
 ## /vms Endpoints
 
 ### POST /vms  : Add a new voting machine.
-**The required parameters are**
+**The required properties of json body are**
   - id 
   - name
   - lat
   - lng
 
 ```js
-POST /vms?id=500&name=VM1&lat=30.286548&lng=31.73985
+POST /vms
+request body 
+{
+  "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
+  "name": "dansant57"
+  "lat": "30.864303166666662",
+  "lng": "31.316472250000007",
+}
 ```
 
 ```json
 {
   "result": {
-    "id": "500",
-    "lat": "30.286548",
-    "lng": "31.73985",
-    "name": "VM1"
+   "id": "0F0F1C30FBB75B87EB11A4934A9520FEF31D43609E3A1261FF63A31D73347F4F1828",
+   "lat": "30.864303166666662",
+   "lng": "31.316472250000007",
+   "name": "dansant57"
   }
 }
 ```

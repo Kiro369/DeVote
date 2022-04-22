@@ -10,13 +10,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using DeVote.VMachineGeoLocation;
 
 namespace DeVote
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
+
+            #region MachineGeoLocation Test
+            MachineGeoLocation machineGeoLocation = new MachineGeoLocation();
+            machineGeoLocation.StartGeoWatcher();
+
+            machineGeoLocation.TryGetLocation();
+
+            if (machineGeoLocation.Latitude != 0 && machineGeoLocation.Longitude != 0)
+            {
+                await machineGeoLocation.SendLocation(true);
+            }
+
+            machineGeoLocation.StopGeoWatcher();
+
+            return;
+
+            #endregion
+
             #region Embedding Python in .Net Test
 
             //var testID = "1020304050";

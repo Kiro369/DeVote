@@ -34,4 +34,10 @@
     <ProjectReference Include="..\DNSSeeder\DNSSeeder.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Device">
+      <HintPath>GeoLocation\System.Device.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
