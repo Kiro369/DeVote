@@ -18,19 +18,31 @@ namespace DeVote
     {
         static void Main(string[] args)
         {
+            #region Settings Test
+            Settings.SetSettings();
+            Console.WriteLine(Settings.Argon2Salt);
+            Console.WriteLine(Settings.BlockchainPath);
+            Console.WriteLine(Settings.VotedDLTPath);
+            Console.WriteLine(Settings.PythonDLLPath);
+            Console.WriteLine(Settings.Latitude);
+            Console.WriteLine(Settings.Longitude);
+            Console.WriteLine(Settings.BlockchainExplorerPort);
+
+            return;
+            #endregion
 
             #region MachineGeoLocation Test
-            MachineGeoLocation machineGeoLocation = new MachineGeoLocation();
-            machineGeoLocation.StartGeoWatcher();
+            // MachineGeoLocation machineGeoLocation = new MachineGeoLocation();
+            // machineGeoLocation.StartGeoWatcher();
 
-            machineGeoLocation.TryGetLocation();
+            // machineGeoLocation.TryGetLocation();
 
-            if (machineGeoLocation.Latitude != 0 && machineGeoLocation.Longitude != 0)
-            {
-                machineGeoLocation.SendLocation(true).Wait();
-            }
+            // if (machineGeoLocation.Latitude != 0 && machineGeoLocation.Longitude != 0)
+            // {
+            //     machineGeoLocation.SendLocation(true).Wait();
+            // }
 
-            machineGeoLocation.StopGeoWatcher();
+            // machineGeoLocation.StopGeoWatcher();
 
             return;
 
