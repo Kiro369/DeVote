@@ -10,8 +10,9 @@ namespace DeVote.Structures
 {
     public class VotedDLT
     {
+        public static VotedDLT Current = new();
         public DB LevelDB;
-        public VotedDLT()
+        private VotedDLT()
         {
             LevelDB = new DB(new Options { CreateIfMissing = true }, Constants.VotedDLTPath);
         }

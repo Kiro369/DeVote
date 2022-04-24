@@ -1,9 +1,7 @@
 ﻿using DeVote.Extensions;
-using DeVote.Network;
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -40,7 +38,7 @@ namespace DeVote.Network
                 {
                     // Generate Radom number and broadcast it 
                     var rn = FastRandom.Current.NextInt64();
-                    var consensusPacket = new Network.Messages.LRNConsensus();
+                    var consensusPacket = new Messages.LRNConsensus();
                     var generatedPacket = consensusPacket.Create(rn);
                     NetworkManager.Broadcast(generatedPacket);
                 }

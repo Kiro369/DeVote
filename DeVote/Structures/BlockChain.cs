@@ -12,10 +12,10 @@ namespace DeVote.Structures
     [ProtoContract(SkipConstructor = true)]
     public class Blockchain
     {
-
+        public static readonly Blockchain Current = new Blockchain();
         [ProtoMember(1)] public LinkedList<Block> Blocks { set; get; }
         public DB LevelDB;
-
+        public Block Block;
         public Blockchain()
         {
             Blocks = new LinkedList<Block>();

@@ -12,9 +12,15 @@ namespace DeVote.PyRecognition
 {
     public class Recognition
     {
-        private dynamic OCRModule;
-        private dynamic FaceVerificationModule;
-        private IntPtr threadState;
+        public static Recognition Current = new Recognition(Settings.Current.PythonDLLPath, Settings.Current.SitePackagesPath);
+
+        private dynamic ocrModule, faceVerificationModule;
+
+        public Recognition(string PythonDLLPath, string SitePackagesPath)
+        {
+            InitPythonInterpreter(PythonDLLPath, SitePackagesPath);
+        }
+
         public void InitPythonInterpreter(string PythonDLLPath, string SitePackagesPath)
         {
             // Set the path of the Python Interpreter's DLL file.
@@ -47,8 +53,8 @@ namespace DeVote.PyRecognition
             // Console.WriteLine(threadState);
 
             var stopwatch = Stopwatch.StartNew();
-            OCRModule = Py.Import("ID_OCR");
-            FaceVerificationModule = Py.Import("identity_verification");
+            ocrModule = Py.Import("ID_OCR");
+            faceVerificationModule = Py.Import("identity_verification");
             stopwatch.Stop();
             Console.WriteLine($"Importing two modules took { stopwatch.ElapsedMilliseconds / 1024.0 } s ");
             Console.WriteLine("Python runtime is initialized");
@@ -57,17 +63,15 @@ namespace DeVote.PyRecognition
         public dynamic ExtractIDInfo(string idpath,string face)
         {
             var stopwatch = Stopwatch.StartNew();
-            dynamic info = OCRModule.ocr_id(idpath,face);
+            dynamic info = ocrModule.ocr_id(idpath,face);
             stopwatch.Stop();
             Console.WriteLine($"Extracting IDInfo took { stopwatch.ElapsedMilliseconds / 1024.0 } s ");
             return info;
         }
 
-        public dynamic VerifyVoter(string idpath, string face)
+        public bool VerifyVoter(string idPath, string voterImage)
         {
-            // TODO: Invoke the right function
-            FaceVerificationModule.verify_id_frame(idpath,"");
-            return "";
+            return faceVerificationModule.verify_id_frame(idPath, voterImage);
         }
         public void EndPythonInterpreter()
         {

@@ -25,6 +25,12 @@ namespace DeVote.Structures
             nTx = transactions.Count;
         }
 
+        public void AddTransaction(Transaction transaction)
+        {
+            Transactions.Add(transaction);
+            nTx++;
+        }
+
         // Save Block into LevelDB as byte array representation of Protobuf Encoding.
         public void SaveBlockAsByteArray(LevelDB.DB levelDB)
         {
@@ -62,6 +68,7 @@ namespace DeVote.Structures
             }
             else return new Block(new List<Transaction>());
         }
+
         public static byte[] SerializeBlock(Block block)
         {
             using (MemoryStream stream = new MemoryStream())

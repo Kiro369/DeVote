@@ -24,6 +24,8 @@ namespace DeVote.Network.Handling
 
             if (processor.Read(client))
                 processor.Handle(client);
+            else
+                throw new Exception($"Couldn't read {processor.GetType()} from {client.EndPoint}");
 
         }
     }
