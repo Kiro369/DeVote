@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using DeVote.VMachineGeoLocation;
 
 namespace DeVote
 {
@@ -19,31 +18,15 @@ namespace DeVote
         static void Main(string[] args)
         {
             #region Settings Test
-            Settings.SetSettings();
-            Console.WriteLine(Settings.Argon2Salt);
-            Console.WriteLine(Settings.BlockchainPath);
-            Console.WriteLine(Settings.VotedDLTPath);
-            Console.WriteLine(Settings.PythonDLLPath);
-            Console.WriteLine(Settings.Latitude);
-            Console.WriteLine(Settings.Longitude);
-            Console.WriteLine(Settings.BlockchainExplorerPort);
+            Console.WriteLine(Settings.Current.Argon2Salt);
+            Console.WriteLine(Settings.Current.BlockchainPath);
+            Console.WriteLine(Settings.Current.VotedDLTPath);
+            Console.WriteLine(Settings.Current.PythonDLLPath);
+            Console.WriteLine(Settings.Current.Latitude);
+            Console.WriteLine(Settings.Current.Longitude);
+            Console.WriteLine(Settings.Current.BlockchainExplorerPort);
 
-            return;
-            #endregion
-
-            #region MachineGeoLocation Test
-            // MachineGeoLocation machineGeoLocation = new MachineGeoLocation();
-            // machineGeoLocation.StartGeoWatcher();
-
-            // machineGeoLocation.TryGetLocation();
-
-            // if (machineGeoLocation.Latitude != 0 && machineGeoLocation.Longitude != 0)
-            // {
-            //     machineGeoLocation.SendLocation(true).Wait();
-            // }
-
-            // machineGeoLocation.StopGeoWatcher();
-
+            NetworkManager.SendLocation(true).Wait();
             return;
 
             #endregion

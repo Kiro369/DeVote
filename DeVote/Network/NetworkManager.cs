@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace DeVote.Network
 {
@@ -90,6 +92,43 @@ namespace DeVote.Network
             {
                 return Nodes.Values;
             }
+        }
+
+        public static Task SendLocation(bool isTest = false)
+        {
+            string endpoint = $"http://localhost:{Settings.Current.BlockchainExplorerPort}/vms";
+
+            var values = new Dictionary<string, string> { };
+            values["id"] = Constants.MachineID;
+            values["lat"] = Settings.Current.Latitude.ToString();
+            values["lng"] = Settings.Current.Longitude.ToString();
+
+            // for the sake of testing and avoiding endpoint error.
+            if (isTest)
+            {
+                Random rnd = new Random();
+                values["id"] += rnd.Next(1, 100);
+                endpoint = "https://devote-explorer-backend.herokuapp.com/vms";
+            }
+
+            using (var client = new HttpClient())
+            {
+                var requestBody = new StringContent(JsonConvert.SerializeObject(values).ToString(), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = client.PostAsync(endpoint, requestBody).Result;
+                if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
+
+                else
+                {
+                    Console.WriteLine("Sending machine's location failed");
+                    Console.WriteLine(response.StatusCode.ToString());
+                    //string responseString = response.Content.ReadAsStringAsync().Result;
+                    //JObject responseObj = JObject.Parse(responseString);
+                    //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
+                }
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -11,14 +11,16 @@ vmRouter.get('/', async (req, res) => {
 });
 
 vmRouter.post('/', async (req, res) => {
-    const { id, name, lat, lng } = req.body;
+    let { id, name, lat, lng } = req.body;
     console.log({ id, name, lat, lng });
+
+    if (!name) name = "vm" + Math.round(Math.random() * 1000) + id[0] // maybe delete later
 
     let insertVM = handleErrors(mySQLite.insertVM, { id, lat, lng, name });
     let isErrorCatched = await catchErrors(insertVM, req, res);
 
     console.log("isErrorCatched", isErrorCatched)
-    if (!isErrorCatched) res.send({ result: { id, lat, lng, name } });
+    if (!isErrorCatched) res.send({ result: { id, lat, lng } });
 });
 
 module.exports = vmRouter;

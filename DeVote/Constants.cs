@@ -20,7 +20,7 @@ namespace DeVote
         /// <summary>
         /// Argon2 hash salt, each application should have its own Salt
         /// </summary>
-        public static byte[] Argon2Salt = Encoding.UTF8.GetBytes(Settings.Argon2Salt);
+        public static byte[] Argon2Salt = Encoding.UTF8.GetBytes(Settings.Current.Argon2Salt);
 
         public static readonly string BlockchainPath = Directory.GetCurrentDirectory() + "\\Blockchain", // Blockchain LevelDB database path
             VotedDLTPath = Directory.GetCurrentDirectory() + "\\VotedDLT", // VotedDLT (the side DLT containing people voted) LevelDB database path

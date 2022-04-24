@@ -130,7 +130,7 @@ class SQLite {
     };
 
     async getVMs() {
-        let vms = await this.db.all("SELECT * FROM VMachines")
+        let vms = await this.db.all("SELECT ID,Lat,Lng FROM VMachines")
         // if (!vms.length) throw new Error("No VMs Found")
         return vms
     }
