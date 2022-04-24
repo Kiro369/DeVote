@@ -15,7 +15,7 @@ namespace DeVote
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             #region Settings Test
             Console.WriteLine(Settings.Current.Argon2Salt);
@@ -69,7 +69,7 @@ namespace DeVote
             PacketsHandler.Init();
 
             // Starting the seeder client to be able to connect to the network
-            DNSSeeder.AsynchronousClient seederClient = new DNSSeeder.AsynchronousClient();
+            DNSSeeder.AsynchronousClient seederClient = new();
 
             // Get the addresses of all nodes, and add out IP to the seeder
             seederClient.StartClient(server.Port);

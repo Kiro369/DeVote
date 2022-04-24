@@ -21,8 +21,7 @@ namespace DeVote
         // A Static constructor is called only once, before any static member is accessed.
         static Settings()
         {
-            var currentDir = Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().LastIndexOf("bin"));
-            string appsettingsFilePath = Path.Combine(currentDir, "appsettings.json");
+            string appsettingsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
 
             if (!File.Exists(appsettingsFilePath)) throw new FileNotFoundException("appsettings.json does not exist.");
 

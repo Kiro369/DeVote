@@ -13,12 +13,12 @@ namespace DeVote.Network
         /// <summary>
         /// An instance of our consensus algorithm
         /// </summary>
-        public static readonly LRNConsensus Consensus = new LRNConsensus();
+        public static readonly LRNConsensus Consensus = new();
 
         /// <summary>
         /// Connected Nodes
         /// </summary>
-        static Dictionary<string, Node> Nodes = new();
+        static readonly Dictionary<string, Node> Nodes = new();
 
         /// <summary>
         /// Connected nodes count
@@ -28,7 +28,7 @@ namespace DeVote.Network
         /// <summary>
         /// Object to lock while adjusting the Nodes collection to avoid multi threading issues
         /// </summary>
-        static object lockable = new();
+        static readonly object lockable = new();
 
         /// <summary>
         /// Broadcast a packet to the whole network
@@ -106,7 +106,7 @@ namespace DeVote.Network
             // for the sake of testing and avoiding endpoint error.
             if (isTest)
             {
-                Random rnd = new Random();
+                Random rnd = new();
                 values["id"] += rnd.Next(1, 100);
                 endpoint = "https://devote-explorer-backend.herokuapp.com/vms";
             }
