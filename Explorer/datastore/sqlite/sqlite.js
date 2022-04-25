@@ -94,11 +94,11 @@ class SQLite {
     }
 
     async insertTx(tx, blockHeight) {
-        const { Hash, Date, Elector, Elected } = tx;
-
+        let { Hash, Date, Elector, Elected, Confirmations } = tx;
+        if (!Confirmations) Confirmations = 0;
         this.db.run('PRAGMA foreign_keys = OFF;');
-        await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?)",
-            Date, Hash, Elector, Elected, parseInt(blockHeight)
+        await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?,?)",
+            Date, Hash, Elector, Elected, Confirmations, parseInt(blockHeight)
         )
         this.db.run('PRAGMA foreign_keys = ON;');
     };
@@ -121,16 +121,15 @@ class SQLite {
     };
 
     async insertVM(vm) {
-        console.log("vm", vm)
-        const { id, lat, lng, name } = vm;
+        const { id, lat, lng } = vm;
         await this.db.run(
-            "INSERT INTO VMachines  VALUES (?,?,?,?)",
-            id, name, lat, lng
+            "INSERT INTO VMachines  VALUES (?,?,?)",
+            id, lat, lng
         )
     };
 
     async getVMs() {
-        let vms = await this.db.all("SELECT ID,Lat,Lng FROM VMachines")
+        let vms = await this.db.all("SELECT * FROM VMachines")
         // if (!vms.length) throw new Error("No VMs Found")
         return vms
     }

@@ -9,17 +9,17 @@ CREATE TABLE  Blocks (
 );
 
 CREATE TABLE Transactions (
-    Date       INTEGER,
-    Hash       TEXT PRIMARY KEY,
-    Elector    TEXT,
-    Elected    TEXT,
-    BlockHeight INTEGER,
+    Date          INTEGER,
+    Hash          TEXT PRIMARY KEY,
+    Elector       TEXT,
+    Elected       TEXT,
+    Confirmations INTEGER NOT NULL,
+    BlockHeight   INTEGER,
     FOREIGN KEY (BlockHeight) REFERENCES Blocks (Height)
 );
 
 CREATE TABLE VMachines (
     ID        TEXT PRIMARY KEY,
-    Name      TEXT NOT NULL UNIQUE,
     Lat       INTEGER NOT NULL,
     Lng       INTEGER NOT NULL
 );

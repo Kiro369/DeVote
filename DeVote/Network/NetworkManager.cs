@@ -94,7 +94,7 @@ namespace DeVote.Network
             }
         }
 
-        public static Task SendLocation(bool isTest = false)
+        public static void SendLocation(bool isTest = false)
         {
             string endpoint = $"http://localhost:{Settings.Current.BlockchainExplorerPort}/vms";
 
@@ -127,8 +127,6 @@ namespace DeVote.Network
                     //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }
