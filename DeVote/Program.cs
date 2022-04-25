@@ -26,7 +26,7 @@ namespace DeVote
             Console.WriteLine(Settings.Current.Longitude);
             Console.WriteLine(Settings.Current.BlockchainExplorerPort);
 
-            NetworkManager.SendLocation(true).Wait();
+            NetworkManager.SendLocation(true);
             return;
 
             #endregion

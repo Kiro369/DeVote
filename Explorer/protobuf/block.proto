@@ -17,4 +17,5 @@ message Block {
     int64 Date = 2;
     string Elector = 3;
     string Elected = 4;
+    int32 Confirmations = 5;
 }
