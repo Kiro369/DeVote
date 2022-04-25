@@ -10,7 +10,7 @@ namespace DeVote.Structures
     public class Transaction
     {
         [ProtoMember(1)] public string Hash { get; set; }
-        [ProtoMember(2)] public long Date;
+        [ProtoMember(2)] public long Date { get; set; }
         [ProtoMember(3)] public string Elector { get; set; }
         [ProtoMember(4)] public string Elected { get; set; }
         [ProtoMember(5)] public int Confirmations { get; set; }
