@@ -14,12 +14,12 @@ namespace DNSSeeder
         // The port our DNS Seeder gonna be listening to
         private static readonly int Port = 6942;
 
-        static void Main(string[] args)
+        static void Main()
         {
             // Initalizing our Concurrent Bag
             Addresses = new ConcurrentBag<string>();
 
-            AsynchronousServer seeder = new AsynchronousServer(Port);
+            AsynchronousServer seeder = new(Port);
             seeder.Start();
 
         }

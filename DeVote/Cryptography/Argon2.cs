@@ -17,21 +17,23 @@ namespace DeVote.Cryptography
         public static byte[] Hash(string message)
         {
             // Console.WriteLine(message);
-            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(message));
+            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(message))
+            {
 
-            // Fixed Parameters.
-            argon2.Salt = Constants.Argon2Salt;
+                // Fixed Parameters.
+                Salt = Constants.Argon2Salt,
 
-            // Number of concurrent threads, that the algorithm will utilize to compute the hash.
-            // It's recommended to be twice the amount of available CPU cores.
-            argon2.DegreeOfParallelism = 8;
+                // Number of concurrent threads, that the algorithm will utilize to compute the hash.
+                // It's recommended to be twice the amount of available CPU cores.
+                DegreeOfParallelism = 8,
 
-            // Tuning these 2 Parameters will affect the execution time and the resulting hash value.
-            // Amount of memory (in kilobytes) to use
-            argon2.MemorySize = 1024;
+                // Tuning these 2 Parameters will affect the execution time and the resulting hash value.
+                // Amount of memory (in kilobytes) to use
+                MemorySize = 1024,
 
-            // Number of iterations over the memory.
-            argon2.Iterations = 4;
+                // Number of iterations over the memory.
+                Iterations = 4
+            };
 
             // Desired number of returned bytes
             return argon2.GetBytes(32);
@@ -59,16 +61,15 @@ namespace DeVote.Cryptography
             {
                 if (hashList.Length == 1) return hashList[0];
 
-                List<string> newHashList = new List<string>();
+                var newHashList = new List<string>();
 
                 int len = (hashList.Length % 2 != 0) ? hashList.Length - 1 : hashList.Length;
 
                 for (int i = 0; i < len; i += 2)
                     newHashList.Add(ComputeHash(hashList[i] + hashList[i + 1]));
 
-                if (len < hashList.Length) newHashList.Add(
-                        ComputeHash(hashList[hashList.Length - 1] + hashList[hashList.Length - 1])
-                    );
+                if (len < hashList.Length) 
+                    newHashList.Add(ComputeHash(hashList[^1] + hashList[^1]));
 
                 hashList = newHashList.ToArray();
             }

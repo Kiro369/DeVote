@@ -13,9 +13,10 @@ namespace DNSSeeder
     class AsynchronousServer
     {
         // Thread signal.  
-        public ManualResetEvent allDone = new ManualResetEvent(false);
+        public ManualResetEvent allDone = new(false);
+
         // The port our DNS Seeder gonna be listening to
-        int Port;
+        readonly int Port;
 
         public AsynchronousServer(int port)
         {
@@ -24,10 +25,10 @@ namespace DNSSeeder
         public void Start()
         {
             // Establish the local endpoint for the socket.  
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, Port);
+            var localEndPoint = new IPEndPoint(IPAddress.Any, Port);
 
             // Create a TCP/IP socket.  
-            Socket listener = new Socket(AddressFamily.InterNetwork,
+            var listener = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
 
             // Bind the socket to the local endpoint and listen for incoming connections.  
@@ -70,8 +71,10 @@ namespace DNSSeeder
             Socket handler = listener.EndAccept(ar);
 
             // Create the state object.  
-            StateObject state = new StateObject();
-            state.workSocket = handler;
+            var state = new StateObject
+            {
+                workSocket = handler
+            };
             handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                 new AsyncCallback(RecieveCallback), state);
         }
@@ -142,13 +145,10 @@ namespace DNSSeeder
                 Console.WriteLine(e.ToString());
             }
         }
-        string GetPublicIP()
+
+        static string GetPublicIP()
         {
             return new HttpClient().GetStringAsync("https://api.ipify.org").Result;
-        }
-        IPAddress GetNebulaIP()
-        {
-            return NetworkInterface.GetAllNetworkInterfaces().First(ni => ni.Name.Equals("nebula1")).GetIPProperties().UnicastAddresses.FirstOrDefault()!.Address;
         }
     }
 }

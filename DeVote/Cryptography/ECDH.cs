@@ -7,7 +7,7 @@ namespace DeVote.Cryptography
 {
     class ECDH
     {
-        static ECDiffieHellman _ecdh = ECDiffieHellman.Create();
+        static readonly ECDiffieHellman _ecdh = ECDiffieHellman.Create();
         public static byte[] PublicKey { get { return _ecdh.PublicKey.ExportSubjectPublicKeyInfo(); } }
 
         public static byte[] Encrypt(byte[] data, ECDiffieHellmanPublicKey otherPartyPublicKey, out byte[] IV)

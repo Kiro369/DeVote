@@ -16,17 +16,17 @@ namespace DeVote.Network
         /// <summary>
         /// Queue of Packets to be Processed
         /// </summary>
-        public static ConcurrentQueue<KeyValuePair<Node, byte[]>> Packets = new ConcurrentQueue<KeyValuePair<Node, byte[]>>();
+        public static ConcurrentQueue<KeyValuePair<Node, byte[]>> Packets = new();
 
         /// <summary>
         /// Handlers that will handle packets
         /// </summary>
-        static readonly ConcurrentDictionary<short, PacketHandler<IPacket>> _handlers = new ConcurrentDictionary<short, PacketHandler<IPacket>>();
+        static readonly ConcurrentDictionary<short, PacketHandler<IPacket>> _handlers = new();
 
         /// <summary>
         /// Log proxy to log events (infos, errors, warnings, etc..)
         /// </summary>
-        static readonly LogProxy Log = new LogProxy("PacketsHandler");
+        static readonly LogProxy Log = new("PacketsHandler");
 
         /// <summary>
         /// Starts the packets handling process

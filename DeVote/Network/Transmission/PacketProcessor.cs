@@ -11,7 +11,7 @@ namespace DeVote.Network.Transmission
 {
     public abstract unsafe class PacketProcessor
     {
-        protected static readonly LogProxy Log = new LogProxy("PacketProcessor");
+        protected static readonly LogProxy Log = new("PacketProcessor");
 
         /// <summary> Guts of a packet, the byte array. </summary>
         public Byte[] Buffer;

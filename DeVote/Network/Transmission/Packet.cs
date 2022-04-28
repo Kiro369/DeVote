@@ -12,8 +12,8 @@ namespace DeVote.Network.Transmission
 {
     abstract class Packet : PacketProcessor, IPacket
     {
-        PacketTypes ID;
-        int IncomingLength;
+        readonly PacketTypes ID;
+        readonly int IncomingLength;
         public Packet(byte[] incomingPacket) : base(incomingPacket)
         {
             if (incomingPacket == null || incomingPacket.Length < 4) return;
@@ -23,21 +23,17 @@ namespace DeVote.Network.Transmission
 
         public T Deserialize<T>()
         {
-            using (MemoryStream stream = new MemoryStream(Buffer.Skip(4).ToArray()))
-            {
-                return Serializer.Deserialize<T>(stream);
-            }
+            using var stream = new MemoryStream(Buffer.Skip(4).ToArray());
+            return Serializer.Deserialize<T>(stream);
         }
 
         public void Serialize(object obj)
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, obj);
-                var srlzd = stream.ToArray();
-                Buffer = new byte[srlzd.Length + 4];
-                srlzd.CopyTo(Buffer, 4);
-            }
+            using var stream = new MemoryStream();
+            Serializer.Serialize(stream, obj);
+            var srlzd = stream.ToArray();
+            Buffer = new byte[srlzd.Length + 4];
+            srlzd.CopyTo(Buffer, 4);
         }
 
         public unsafe void Finalize<T>()

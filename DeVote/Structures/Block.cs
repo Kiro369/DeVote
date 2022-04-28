@@ -71,20 +71,15 @@ namespace DeVote.Structures
 
         public static byte[] SerializeBlock(Block block)
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, block);
-                return stream.ToArray();
-            }
+            using var stream = new MemoryStream();
+            Serializer.Serialize(stream, block);
+            return stream.ToArray();
         }
 
         public static Block DeserializeBlock(byte[] data)
         {
-            using (MemoryStream stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<Block>(stream);
-
-            }
+            using var stream = new MemoryStream(data);
+            return Serializer.Deserialize<Block>(stream);
         }
 
         public static string GetBlockProto()

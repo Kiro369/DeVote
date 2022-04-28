@@ -13,13 +13,12 @@ namespace DNSSeeder
     {
         public List<string> EndPoints;
         // ManualResetEvent instances signal completion.  
-        private static ManualResetEvent connectDone = 
-            new ManualResetEvent(false), sendDone = 
-            new ManualResetEvent(false), receiveDone = 
-            new ManualResetEvent(false);
-
-        string SeederHost;
-        int SeederPort;
+        private static readonly ManualResetEvent connectDone = 
+            new(false), sendDone = 
+            new(false), receiveDone = 
+            new(false);
+        readonly string SeederHost;
+        readonly int SeederPort;
 
         // The response from the remote device.  
         private static string response = string.Empty;
@@ -56,10 +55,10 @@ namespace DNSSeeder
 
 
             // Establish the remote endpoint for the socket. IPAddress.Parse("127.0.0.1")
-            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress.ToString().Equals(externalIP) ? IPAddress.Parse("127.0.0.1") : ipAddress, SeederPort);
+            IPEndPoint remoteEndPoint = new(ipAddress.ToString().Equals(externalIP) ? IPAddress.Parse("127.0.0.1") : ipAddress, SeederPort);
 
             // Create a TCP/IP socket.  
-            Socket client = new Socket(AddressFamily.InterNetwork,
+            Socket client = new(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
 
             // Connect to the remote endpoint.  
@@ -110,7 +109,7 @@ namespace DNSSeeder
             try
             {
                 // Create the state object.  
-                StateObject state = new StateObject();
+                StateObject state = new();
                 state.workSocket = client;
 
                 // Begin receiving the data from the remote device.  
@@ -159,14 +158,6 @@ namespace DNSSeeder
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        private static void Send(Socket client, String data)
-        {
-            // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
-
-            Send(client, byteData);
         }
         private static void Send(Socket client, byte[] byteData)
         {

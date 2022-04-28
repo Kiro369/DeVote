@@ -12,7 +12,7 @@ namespace DeVote.Structures
     [ProtoContract(SkipConstructor = true)]
     public class Blockchain
     {
-        public static readonly Blockchain Current = new Blockchain();
+        public static readonly Blockchain Current = new();
         [ProtoMember(1)] public LinkedList<Block> Blocks { set; get; }
         public DB LevelDB;
         public Block Block;
@@ -24,16 +24,20 @@ namespace DeVote.Structures
             //SaveBlock(GenesisBlock);
         }
 
-        public Block CreateGenesisBlock()
+        public static Block GenesisBlock
         {
-            Block GenesisBlock = new Block(new List<Transaction>{
-                new Transaction("test","test")
-            });
-            // Block GenesisBlock = new Block();
-            GenesisBlock.Height = 1;
-            GenesisBlock.Miner = "deVote";
-            GenesisBlock.Hash = Argon2.ComputeHash(GenesisBlock.Timestamp.ToString());
-            return GenesisBlock;
+            get
+            {
+                var genesisBlock = new Block(new List<Transaction>{
+                new Transaction("Ahmed","Mahmoud")
+            })
+                {
+                    Height = 1,
+                    Miner = "DeVote"
+                };
+                genesisBlock.Hash = Argon2.ComputeHash(genesisBlock.Timestamp.ToString());
+                return genesisBlock;
+            }
         }
 
         public void AddBlock(Block block)
@@ -55,14 +59,12 @@ namespace DeVote.Structures
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
 
-            using (var iterator = this.LevelDB.CreateIterator(readOptions))
+            using var iterator = this.LevelDB.CreateIterator(readOptions);
+            for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
             {
-                for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
-                {
-                    byte[] SerializedBlock = iterator.Value();
-                    var block = Block.DeserializeBlock(SerializedBlock);
-                    this.Blocks.AddLast(block);
-                }
+                byte[] SerializedBlock = iterator.Value();
+                var block = Block.DeserializeBlock(SerializedBlock);
+                this.Blocks.AddLast(block);
             }
         }
 
@@ -72,14 +74,12 @@ namespace DeVote.Structures
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
 
-            using (var iterator = this.LevelDB.CreateIterator(readOptions))
+            using var iterator = this.LevelDB.CreateIterator(readOptions);
+            for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
             {
-                for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
-                {
-                    string StringifiedBlock = iterator.ValueAsString();
-                    Block block = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
-                    this.Blocks.AddLast(block);
-                }
+                string StringifiedBlock = iterator.ValueAsString();
+                Block block = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
+                this.Blocks.AddLast(block);
             }
         }
 
@@ -106,11 +106,9 @@ namespace DeVote.Structures
 
         public byte[] SerializeBlockchain()
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, this);
-                return stream.ToArray();
-            }
+            using var stream = new MemoryStream();
+            Serializer.Serialize(stream, this);
+            return stream.ToArray();
         }
     }
 }

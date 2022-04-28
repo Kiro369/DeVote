@@ -57,7 +57,7 @@ namespace DeVote.Network
         /// Performs the consensus to pick who will mine the next block!
         /// </summary>
         /// <returns>The choosen one</returns>
-        public string Perform()
+        public static string Perform()
         {
             var s = string.Empty;
             var min = long.MaxValue;
@@ -85,7 +85,7 @@ namespace DeVote.Network
         /// </summary>
         /// <param name="minute">Current minute -to round</param>
         /// <returns></returns>
-        int Round(int minute)
+        static int Round(int minute)
         {
             while (minute % Constants.BlockTime != 0)
                 minute++;
@@ -96,15 +96,13 @@ namespace DeVote.Network
         /// Gets current UTC time from a reliable source on the internet, since current device time can be manipulated.
         /// </summary>
         /// <returns></returns>
-        private DateTime GetInternetTime()
+        private static DateTime GetInternetTime()
         {
             var client = new TcpClient("time.nist.gov", 13);
-            using (var streamReader = new StreamReader(client.GetStream()))
-            {
-                var response = streamReader.ReadToEnd();
-                var utcDateTimeString = response.Substring(7, 17);
-                return DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-            }
+            using var streamReader = new StreamReader(client.GetStream());
+            var response = streamReader.ReadToEnd();
+            var utcDateTimeString = response.Substring(7, 17);
+            return DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
         }
     }
 }

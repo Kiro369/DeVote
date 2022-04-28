@@ -28,7 +28,7 @@ namespace DeVote.Network.Messages
             }
             else
             {
-                DecompressID(out string frontIDPath, out string backIDPath);
+                DecompressID(out string frontIDPath, out _);
                 var verified = 0;
                 foreach (var imagePath in DecompressImages())
                 {
@@ -119,7 +119,7 @@ namespace DeVote.Network.Messages
         /// </summary>
         /// <param name="image"></param>
         /// <returns></returns>
-        public byte[] Compress(byte[] image)
+        public static byte[] Compress(byte[] image)
         {
             using var originalImageStream = new MemoryStream(image);
             using var compressedImageStream = new MemoryStream();
@@ -148,7 +148,7 @@ namespace DeVote.Network.Messages
         /// </summary>
         /// <param name="image">image byte[] to be decompressed</param>
         /// <param name="outputPath">the output path to save the image in</param>
-        public void Decompress(byte[] image, string outputPath)
+        public static void Decompress(byte[] image, string outputPath)
         {
             using var compressedImageStream = new MemoryStream(image);
             using FileStream outputFileStream = File.Create(outputPath);
