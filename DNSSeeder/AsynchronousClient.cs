@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -43,7 +44,7 @@ namespace DNSSeeder
         /// <param name="port">Set this to anything, to add the address to the list in the Seeder</param>
         public void StartClient(int port = 0)
         {
-            var externalIP = new WebClient().DownloadString("https://api.ipify.org");
+            var externalIP = new HttpClient().GetStringAsync("https://api.ipify.org").Result;
             connectDone.Reset(); sendDone.Reset(); receiveDone.Reset();
 
             //Resolving the DNS Seeder host to get the acutal IP of our Seeder. 
