@@ -17,6 +17,20 @@ namespace DeVote
     {
         static void Main()
         {
+            #region Compression test
+            var transaction = new Network.Messages.Transaction(null);
+            var image = System.IO.File.ReadAllBytes(@"C:\Users\Kiro\Downloads\xyz.png");
+            var stopWatch = new System.Diagnostics.Stopwatch(); stopWatch.Start();
+            var compressed = transaction.Compress(image);
+            stopWatch.Stop();
+            Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
+            stopWatch.Restart();
+            transaction.Decompress(compressed, "output.jpg");
+            stopWatch.Stop();
+            Console.WriteLine($"Time to decompress: {stopWatch.ElapsedMilliseconds}");
+            Console.ReadLine();
+            return;
+            #endregion
             #region Settings Test
             Console.WriteLine(Settings.Current.Argon2Salt);
             Console.WriteLine(Settings.Current.BlockchainPath);

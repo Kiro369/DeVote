@@ -33,6 +33,11 @@ namespace DeVote.Network
                     // Reset the RN of all Nodes
                     NetworkManager.ResetRNConsensus();
 
+                    if (Choosen.Equals(Constants.MachineID))
+                    {
+                        // Add block
+                    }
+
                 }
                 else if (currentMinute == mineMinute - 1)
                 {

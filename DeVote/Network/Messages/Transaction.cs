@@ -11,7 +11,7 @@ using System.IO.Compression;
 namespace DeVote.Network.Messages
 {
     [ProtoContract(SkipConstructor = true)]
-    [Handling.NodePacketHandler(PacketTypes.Test)]
+    [Handling.NodePacketHandler(PacketTypes.Transaction)]
     class Transaction : Packet
     {
         [ProtoMember(1)] public Structures.Transaction TransactionData { get; set; }
@@ -47,8 +47,11 @@ namespace DeVote.Network.Messages
                             var hash = Argon2.ComputeHash(extractedID);
                             if (hash.Equals(TransactionData.Elector)) 
                             {
-                                VotedDLT.Current.Add(TransactionData.Elector);
+                                VotedDLT.Current.Add(TransactionData.Elector, client.MachineID);
+                                TransactionData.Confirmations++;
+                                TransactionData.Elector = client.MachineID;
                                 Blockchain.Current.Block.AddTransaction(TransactionData);
+
                                 // TODO: Send confirmation
                             }
                             else
