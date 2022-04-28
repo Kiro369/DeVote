@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Reflection;
 
 namespace DeVote.Extensions
@@ -102,7 +103,7 @@ namespace DeVote.Extensions
 
             // Iterate the Properties of the source instance and  
             // populate them from their desination counterparts  
-            PropertyInfo[] srcProps = typeSrc.GetProperties();
+            PropertyInfo[] srcProps = typeSrc.GetProperties().Where(p => !p.GetIndexParameters().Any()).ToArray();
             foreach (PropertyInfo srcProp in srcProps)
             {
                 if (!srcProp.CanRead)

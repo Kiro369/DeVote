@@ -71,9 +71,9 @@ namespace DeVote.Network
                             {
                                 packet = Cryptography.AES.Decrypt(packet); // Decrypt the packet using our AES Key
 
-                                // Our Header containing the ID at the first 2 bytes (0 and 1), and the length at the next 2 bytes (2 and 3)
-                                var id = BitConverter.ToInt16(packet, 0);
-                                var length = BitConverter.ToInt16(packet, 2);
+                                // Our Header containing the length at the first 2 bytes (0 and 1), and the ID at the next 2 bytes (2 and 3)
+                                var length = BitConverter.ToInt16(packet, 0);
+                                var id = BitConverter.ToInt16(packet, 2);
 
                                 if (packet.Length - 4 == length) // Verify that the length is accurate (we deduct header length)
                                 {

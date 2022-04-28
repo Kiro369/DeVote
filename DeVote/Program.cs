@@ -17,63 +17,63 @@ namespace DeVote
     {
         static void Main()
         {
-            #region Compression test
-            var transaction = new Network.Messages.Transaction(null);
-            var image = System.IO.File.ReadAllBytes(@"C:\Users\Kiro\Downloads\xyz.png");
-            var stopWatch = new System.Diagnostics.Stopwatch(); stopWatch.Start();
-            var compressed = transaction.Compress(image);
-            stopWatch.Stop();
-            Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
-            stopWatch.Restart();
-            transaction.Decompress(compressed, "output.jpg");
-            stopWatch.Stop();
-            Console.WriteLine($"Time to decompress: {stopWatch.ElapsedMilliseconds}");
-            Console.ReadLine();
-            return;
-            #endregion
-            #region Settings Test
-            Console.WriteLine(Settings.Current.Argon2Salt);
-            Console.WriteLine(Settings.Current.BlockchainPath);
-            Console.WriteLine(Settings.Current.VotedDLTPath);
-            Console.WriteLine(Settings.Current.PythonDLLPath);
-            Console.WriteLine(Settings.Current.Latitude);
-            Console.WriteLine(Settings.Current.Longitude);
-            Console.WriteLine(Settings.Current.BlockchainExplorerPort);
-
-            NetworkManager.SendLocation(true);
-            return;
-
-            #endregion
-
-            #region Embedding Python in .Net Test
-
-            //var testID = "1020304050";
-            //var votedDLT = new VotedDLT();
-            ////votedDLT.Add(testID);
-
-            //var voted = votedDLT.Contains(testID);
-            //var voted2 = votedDLT.Contains("5040302010");
-
-            //var test = new Network.Messages.Test(null);
-            //var packet = test.Create("Testing new packet stuff");
-
-            //var dePacket = new Network.Messages.Test(packet);
-            //dePacket.Read(null);
-            //var PythonDLLPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\python37.dll";
-            //var SitePackagesPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\Lib\site-packages";
-
-            //Recognition recognition = new Recognition();
-            //recognition.InitPythonInterpreter(PythonDLLPath, SitePackagesPath);
-            //var imgPath = @"";
-            //dynamic IDInfo = recognition.ExtractIDInfo(imgPath, "front");
-            //Console.WriteLine("IDInfo {0}",IDInfo);
-            //// reg.verifyVoter(imgPath, "front");
-            //recognition.EndPythonInterpreter();
+            //#region Compression test
+            //var transaction = new Network.Messages.Transaction(null);
+            //var image = System.IO.File.ReadAllBytes(@"C:\Users\Kiro\Downloads\xyz.png");
+            //var stopWatch = new System.Diagnostics.Stopwatch(); stopWatch.Start();
+            //var compressed = transaction.Compress(image);
+            //stopWatch.Stop();
+            //Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
+            //stopWatch.Restart();
+            //transaction.Decompress(compressed, "output.jpg");
+            //stopWatch.Stop();
+            //Console.WriteLine($"Time to decompress: {stopWatch.ElapsedMilliseconds}");
+            //Console.ReadLine();
             //return;
-            #endregion
+            //#endregion
+            //#region Settings Test
+            //Console.WriteLine(Settings.Current.Argon2Salt);
+            //Console.WriteLine(Settings.Current.BlockchainPath);
+            //Console.WriteLine(Settings.Current.VotedDLTPath);
+            //Console.WriteLine(Settings.Current.PythonDLLPath);
+            //Console.WriteLine(Settings.Current.Latitude);
+            //Console.WriteLine(Settings.Current.Longitude);
+            //Console.WriteLine(Settings.Current.BlockchainExplorerPort);
 
-            #region Test
-            #endregion
+            //NetworkManager.SendLocation(true);
+            //return;
+
+            //#endregion
+
+            //#region Embedding Python in .Net Test
+
+            ////var testID = "1020304050";
+            ////var votedDLT = new VotedDLT();
+            //////votedDLT.Add(testID);
+
+            ////var voted = votedDLT.Contains(testID);
+            ////var voted2 = votedDLT.Contains("5040302010");
+
+            ////var test = new Network.Messages.Test(null);
+            ////var packet = test.Create("Testing new packet stuff");
+
+            ////var dePacket = new Network.Messages.Test(packet);
+            ////dePacket.Read(null);
+            ////var PythonDLLPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\python37.dll";
+            ////var SitePackagesPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\Lib\site-packages";
+
+            ////Recognition recognition = new Recognition();
+            ////recognition.InitPythonInterpreter(PythonDLLPath, SitePackagesPath);
+            ////var imgPath = @"";
+            ////dynamic IDInfo = recognition.ExtractIDInfo(imgPath, "front");
+            ////Console.WriteLine("IDInfo {0}",IDInfo);
+            ////// reg.verifyVoter(imgPath, "front");
+            ////recognition.EndPythonInterpreter();
+            ////return;
+            //#endregion
+
+            //#region Test
+            //#endregion
             #region Main
             // Start the server first, so anyone can connect after we get added to the seeder
             var server = new Server(4269);
