@@ -3,6 +3,15 @@ import cv2
 import numpy as np
 from .cfg import *
 import time
+from tensorflow.keras.models import model_from_json
+
+face_detection = cv2.CascadeClassifier("../models/frontfaces.xml")
+
+with open("../models/spoofing_model.json", "r") as f:
+    loaded_model = f.read()
+    model = model_from_json(loaded_model)
+
+model.load_weights('../models/spoofing_model.h5')
 
 def get_face_encodings(frame):
     '''
@@ -87,3 +96,39 @@ def compare_faces_frame(ID_face, frame):
 def frame_contains_faces(frame):
 
     pass
+
+def isNotSpoofing(vid_path):
+    '''
+
+    :param vid_path:
+    :return:
+    '''
+    video = cv2.VideoCapture(vid_path)
+    if not video.isOpened():
+        return (False, 1)
+
+    predictions = np.empty(0)
+
+    while video.isOpened():
+        try:
+            ret, frame = video.read()
+            if ret:
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                faces = face_detection.detectMultiScale(gray, 1.3, 5)
+                for (x, y, w, h) in faces:
+                    face = frame[y - 5:y + h + 5, x - 5:x + w + 5]
+                    resized_face = cv2.resize(face, (160, 160))
+                    resized_face = resized_face.astype("float") / 255.0
+                    resized_face = np.expand_dims(resized_face, axis=0)
+                    prediction = model.predict(resized_face)[0]
+                    predictions = np.append(predictions, prediction)
+            else:
+                break
+        except cv2.error as error:
+            print("[Error]: {}".format(error))
+
+    video.release()
+    cv2.destroyAllWindows()
+    return ("True", 0) if predictions.mean() <= .4 else ("False", 0)
+
+
