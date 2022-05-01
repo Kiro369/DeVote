@@ -97,7 +97,8 @@ final Color color1=const Color(0xff26375f);
                 return Dialog(
                   elevation: 1,
                   backgroundColor: Colors.transparent,
-                  child:Container(height: MediaQuery.of(context).size.height / 2.5,
+                  child:Container(
+                      height: MediaQuery.of(context).size.height / 2.5,
                       width: MediaQuery.of(context).size.width / 3.2,
                       decoration: BoxDecoration(
                         color: Colors.yellow[700],
@@ -114,8 +115,11 @@ final Color color1=const Color(0xff26375f);
                           ),textDirection: TextDirection.rtl,),
                         ),
                       Center(
-                        child: FlatButton(color: Colors.black,onPressed: ()=> Navigator.of(context)
-                          .pop(), child: Text('موافق',style: TextStyle(color: Colors.white),)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top:14.0),
+                          child: FlatButton(color: Colors.black,onPressed: ()=> Navigator.of(context)
+                            .pop(), child: Text('موافق',style: TextStyle(color: Colors.white),)),
+                        ),
                       )
                       ],))
                 );

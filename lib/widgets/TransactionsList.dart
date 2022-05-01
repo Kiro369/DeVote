@@ -49,6 +49,7 @@ void _runFilter(String enteredKeyword) {
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: TransactionDetails(
+            block: 2,
             dateTime:dateTime ,
             hash:hash ,
             elected: elected,
@@ -110,6 +111,7 @@ void _runFilter(String enteredKeyword) {
                           .push(new MaterialPageRoute(
                         builder: (BuildContext context) =>
                         new TransactionDetails(
+                          block: 2,
                           elector: _foundsearch[index].elector,
                           elected: _foundsearch[index].elected,
                           hash: _foundsearch[index].hash,

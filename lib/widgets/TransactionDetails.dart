@@ -5,8 +5,9 @@ class TransactionDetails extends StatelessWidget {
   final String dateTime;
   final String elector;
   final String elected;
+  final int block;
 
-  const TransactionDetails({ required this.hash, required this.dateTime, required this.elector, required this.elected}) ;
+  const TransactionDetails({ required this.hash, required this.dateTime, required this.elector, required this.elected, required this.block}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ class TransactionDetails extends StatelessWidget {
             title:Text('Block:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text('1230980931',style: TextStyle(color: Colors.black),  overflow: TextOverflow.fade,
+              child: Text(block.toString(),style: TextStyle(color: Colors.black),  overflow: TextOverflow.fade,
                 softWrap: false,),
             ),
           ),

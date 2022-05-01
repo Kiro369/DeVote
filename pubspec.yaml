@@ -40,6 +40,7 @@ dependencies:
   location: ^4.2.0
   syncfusion_flutter_maps: ^19.4.47-beta
   url_launcher: ^6.0.20
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:

@@ -73,7 +73,7 @@ class PieChart extends StatelessWidget {
           ),
         ),
         Container(
-          width: MediaQuery.of(context).size.width / 4,
+          width: kIsWeb ?MediaQuery.of(context).size.width / 4:MediaQuery.of(context).size.width / 2,
           child: Column(
             children: [
               kIsWeb
