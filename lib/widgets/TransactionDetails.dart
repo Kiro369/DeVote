@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 class TransactionDetails extends StatelessWidget {
   final String hash;
-  final String dateTime;
+  final int dateTime;
   final String elector;
   final String elected;
   final int block;
@@ -41,7 +41,7 @@ class TransactionDetails extends StatelessWidget {
             title: Text('Timestamp:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
             subtitle: Padding(
               padding: const EdgeInsets.only(top:8.0),
-              child: Text(dateTime,style: TextStyle(color: Colors.black),),
+              child: Text(DateTime.fromMillisecondsSinceEpoch(dateTime).toString(),style: TextStyle(color: Colors.black),),
             ),
           ),
           Divider(

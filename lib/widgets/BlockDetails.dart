@@ -4,7 +4,7 @@ class BlockDetails extends StatelessWidget {
   final String miner;
   final  int blockHeight;
   final int transactions;
-  final String time;
+  final int time;
   final String transactionTime;
 
 
@@ -40,7 +40,7 @@ class BlockDetails extends StatelessWidget {
             title:const Text('Timestamp:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text(time,style: const TextStyle(color: Colors.black),),
+              child: Text(DateTime.fromMillisecondsSinceEpoch(time).toString(),style: const TextStyle(color: Colors.black),),
             ),
           ),
           const Divider(

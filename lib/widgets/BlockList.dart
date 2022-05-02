@@ -47,7 +47,7 @@ class _BlockListState extends State<BlockList> {
   }
 
   _buildChild(BuildContext context, String miner, int transactions,
-          int blockHeight, String time, String transactionTime) =>
+          int blockHeight, int time, String transactionTime) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.3,
           width: MediaQuery.of(context).size.width / 2.8,
@@ -202,7 +202,7 @@ class _BlockListState extends State<BlockList> {
                                           softWrap: false,
                                         ),
                                         subtitle: Text(
-                                          _foundsearch[index].time,
+                                          DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].time).toString(),
                                           style: const TextStyle(
                                               color: Colors.black45,
                                               fontSize: 10),

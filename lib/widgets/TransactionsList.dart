@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import '../models/Call_api.dart';
 import '../models/transaction.dart';
 import 'TransactionDetails.dart';
 class TransactionsList extends StatefulWidget {
@@ -12,7 +12,6 @@ _TransactionsListState createState() => _TransactionsListState();
 }
 
 class _TransactionsListState extends State<TransactionsList> {
-
   List _foundsearch=[];
 
 void _runFilter(String enteredKeyword) {
@@ -39,7 +38,7 @@ void _runFilter(String enteredKeyword) {
     _foundsearch=widget.transactions;
     super.initState();
   }
-  _buildChild(BuildContext context, String dateTime, String elector,
+  _buildChild(BuildContext context,int block,int date, String elector,
        String hash, String elected) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.15,
@@ -49,8 +48,8 @@ void _runFilter(String enteredKeyword) {
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: TransactionDetails(
-            block: 2,
-            dateTime:dateTime ,
+            block: block,
+            dateTime:date ,
             hash:hash ,
             elected: elected,
             elector: elector,
@@ -100,6 +99,7 @@ void _runFilter(String enteredKeyword) {
                               backgroundColor: Colors.transparent,
                               child: _buildChild(
                                 context,
+                                _foundsearch[index].blockheight,
                                 _foundsearch[index].dateTime,
                                 _foundsearch[index].elector,
                                 _foundsearch[index].hash,
@@ -111,7 +111,7 @@ void _runFilter(String enteredKeyword) {
                           .push(new MaterialPageRoute(
                         builder: (BuildContext context) =>
                         new TransactionDetails(
-                          block: 2,
+                          block:  _foundsearch[index].blockheight,
                           elector: _foundsearch[index].elector,
                           elected: _foundsearch[index].elected,
                           hash: _foundsearch[index].hash,
@@ -185,7 +185,7 @@ void _runFilter(String enteredKeyword) {
                                       softWrap: false,
                                     ),
                                     subtitle: Text(
-                                      _foundsearch[index].dateTime,
+                                      DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].dateTime).toString(),
                                       style: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 10),

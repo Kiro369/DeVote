@@ -11,16 +11,17 @@ class Transaction{
 }
 class Result {
   final String hash;
-  //final String dateTime;
+  final int dateTime;
   final String elector;
   final String elected;
   final int blockheight;
 
-  Result(this.hash,  this.elector, this.elected, this.blockheight);
+  Result(this.hash,this.dateTime,  this.elector, this.elected, this.blockheight);
 
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
         json['Hash'],
+        json['Date'],
         json['Elector'],
         json['Elected'],
         json['BlockHeight']);
