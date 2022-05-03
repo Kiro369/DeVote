@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'BlockDetails.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:timeago/timeago.dart' as timeago;
 
 class BlockList extends StatefulWidget {
   final List blocks;
@@ -47,7 +48,7 @@ class _BlockListState extends State<BlockList> {
   }
 
   _buildChild(BuildContext context, String miner, int transactions,
-          int blockHeight, int time, String transactionTime) =>
+          int blockHeight, int time, String merkleRoot,String hash,String prevHash) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.3,
           width: MediaQuery.of(context).size.width / 2.8,
@@ -60,7 +61,9 @@ class _BlockListState extends State<BlockList> {
             transactions: transactions,
             time: time,
             blockHeight: blockHeight,
-            transactionTime: transactionTime,
+            hash: hash,
+            merkleRoot: merkleRoot,
+            prevhash: prevHash,
           ));
 
   @override
@@ -102,7 +105,7 @@ class _BlockListState extends State<BlockList> {
             Expanded(
               child: _foundsearch.isNotEmpty
                   ? Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(15.0),
                       child: ListView.builder(
                         itemCount: _foundsearch.length,
                         itemBuilder: (context, index) => InkWell(
@@ -119,7 +122,9 @@ class _BlockListState extends State<BlockList> {
                                         _foundsearch[index].transactions,
                                         _foundsearch[index].blockHeight,
                                         _foundsearch[index].time,
-                                        _foundsearch[index].transactionTime,
+                                        _foundsearch[index].merkleRoot,
+                                        _foundsearch[index].hash,
+                                        _foundsearch[index].prevHash,
                                       ),
                                     );
                                   })
@@ -132,8 +137,10 @@ class _BlockListState extends State<BlockList> {
                                     time: _foundsearch[index].time,
                                     transactions:
                                         _foundsearch[index].transactions,
-                                    transactionTime:
-                                        _foundsearch[index].transactionTime,
+                                    merkleRoot:
+                                        _foundsearch[index].merkleRoot,
+                                        hash: _foundsearch[index].hash,
+                                        prevhash: _foundsearch[index].prevHash,
                                   ),
                                 )),
                           child: Expanded(
@@ -171,9 +178,9 @@ class _BlockListState extends State<BlockList> {
                                       children: <TextSpan>[
                                         TextSpan(
                                             text:
-                                                ' in ${_foundsearch[index].transactionTime}',
+                                                ' txns',
                                             style: const TextStyle(
-                                                color: Colors.black45,
+                                                color: Colors.blue,
                                                 fontSize: 13)),
                                       ],
                                     ),
@@ -202,7 +209,7 @@ class _BlockListState extends State<BlockList> {
                                           softWrap: false,
                                         ),
                                         subtitle: Text(
-                                          DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].time).toString(),
+                                          timeago.format(DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].time)),
                                           style: const TextStyle(
                                               color: Colors.black45,
                                               fontSize: 10),

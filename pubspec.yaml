@@ -41,6 +41,7 @@ dependencies:
   syncfusion_flutter_maps: ^19.4.47-beta
   url_launcher: ^6.0.20
   http: ^0.13.4
+  timeago: ^3.2.2
 
 dev_dependencies:
   flutter_test:

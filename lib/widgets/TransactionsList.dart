@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../models/Call_api.dart';
-import '../models/transaction.dart';
 import 'TransactionDetails.dart';
+import 'package:timeago/timeago.dart' as timeago;
 class TransactionsList extends StatefulWidget {
+
   final List transactions;
 
    TransactionsList( this.transactions);
@@ -85,7 +85,7 @@ void _runFilter(String enteredKeyword) {
             Expanded(
               child: _foundsearch.isNotEmpty
                   ? Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: ListView.builder(
                 itemCount: _foundsearch.length,
                 itemBuilder: (context, index) => Container(
@@ -185,7 +185,7 @@ void _runFilter(String enteredKeyword) {
                                       softWrap: false,
                                     ),
                                     subtitle: Text(
-                                      DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].dateTime).toString(),
+                                      timeago.format(DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].dateTime)),
                                       style: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 10),

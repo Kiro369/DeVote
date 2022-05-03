@@ -7,6 +7,7 @@ import '../models/Call_api.dart';
 import '../models/block.dart';
 import '../models/transaction.dart';
 import 'TransactionDetails.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class BlockChain extends StatefulWidget {
   const BlockChain({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _BlockChainState extends State<BlockChain> {
 
 
   _buildChild(BuildContext context, String miner, int transactions,
-          int blockHeight, int time, String transactionTime) =>
+          int blockHeight, int time,String merkleRoot,String hash,String prevHash) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.3,
           width: MediaQuery.of(context).size.width / 2.8,
@@ -49,11 +50,13 @@ class _BlockChainState extends State<BlockChain> {
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: BlockDetails(
+            hash: hash,
+            merkleRoot: merkleRoot,
+            prevhash: prevHash,
             miner: miner,
             transactions: transactions,
             time: time,
             blockHeight: blockHeight,
-            transactionTime: transactionTime,
           ));
 
   _buildtransaction(BuildContext context,int date, String elector, String hash,
@@ -170,7 +173,9 @@ class _BlockChainState extends State<BlockChain> {
                                                   snapshot.data![index].transactions,
                                                   snapshot.data![index].blockHeight,
                                                   snapshot.data![index].time,
-                                                  snapshot.data![index].transactionTime,
+                                                  snapshot.data![index].merkleRoot,
+                                                  snapshot.data![index].hash,
+                                                  snapshot.data![index].prevHash,
                                                 ),
                                               );
                                             })
@@ -184,8 +189,10 @@ class _BlockChainState extends State<BlockChain> {
                                               time: snapshot.data![index].time,
                                               transactions:
                                               snapshot.data![index].transactions,
-                                              transactionTime:
-                                              snapshot.data![index].transactionTime,
+                                              merkleRoot:
+                                              snapshot.data![index].merkleRoot,
+                                                  prevhash: snapshot.data![index].prevHash,
+                                                  hash: snapshot.data![index].hash,
                                             ),
                                           )),
                                     child: Expanded(
@@ -227,10 +234,9 @@ class _BlockChainState extends State<BlockChain> {
                                                 children: <TextSpan>[
                                                   TextSpan(
                                                       text:
-                                                          ' in ${snapshot.data?[index].transactionTime??
-                                                              'error'}',
+                                                          ' txns',
                                                       style: TextStyle(
-                                                          color: Colors.black45,
+                                                          color: Colors.blue,
                                                           fontSize: 13)),
                                                 ],
                                               ),
@@ -270,7 +276,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     softWrap: false,
                                                   ),
                                                   subtitle: Text(
-                                                    DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].time).toString(),
+                                                    timeago.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].time)),
                                                     style: TextStyle(
                                                         color: Colors.black45,
                                                         fontSize: 10),
@@ -469,7 +475,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     softWrap: false,
                                                   ),
                                                   subtitle: Text(
-                                                      DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].dateTime).toString()
+                                                    timeago.format( DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].dateTime))
                                                       ,
                                                     style: TextStyle(
                                                         color: Colors.black45,
