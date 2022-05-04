@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DeVote.Network
 {
-    class PacketsHandler
+    public class PacketsHandler
     {
         /// <summary>
         /// Queue of Packets to be Processed

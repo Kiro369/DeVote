@@ -77,5 +77,13 @@ namespace DeVote.PyRecognition
         {
             PythonEngine.Shutdown();
         }
+        public bool ContainsCard(/*object img*/)
+        {
+            return false;
+        }
+        public void PlayTTS(string text)
+        {
+
+        }
     }
 }
