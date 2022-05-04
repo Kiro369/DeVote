@@ -30,4 +30,14 @@ class CallApi{
       throw Exception('Can not load data');
     }
   }
+  Future<BlockHeight> getbyBlockHeight() async {
+    http.Response transactionFuture = await http.get(url);
+    if (transactionFuture.statusCode == 200) {
+      final jsonResponse = json.decode(transactionFuture.body);
+     BlockHeight blockHeight= new BlockHeight.fromJson(jsonResponse);
+     return blockHeight;
+    } else {
+      throw Exception('Can not load data');
+    }
+  }
 }

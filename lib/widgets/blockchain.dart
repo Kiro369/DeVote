@@ -180,9 +180,9 @@ class _BlockChainState extends State<BlockChain> {
                                               );
                                             })
                                         : Navigator.of(context)
-                                            .push(new MaterialPageRoute(
+                                            .push( MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                new BlockDetails(
+                                                 BlockDetails(
                                               blockHeight:
                                               snapshot.data![index].blockHeight,
                                               miner: snapshot.data![index].miner,

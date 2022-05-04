@@ -8,7 +8,15 @@ class Block{
     List<Results> result = list.map((i) => Results.fromJson(i)).toList();
     return Block(json['pagination'], result);
   }
-  
+}
+class BlockHeight{
+  final Results block;
+
+  BlockHeight(this.block);
+  factory BlockHeight.fromJson(Map<String, dynamic> parsedJson){
+    return BlockHeight(Results.fromJson(parsedJson['result']));
+  }
+
 }
 class Results{
 final  int blockHeight;
@@ -24,14 +32,3 @@ final String miner;
     return Results(json['Height'], json['nTx'], json['Timestamp'], json['MerkleRoot'], json['Miner'],json['Hash'],json['PrevHash']);
   }
 }
-/*ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: const Text('PrevHash:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(bottom:  8.0,top: 8.0),
-              child: Text(widget.prevhash,style: const TextStyle(color: Colors.black),),
-            ),
-          ),
-* */

@@ -2,7 +2,9 @@ import 'package:devote/models/people.dart';
 import 'package:devote/widgets/MapChart.dart';
 import 'package:devote/widgets/PieChart.dart';
 import 'package:devote/widgets/blockchain.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 import '../models/mapModel.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -24,6 +26,8 @@ class _ResultState extends State<Result> {
   late MapShapeSource _mapSource;
 final Color color2=const Color(0xffd82148);
 final Color color1=const Color(0xff26375f);
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -101,24 +105,25 @@ final Color color1=const Color(0xff26375f);
                       height: MediaQuery.of(context).size.height / 2.5,
                       width: MediaQuery.of(context).size.width / 3.2,
                       decoration: BoxDecoration(
-                        color: Colors.yellow[700],
+                        color: const Color(0xff26375f),
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),child: Column(children: [
                         Center(child: Padding(
                           padding: const EdgeInsets.all(14.0),
-                          child: Icon(Icons.warning,size: 50,),
+                          child: Icon(Icons.warning,size: 50,color:const Color(0xfff3f3f5)),
                         )),
                         Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Text('يمكنك معرفة امكان مكن الانتخابات الالكترونية من خلال تطبيقنا الخاص DeVote علي GooglePlay او AppStore',style: TextStyle(
                             fontSize: 18,
+                            color:const Color(0xfff3f3f5),
                           ),textDirection: TextDirection.rtl,),
                         ),
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top:14.0),
-                          child: FlatButton(color: Colors.black,onPressed: ()=> Navigator.of(context)
-                            .pop(), child: Text('موافق',style: TextStyle(color: Colors.white),)),
+                          child: FlatButton(color: const Color(0xfff3f3f5),onPressed: ()=> Navigator.of(context)
+                            .pop(), child: Text('موافق',style: TextStyle(color: Color(0xff26375f)),)),
                         ),
                       )
                       ],))
@@ -133,6 +138,7 @@ final Color color1=const Color(0xff26375f);
           Container(
             width: MediaQuery.of(context).size.width/2,
             child: ListView(
+
               children: [
                 const Padding(
                   padding: EdgeInsets.all(12.0),
@@ -158,7 +164,8 @@ final Color color1=const Color(0xff26375f);
             ),
           ),
         ],
-      ):ListView(
+      ):
+      ListView(
         children: [
           const Padding(
             padding: EdgeInsets.all(12.0),

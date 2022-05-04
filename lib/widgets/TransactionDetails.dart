@@ -12,6 +12,7 @@ class TransactionDetails extends StatefulWidget {
   final String elected;
   final int block;
 
+  // ignore: use_key_in_widget_constructors
   const TransactionDetails(
       {required this.hash,
       required this.dateTime,
@@ -24,20 +25,19 @@ class TransactionDetails extends StatefulWidget {
 }
 
 class _TransactionDetailsState extends State<TransactionDetails> {
-  late Future<List<Results>> blockks;
+  late Future<BlockHeight> blockks;
+
   @override
   initState() {
     super.initState();
-
-    CallApi block = CallApi(
-        Uri.https('devote-explorer-backend.herokuapp.com', 'blocks'));
-
-    blockks = block.getBlocks();
-
+print(widget.block.toString());
+    CallApi block =
+        CallApi(Uri.https('devote-explorer-backend.herokuapp.com', 'blocks/block-height/${widget.block}'));
+    blockks = block.getbyBlockHeight() ;
   }
 
-  void block(String miner,int transactions,int blockHeight,int time,String merkleRoot,String hash,String prevHash) async {
-
+  void block(String miner, int transactions, int blockHeight, int time,
+      String merkleRoot, String hash, String prevHash) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -48,7 +48,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
               time: time,
               merkleRoot: merkleRoot,
               hash: hash,
-              prevhash:prevHash)),
+              prevhash: prevHash)),
     );
   }
 
@@ -56,24 +56,24 @@ class _TransactionDetailsState extends State<TransactionDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(
+        leading: const Icon(
           Icons.arrow_back_ios_outlined,
           size: 0,
           color: Color(0xff26375f),
         ),
-        title: Text(
+        title: const Text(
           'Transaction Details',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Color(0xff26375f),
+        backgroundColor: const Color(0xff26375f),
       ),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: ListTile(
-              title: Text(
+              title: const Text(
                 'Transaction Hash:',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -82,17 +82,17 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Text(
                   widget.hash,
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             height: 2,
             color: Colors.grey,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'Timestamp:',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -101,50 +101,50 @@ class _TransactionDetailsState extends State<TransactionDetails> {
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
                 DateTime.fromMillisecondsSinceEpoch(widget.dateTime).toString(),
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             height: 2,
             color: Colors.grey,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'From:',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               widget.elector,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               overflow: TextOverflow.fade,
               softWrap: false,
             ),
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'To:',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               widget.elected,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               overflow: TextOverflow.fade,
               softWrap: false,
             ),
           ),
-          Divider(
+          const Divider(
             height: 2,
             color: Colors.grey,
           ),
-          FutureBuilder<List<Results>>(
+          FutureBuilder<BlockHeight>(
             future: blockks,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ListTile(
-                  title: Text(
+                  title: const Text(
                     'Block:',
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
@@ -152,16 +152,18 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: InkWell(
-                      onTap: () => block(snapshot.data![0].miner,
-                        snapshot.data![0].transactions,
-                        snapshot.data![0].blockHeight,
-                        snapshot.data![0].time,
-                        snapshot.data![0].merkleRoot,
-                        snapshot.data![0].hash,
-                        snapshot.data![0].prevHash,),
+                      onTap: () => block(
+                        snapshot.data!.block.miner,
+                        snapshot.data!.block.transactions,
+                        snapshot.data!.block.blockHeight,
+                        snapshot.data!.block.time,
+                        snapshot.data!.block.merkleRoot,
+                        snapshot.data!.block.hash,
+                        snapshot.data!.block.prevHash,
+                      ),
                       child: Text(
                         widget.block.toString(),
-                        style: TextStyle(color: Colors.blue),
+                        style: const TextStyle(color: Colors.blue),
                         overflow: TextOverflow.fade,
                         softWrap: false,
                       ),
@@ -169,10 +171,10 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                   ),
                 );
               } else if (snapshot.hasError) {
-                return CircularProgressIndicator(color: Colors.grey[50],);
+                return Text(snapshot.error.toString());
               } // spinner
-              return  ListTile(
-                title: Text(
+              return ListTile(
+                title: const Text(
                   'Block:',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold),
@@ -181,7 +183,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     widget.block.toString(),
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     overflow: TextOverflow.fade,
                     softWrap: false,
                   ),
@@ -191,13 +193,13 @@ class _TransactionDetailsState extends State<TransactionDetails> {
           ),
           kIsWeb
               ? Center(
-                  child: Container(
+                  child: SizedBox(
                       height: 180,
                       width: 180,
                       child: Image.asset('assets/a4.png',
                           color: const Color(0xff26375f))),
                 )
-              : Text(''),
+              : const Text(''),
         ],
       ),
     );

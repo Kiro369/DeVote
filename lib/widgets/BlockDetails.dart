@@ -3,7 +3,6 @@ import 'package:devote/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../models/block.dart';
 import 'TransactionsList.dart';
 
 class BlockDetails extends StatefulWidget {
@@ -15,6 +14,7 @@ class BlockDetails extends StatefulWidget {
   final String hash;
   final String prevhash;
 
+  // ignore: use_key_in_widget_constructors
   const BlockDetails(
       {required this.miner,
       required this.transactions,
@@ -61,7 +61,7 @@ class _BlockDetailsState extends State<BlockDetails> {
         leading: const Icon(
           Icons.arrow_back_ios_outlined,
           size: 0,
-          color: const Color(0xff26375f),
+          color: Color(0xff26375f),
         ),
         title: const Text(
           'Block Details',
@@ -73,9 +73,9 @@ class _BlockDetailsState extends State<BlockDetails> {
       body: ListView(
         children: [
           ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: const Text(
+            title: const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
                 'Block Height:',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -113,9 +113,9 @@ class _BlockDetailsState extends State<BlockDetails> {
             color: Colors.grey,
           ),
           ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: const Text(
+            title: const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
                 'MerkleRoot:',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -154,9 +154,9 @@ class _BlockDetailsState extends State<BlockDetails> {
             color: Colors.grey,
           ),
           ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: const Text(
+            title: const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
                 'Hash:',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -195,13 +195,13 @@ class _BlockDetailsState extends State<BlockDetails> {
           ),
           kIsWeb
               ? Center(
-                  child: Container(
+                  child: SizedBox(
                       height: 180,
                       width: 180,
                       child: Image.asset('assets/a4.png',
                           color: const Color(0xff26375f))),
                 )
-              : Text(''),
+              : const Text(''),
         ],
       ),
     );
