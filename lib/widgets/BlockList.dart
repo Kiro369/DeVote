@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/Call_api.dart';
+import '../models/block.dart';
 import 'BlockDetails.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:timeago/timeago.dart' as timeago;
@@ -14,19 +16,40 @@ class BlockList extends StatefulWidget {
 
 class _BlockListState extends State<BlockList> {
   List _foundsearch = [];
+  late Future<List<Results>> blockks;
+  late List blockList;
+  late Future<Block> all;
+  CallApi block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
+      'blocks'));
 
-  // final List blocks;
+  void getlist() async {
+    blockList = await blockks;
+  }
 
-  //_BlockListState(this.blocks);
+  void showmore(String prev) async {
+
+    Uri myUri = Uri.parse(prev);
+    Map<String, String> queryParameters = myUri.queryParameters;
+    setState(() {
+      block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
+          'blocks',queryParameters));
+      blockks = block.getBlocks();
+      all=block.pagination();
+      getlist();
+      _foundsearch = blockList;
+      print(prev);
+    });
+
+  }
 
   void _runFilter(String enteredKeyword) {
     List results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
 
-      results = widget.blocks;
+      results = blockList;
     } else {
-      results = widget.blocks
+      results = blockList
           .where((block) => block.blockHeight
               .toString()
               .toLowerCase()
@@ -43,12 +66,24 @@ class _BlockListState extends State<BlockList> {
 
   @override
   void initState() {
-    _foundsearch = widget.blocks;
+
+    blockks = block.getBlocks();
+    blockList = widget.blocks;
+    all=block.pagination();
+    getlist();
+    _foundsearch = blockList;
     super.initState();
   }
 
-  _buildChild(BuildContext context, String miner, int transactions,
-          int blockHeight, int time, String merkleRoot,String hash,String prevHash) =>
+  _buildChild(
+          BuildContext context,
+          String miner,
+          int transactions,
+          int blockHeight,
+          int time,
+          String merkleRoot,
+          String hash,
+          String prevHash) =>
       Container(
           height: MediaQuery.of(context).size.height / 1.3,
           width: MediaQuery.of(context).size.width / 2.8,
@@ -106,127 +141,208 @@ class _BlockListState extends State<BlockList> {
               child: _foundsearch.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: ListView.builder(
-                        itemCount: _foundsearch.length,
-                        itemBuilder: (context, index) => InkWell(
-                          onTap: () => kIsWeb
-                              ? showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                      elevation: 1,
-                                      backgroundColor: Colors.transparent,
-                                      child: _buildChild(
-                                        context,
-                                        _foundsearch[index].miner,
-                                        _foundsearch[index].transactions,
-                                        _foundsearch[index].blockHeight,
-                                        _foundsearch[index].time,
-                                        _foundsearch[index].merkleRoot,
-                                        _foundsearch[index].hash,
-                                        _foundsearch[index].prevHash,
+                      child: FutureBuilder<Block>(
+                        key: UniqueKey(),
+                        future: all,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return SingleChildScrollView(
+                              physics: ScrollPhysics(),
+                              child: Column(
+                                children: [
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    //key: UniqueKey(),
+                                    itemCount: _foundsearch.length,
+                                    itemBuilder: (context, index) => InkWell(
+                                      onTap: () => kIsWeb
+                                          ? showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  elevation: 1,
+                                                  backgroundColor: Colors.transparent,
+                                                  child: _buildChild(
+                                                    context,
+                                                    _foundsearch[index].miner,
+                                                    _foundsearch[index].transactions,
+                                                    _foundsearch[index].blockHeight,
+                                                    _foundsearch[index].time,
+                                                    _foundsearch[index].merkleRoot,
+                                                    _foundsearch[index].hash,
+                                                    _foundsearch[index].prevHash,
+                                                  ),
+                                                );
+                                              })
+                                          : Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  BlockDetails(
+                                                blockHeight:
+                                                _foundsearch[index].blockHeight,
+                                                miner: _foundsearch[index].miner,
+                                                time:  _foundsearch[index].time,
+                                                transactions:
+                                                _foundsearch[index].transactions,
+                                                merkleRoot:
+                                                _foundsearch[index].merkleRoot,
+                                                hash:  _foundsearch[index].hash,
+                                                prevhash:
+                                                _foundsearch[index].prevHash,
+                                              ),
+                                            )),
+                                      child: Expanded(
+                                        child: Column(
+                                          children: [
+                                            ListTile(
+                                              horizontalTitleGap: 3,
+                                              title: RichText(
+                                                maxLines: 1,
+                                                overflow: TextOverflow.fade,
+                                                softWrap: false,
+                                                text: TextSpan(
+                                                  text: 'Miner ',
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 13),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text:
+                                                        _foundsearch[index].miner,
+                                                        style: const TextStyle(
+                                                            color: Colors.blue,
+                                                            fontSize: 13)),
+                                                  ],
+                                                ),
+                                              ),
+                                              subtitle: RichText(
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: false,
+                                                text: TextSpan(
+                                                  text:  _foundsearch[index]
+                                                      .transactions
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: ' txns',
+                                                        style: const TextStyle(
+                                                            color: Colors.blue,
+                                                            fontSize: 13)),
+                                                  ],
+                                                ),
+                                              ),
+                                              leading: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2.4,
+                                                  child: ListTile(
+                                                    leading: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.grey[300],
+                                                      child: const Center(
+                                                          child: Text(
+                                                        'Bk',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black),
+                                                      )),
+                                                    ),
+                                                    title: Text(
+                                                      _foundsearch[index]
+                                                          .blockHeight
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                          fontSize: 12),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                    subtitle: Text(
+                                                      timeago.format(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                          _foundsearch[index]
+                                                                  .time)),
+                                                      style: const TextStyle(
+                                                          color: Colors.black45,
+                                                          fontSize: 10),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  )),
+                                            ),
+                                            const Divider(
+                                              height: 2,
+                                              color: Colors.grey,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    );
-                                  })
-                              : Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      BlockDetails(
-                                    blockHeight:
-                                        _foundsearch[index].blockHeight,
-                                    miner: _foundsearch[index].miner,
-                                    time: _foundsearch[index].time,
-                                    transactions:
-                                        _foundsearch[index].transactions,
-                                    merkleRoot:
-                                        _foundsearch[index].merkleRoot,
-                                        hash: _foundsearch[index].hash,
-                                        prevhash: _foundsearch[index].prevHash,
-                                  ),
-                                )),
-                          child: Expanded(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  horizontalTitleGap: 3,
-                                  title: RichText(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    text: TextSpan(
-                                      text: 'Miner ',
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 13),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text: _foundsearch[index].miner,
-                                            style: const TextStyle(
-                                                color: Colors.blue,
-                                                fontSize: 13)),
-                                      ],
                                     ),
                                   ),
-                                  subtitle: RichText(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                    text: TextSpan(
-                                      text: _foundsearch[index]
-                                          .transactions
-                                          .toString(),
-                                      style: const TextStyle(
-                                          color: Colors.blue, fontSize: 13),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                ' txns',
-                                            style: const TextStyle(
-                                                color: Colors.blue,
-                                                fontSize: 13)),
-                                      ],
-                                    ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: RaisedButton.icon(
+                                            onPressed: () => snapshot.data!.pagination.prev==null?null:showmore(snapshot.data!.pagination.prev),
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.all(Radius.circular(10.0))),
+                                            label: const Text(
+                                              'Back',
+                                              style: TextStyle(color: Colors.white, fontSize: 16),
+                                            ),
+                                            icon: const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                Icons.arrow_back_ios_rounded,
+                                                color: Colors.white,
+                                                size: 15,
+                                              ),
+                                            ),
+                                            textColor: Colors.white,
+                                            color: Colors.blue),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: RaisedButton.icon(
+                                            onPressed: () =>snapshot.data!.pagination.next==null?null: showmore(snapshot.data!.pagination.next),
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.all(Radius.circular(10.0))),
+                                            label: const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                Icons.navigate_next_rounded,
+                                                size: 25,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            icon: const Text(
+                                              'Next',
+                                              style: TextStyle(color: Colors.white, fontSize: 16),
+                                            ),
+                                            textColor: Colors.white,
+                                            color: Colors.blue),
+                                      ),
+                                    ],
                                   ),
-                                  leading: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          2.4,
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.grey[300],
-                                          child: const Center(
-                                              child: Text(
-                                            'Bk',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black),
-                                          )),
-                                        ),
-                                        title: Text(
-                                          _foundsearch[index]
-                                              .blockHeight
-                                              .toString(),
-                                          style: const TextStyle(fontSize: 12),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                        ),
-                                        subtitle: Text(
-                                          timeago.format(DateTime.fromMillisecondsSinceEpoch(_foundsearch[index].time)),
-                                          style: const TextStyle(
-                                              color: Colors.black45,
-                                              fontSize: 10),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                        ),
-                                      )),
-                                ),
-                                const Divider(
-                                  height: 2,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                ],
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          } // spinner
+                          return Center(child: CircularProgressIndicator());
+                        },
                       ),
                     )
                   : const Center(
@@ -236,6 +352,7 @@ class _BlockListState extends State<BlockList> {
                       ),
                     ),
             ),
+
           ],
         ),
       ),

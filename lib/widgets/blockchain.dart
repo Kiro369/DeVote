@@ -19,18 +19,23 @@ class BlockChain extends StatefulWidget {
 class _BlockChainState extends State<BlockChain> {
   late Future<List<Result>> daata;
   late Future<List<Results>> blockks;
+  late Future<Block> all_blocks;
+  late Future<Transaction> all_transactions;
   late List transactionList;
   late List blockList;
 
   @override
   initState() {
     super.initState();
+
     CallApi network = CallApi(
         Uri.https('devote-explorer-backend.herokuapp.com', 'transactions'));
     CallApi block = CallApi(
         Uri.https('devote-explorer-backend.herokuapp.com', 'blocks'));
     daata = network.getTransaction();
     blockks = block.getBlocks();
+    all_blocks=block.pagination();
+    all_transactions=network.TransactionPagination();
     getlist();
   }
 
@@ -151,8 +156,8 @@ class _BlockChainState extends State<BlockChain> {
                         color: Colors.grey,
                       ),
                       Expanded(
-                        child: FutureBuilder<List<Results>>(
-                          future: blockks,
+                        child: FutureBuilder<Block>(
+                          future: all_blocks,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return ListView.builder(
@@ -169,13 +174,13 @@ class _BlockChainState extends State<BlockChain> {
                                                     Colors.transparent,
                                                 child: _buildChild(
                                                   context,
-                                                  snapshot.data![index].miner,
-                                                  snapshot.data![index].transactions,
-                                                  snapshot.data![index].blockHeight,
-                                                  snapshot.data![index].time,
-                                                  snapshot.data![index].merkleRoot,
-                                                  snapshot.data![index].hash,
-                                                  snapshot.data![index].prevHash,
+                                                  snapshot.data!.blocks[index].miner,
+                                                  snapshot.data!.blocks[index].transactions,
+                                                  snapshot.data!.blocks[index].blockHeight,
+                                                  snapshot.data!.blocks[index].time,
+                                                  snapshot.data!.blocks[index].merkleRoot,
+                                                  snapshot.data!.blocks[index].hash,
+                                                  snapshot.data!.blocks[index].prevHash,
                                                 ),
                                               );
                                             })
@@ -184,15 +189,15 @@ class _BlockChainState extends State<BlockChain> {
                                             builder: (BuildContext context) =>
                                                  BlockDetails(
                                               blockHeight:
-                                              snapshot.data![index].blockHeight,
-                                              miner: snapshot.data![index].miner,
-                                              time: snapshot.data![index].time,
+                                              snapshot.data!.blocks[index].blockHeight,
+                                              miner: snapshot.data!.blocks[index].miner,
+                                              time: snapshot.data!.blocks[index].time,
                                               transactions:
-                                              snapshot.data![index].transactions,
+                                              snapshot.data!.blocks[index].transactions,
                                               merkleRoot:
-                                              snapshot.data![index].merkleRoot,
-                                                  prevhash: snapshot.data![index].prevHash,
-                                                  hash: snapshot.data![index].hash,
+                                              snapshot.data!.blocks[index].merkleRoot,
+                                                  prevhash: snapshot.data!.blocks[index].prevHash,
+                                                  hash: snapshot.data!.blocks[index].hash,
                                             ),
                                           )),
                                     child: Expanded(
@@ -211,7 +216,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     fontSize: 13),
                                                 children: <TextSpan>[
                                                   TextSpan(
-                                                      text: snapshot.data?[index].miner??
+                                                      text: snapshot.data?.blocks[index].miner??
                                                           'error',
                                                       style: TextStyle(
                                                           color: Colors.blue,
@@ -224,7 +229,7 @@ class _BlockChainState extends State<BlockChain> {
                                               overflow: TextOverflow.ellipsis,
                                               softWrap: false,
                                               text: TextSpan(
-                                                text: snapshot.data?[index]
+                                                text: snapshot.data?.blocks[index]
                                                     .transactions
                                                     .toString()??
                                                     'error',
@@ -264,7 +269,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     )),
                                                   ),
                                                   title: Text(
-                                                    snapshot.data?[index]
+                                                    snapshot.data?.blocks[index]
                                                         .blockHeight
                                                         .toString()??
                                                         'error',
@@ -276,7 +281,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     softWrap: false,
                                                   ),
                                                   subtitle: Text(
-                                                    timeago.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].time)),
+                                                    timeago.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data!.blocks[index].time)),
                                                     style: TextStyle(
                                                         color: Colors.black45,
                                                         fontSize: 10),
@@ -352,8 +357,8 @@ class _BlockChainState extends State<BlockChain> {
                         color: Colors.grey,
                       ),
                       Expanded(
-                        child: FutureBuilder<List<Result>>(
-                          future: daata,
+                        child: FutureBuilder<Transaction>(
+                          future: all_transactions,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return ListView.builder(
@@ -370,12 +375,12 @@ class _BlockChainState extends State<BlockChain> {
                                                     Colors.transparent,
                                                 child: _buildtransaction(
                                                   context,
-                                                   snapshot.data![index].dateTime,
-                                                  snapshot.data![index].elector,
-                                                  snapshot.data![index].hash,
-                                                  snapshot.data![index].elected,
+                                                   snapshot.data!.transaction[index].dateTime,
+                                                  snapshot.data!.transaction[index].elector,
+                                                  snapshot.data!.transaction[index].hash,
+                                                  snapshot.data!.transaction[index].elected,
                                                   snapshot
-                                                      .data![index].blockheight,
+                                                      .data!.transaction[index].blockheight,
                                                 ),
                                               );
                                             })
@@ -384,14 +389,14 @@ class _BlockChainState extends State<BlockChain> {
                                             builder: (BuildContext context) =>
                                                 new TransactionDetails(
                                               elector:
-                                                  snapshot.data![index].elector,
+                                                  snapshot.data!.transaction[index].elector,
                                               elected:
-                                                  snapshot.data![index].elected,
-                                              hash: snapshot.data![index].hash,
+                                                  snapshot.data!.transaction[index].elected,
+                                              hash: snapshot.data!.transaction[index].hash,
                                               block: snapshot
-                                                  .data![index].blockheight,
+                                                  .data!.transaction[index].blockheight,
                                               dateTime:
-                                                  snapshot.data![index].dateTime,
+                                                  snapshot.data!.transaction[index].dateTime,
                                             ),
                                           )),
                                     child: Expanded(
@@ -411,7 +416,7 @@ class _BlockChainState extends State<BlockChain> {
                                                 children: <TextSpan>[
                                                   TextSpan(
                                                       text: snapshot
-                                                              .data?[index]
+                                                              .data?.transaction[index]
                                                               .elector ??
                                                           'error',
                                                       style: TextStyle(
@@ -432,7 +437,7 @@ class _BlockChainState extends State<BlockChain> {
                                                 children: <TextSpan>[
                                                   TextSpan(
                                                       text: snapshot
-                                                              .data?[index]
+                                                              .data?.transaction[index]
                                                               .elected ??
                                                           'error',
                                                       style: TextStyle(
@@ -464,7 +469,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     )),
                                                   ),
                                                   title: Text(
-                                                    snapshot.data?[index]
+                                                    snapshot.data?.transaction[index]
                                                             .hash ??
                                                         'error',
                                                     style:
@@ -475,7 +480,7 @@ class _BlockChainState extends State<BlockChain> {
                                                     softWrap: false,
                                                   ),
                                                   subtitle: Text(
-                                                    timeago.format( DateTime.fromMillisecondsSinceEpoch(snapshot.data![index].dateTime))
+                                                    timeago.format( DateTime.fromMillisecondsSinceEpoch(snapshot.data!.transaction[index].dateTime))
                                                       ,
                                                     style: TextStyle(
                                                         color: Colors.black45,

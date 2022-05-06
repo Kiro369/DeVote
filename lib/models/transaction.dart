@@ -6,7 +6,18 @@ class Transaction{
   factory Transaction.fromJson(Map<String,dynamic> json){
     var list = json['result'] as List;
     List<Result> result = list.map((i) => Result.fromJson(i)).toList();
-    return Transaction(json['pagination'], result);
+    return Transaction(Pagination.fromJson(json['pagination']), result);
+  }
+}
+class Pagination{
+  final String next;
+  final String prev;
+  final bool more;
+  final int max;
+
+  Pagination(this.next, this.prev, this.more, this.max);
+  factory Pagination.fromJson(Map<String,dynamic> json){
+    return Pagination(json['next'], json['prev'], json['more'], json['max']);
   }
 }
 class Result {

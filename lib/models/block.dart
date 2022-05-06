@@ -1,12 +1,23 @@
 class Block{
-  final dynamic pagination;
+  final Pagination pagination;
   final List<Results> blocks;
 
   Block(this.pagination, this.blocks);
   factory Block.fromJson(Map<String,dynamic> json){
     var list = json['result'] as List;
     List<Results> result = list.map((i) => Results.fromJson(i)).toList();
-    return Block(json['pagination'], result);
+    return Block(Pagination.fromJson(json['pagination']), result);
+  }
+}
+class Pagination{
+  final String next;
+  final String prev;
+  final bool more;
+  final int max;
+
+  Pagination(this.next, this.prev, this.more, this.max);
+  factory Pagination.fromJson(Map<String,dynamic> json){
+    return Pagination(json['next'], json['prev'], json['more'], json['max']);
   }
 }
 class BlockHeight{

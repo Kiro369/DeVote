@@ -110,7 +110,8 @@ class PieChart extends StatelessWidget {
                         color: const Color(0xff26375f),
                       ),
                     ),
-              InkWell(
+              kIsWeb
+                  ? InkWell(
                 onTap: () {
                   showDialog(
                       context: context,
@@ -132,7 +133,16 @@ class PieChart extends StatelessWidget {
                     color: const Color(0xffd82148),
                   ),
                 ),
-              )
+              ):ListTile(
+                title: Text(
+                  motrsh7[1].nickname,
+                  textAlign: TextAlign.right,
+                ),
+                trailing: Icon(
+                  Icons.circle,
+                  color: const Color(0xffd82148),
+                ),
+              ),
             ],
           ),
         )
