@@ -3,6 +3,7 @@ from pytesseract import image_to_string
 import cv2
 import imutils
 import re
+import easyocr
 
 
 def id_read(img, gray=False, *, data, face):
@@ -23,21 +24,21 @@ def id_read(img, gray=False, *, data, face):
     data_coords = {"front": {"first_name": [(900, 220), (1380, 300)],
                       "full_name" : [(480, 310), (1380, 400)],
                       "address"   : [(480, 420), (1380, 570)],
-                      "ID"        : [(620, 685), (1380, 780)]},
+                      "ID"        : [(620, 685), (1380, 780)],
+                      "test"      : [(670, 120), (900, 190)]},
             "back": {"expire_date": [(450, 350), (750, 500)]}}
 
 
     for coord in data_coords[face].values():
         bi_img = cv2.rectangle(bi_img, coord[0], coord[1], (0, 0, 0), 2)
-
-
+    reader = easyocr.Reader(["ar"])
+    cv2.imshow("coord", bi_img)
     for key, val in data_coords[face].items():
         (x1, y1), (x2, y2) = val
         if key == "ID" or key == "expire_date":
             data[face][key] = "".join(image_to_string(bi_img[y1:y2, x1:x2], lang="hin").split());continue
 
         data[face][key] = re.sub('[^A-Za-zا-ي0 -9]+', '', image_to_string(bi_img[y1:y2, x1:x2], lang="ara").replace("\n", " "))
-
 
     pass
 
@@ -104,4 +105,39 @@ def ocr_id(id_path, face):
     pass
 
 def img_load(img_path):
-    return cv2.imread(img_path)
+    img = cv2.imread(img_path, 1)
+    return cv2.resize(img, (800, 600))
+
+def test_card(card):
+    image = cv2.resize(card, (1410, 900))
+
+    data_coords = {"front_test": [(670, 120), (900, 190)],
+                   "back_test" : [(750, 350), (990, 500)]}
+
+    data = {"front_test": "",
+            "back_test" : ""}
+
+    for coord in data_coords.values():
+        bi_img = cv2.rectangle(image, coord[0], coord[1], (0, 0, 0), 2)
+    reader = easyocr.Reader(["ar"])
+    cv2.imshow("coord", bi_img)
+    for key, val in data_coords.items():
+        (x1, y1), (x2, y2) = val
+        text_mat = reader.readtext(image[y1:y2, x1:x2])
+        data[key] = text_mat[0][-2] if len(text_mat) > 0 else None
+
+
+    return data
+    pass
+
+def is_front_back(img_path):
+    img = img_load(img_path)
+    cropped = id_crop(img)
+    data = [*test_card(cropped).values()]
+    if data[0] is None and data[1] is None:
+        return "None"
+    elif data[0] in "الشخصة":
+        return "Front"
+    else:
+        return "Back"
+
