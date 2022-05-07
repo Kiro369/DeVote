@@ -22,7 +22,7 @@ class _BlockListState extends State<BlockList> {
   CallApi block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
       'blocks'));
 
-  void getlist() async {
+  Future<void> getlist() async {
     blockList = await blockks;
   }
 
@@ -30,12 +30,13 @@ class _BlockListState extends State<BlockList> {
 
     Uri myUri = Uri.parse(prev);
     Map<String, String> queryParameters = myUri.queryParameters;
+    block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
+        'blocks',queryParameters));
+    blockks = block.getBlocks();
+    all=block.pagination();
+    await getlist();
     setState(() {
-      block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-          'blocks',queryParameters));
-      blockks = block.getBlocks();
-      all=block.pagination();
-      getlist();
+
       _foundsearch = blockList;
       print(prev);
     });
@@ -66,7 +67,6 @@ class _BlockListState extends State<BlockList> {
 
   @override
   void initState() {
-
     blockks = block.getBlocks();
     blockList = widget.blocks;
     all=block.pagination();

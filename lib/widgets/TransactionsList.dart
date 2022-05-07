@@ -22,19 +22,19 @@ class _TransactionsListState extends State<TransactionsList> {
   CallApi block = CallApi(
       Uri.https('devote-explorer-backend.herokuapp.com', 'transactions'));
 
-  void getlist() async {
+  Future<void> getlist() async {
     tansactionList = await trans;
   }
 
   void showmore(String prev) async {
     Uri myUri = Uri.parse(prev);
     Map<String, String> queryParameters = myUri.queryParameters;
+    block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
+        'transactions', queryParameters));
+    trans = block.getTransaction();
+    all = block.TransactionPagination();
+    await getlist();
     setState(() {
-      block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-          'transactions', queryParameters));
-      trans = block.getTransaction();
-      all = block.TransactionPagination();
-      getlist();
       _foundsearch = tansactionList;
       print(prev);
     });

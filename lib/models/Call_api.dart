@@ -20,6 +20,17 @@ class CallApi{
       throw Exception('Can not load data');
     }
   }
+  Future<List<Result>> getTransactionByBlock() async {
+    http.Response transactionFuture = await http.get(url);
+    if (transactionFuture.statusCode == 200) {
+      final jsonResponse = json.decode(transactionFuture.body);
+      TransactionBlock transacion = new TransactionBlock.fromJson(jsonResponse);
+      //Transaction.fromJson(json.decode(transactionFuture.body))
+      return transacion.transactions;
+    } else {
+      throw Exception('Can not load data');
+    }
+  }
   Future<Transaction> TransactionPagination() async {
     http.Response transactionFuture = await http.get(url);
     if (transactionFuture.statusCode == 200) {

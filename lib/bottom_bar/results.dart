@@ -5,6 +5,7 @@ import 'package:devote/widgets/blockchain.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 import '../models/mapModel.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -27,10 +28,15 @@ class _ResultState extends State<Result> {
 final Color color2=const Color(0xffd82148);
 final Color color1=const Color(0xff26375f);
 
-  final ScrollController _scrollController = ScrollController();
+  late LinkedScrollControllerGroup _controllers;
+  late ScrollController _letters;
+  late ScrollController _numbers;
 
   @override
   void initState() {
+    _controllers = LinkedScrollControllerGroup();
+    _letters = _controllers.addAndGet();
+    _numbers = _controllers.addAndGet();
     data =  <Model>[
       Model('Kafr-El-Sheikh', color1, 'كفر الشيخ'),
       Model('Al Fayyum (Fayoum)',color1, 'الفيوم'),
@@ -68,6 +74,12 @@ final Color color1=const Color(0xff26375f);
       shapeColorValueMapper: (int index) => data[index].color,
     );
     super.initState();
+  }
+  @override
+  void dispose() {
+    _letters.dispose();
+    _numbers.dispose();
+    super.dispose();
   }
 
   @override
@@ -132,38 +144,49 @@ final Color color1=const Color(0xff26375f);
              , icon: Icon(Icons.location_on,size: 30,color: Colors.black,)),
         ):Text('') ,
       ),
-      body: kIsWeb? Row(
-        children: [
-          SizedBox(width: MediaQuery.of(context).size.width/2.2,child: BlockChain()),
-          Container(
-            width: MediaQuery.of(context).size.width/2,
-            child: ListView(
-
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    'النتيجة الاجمالية',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+      body: kIsWeb? Scrollbar(
+        isAlwaysShown: true,
+        scrollbarOrientation: ScrollbarOrientation.right,
+        controller: _letters,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: Row(
+            children: [
+              SizedBox(width: MediaQuery.of(context).size.width/2.2,child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: BlockChain( _letters,),
+              )),
+              Container(
+                width: MediaQuery.of(context).size.width/2,
+                child: ListView(
+                  controller: _numbers,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        'النتيجة الاجمالية',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    PieChart(
+                      motrsh7: motrsh7en,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        'النتيجة علي الخريطة',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    MapChart(data: data, mapSource: _mapSource),
+                  ],
                 ),
-                PieChart(
-                  motrsh7: motrsh7en,
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    'النتيجة علي الخريطة',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                MapChart(data: data, mapSource: _mapSource),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ):
       ListView(
         children: [
@@ -192,7 +215,7 @@ final Color color1=const Color(0xff26375f);
 
             child: RaisedButton.icon(
               onPressed: () => Navigator.of(context).push( MaterialPageRoute(
-                  builder: (BuildContext context) =>const  BlockChain())),
+                  builder: (BuildContext context) =>  BlockChain())),
               shape:const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
               label:const Text(

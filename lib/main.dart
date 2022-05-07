@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    //  scrollBehavior: MaterialScrollBehavior().copyWith(
-      //  dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},),
+      //scrollBehavior: MaterialScrollBehavior().copyWith(
+        //dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},),
+
       title: 'DeVote',
       home: kIsWeb?Result():Bottom_bar(),
       debugShowCheckedModeBanner: false,

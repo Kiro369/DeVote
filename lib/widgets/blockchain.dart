@@ -10,7 +10,8 @@ import 'TransactionDetails.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class BlockChain extends StatefulWidget {
-  const BlockChain({Key? key}) : super(key: key);
+    final ScrollController? scrollController;
+  BlockChain( [this.scrollController]);
 
   @override
   _BlockChainState createState() => _BlockChainState();
@@ -86,24 +87,7 @@ class _BlockChainState extends State<BlockChain> {
     return Scaffold(
         backgroundColor: kIsWeb ? Colors.white : Colors.grey[50],
         appBar: kIsWeb
-            ? AppBar(
-                leading: const Icon(Icons.arrow_back, color: Colors.white),
-                centerTitle: true,
-                elevation: 0,
-                backgroundColor: Colors.white,
-                title: Column(children: [
-                  const Text(
-                    "متابعة العملية الانتخابية",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  GestureDetector(
-                    child: const Text(
-                      'BlockChain Explorer',
-                      style: TextStyle(fontSize: 12, color: Colors.black45),
-                    ),
-                  )
-                ]),
-              )
+            ? null
             : AppBar(
                 actions: const [
                   Padding(
@@ -131,7 +115,26 @@ class _BlockChainState extends State<BlockChain> {
                 ]),
               ),
         body: ListView(
+          controller: kIsWeb ? widget.scrollController:ScrollController(),
           children: [
+            kIsWeb?
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(children: [
+                  const Text(
+                    "متابعة العملية الانتخابية",
+                    style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    child: const Text(
+                      'BlockChain Explorer',
+                      style: TextStyle(fontSize: 13, color: Colors.black45),
+                    ),
+                  )
+                ]),
+              )
+            ):Text('',style: TextStyle(fontSize: 0),),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

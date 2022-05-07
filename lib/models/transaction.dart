@@ -9,6 +9,17 @@ class Transaction{
     return Transaction(Pagination.fromJson(json['pagination']), result);
   }
 }
+class TransactionBlock {
+  final List<Result> transactions;
+
+  TransactionBlock(this.transactions);
+
+  factory TransactionBlock.fromJson(Map<String, dynamic> json){
+    var list = json['result'] as List;
+    List<Result> result = list.map((i) => Result.fromJson(i)).toList();
+    return TransactionBlock(result);
+  }
+}
 class Pagination{
   final String next;
   final String prev;
