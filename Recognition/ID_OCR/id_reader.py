@@ -24,15 +24,15 @@ def id_read(img, gray=False, *, data, face):
     data_coords = {"front": {"first_name": [(900, 220), (1380, 300)],
                       "full_name" : [(480, 310), (1380, 400)],
                       "address"   : [(480, 420), (1380, 570)],
-                      "ID"        : [(620, 685), (1380, 780)],
-                      "test"      : [(670, 120), (900, 190)]},
+                      "ID"        : [(620, 685), (1380, 780)]},
             "back": {"expire_date": [(450, 350), (750, 500)]}}
 
-
+    '''
     for coord in data_coords[face].values():
         bi_img = cv2.rectangle(bi_img, coord[0], coord[1], (0, 0, 0), 2)
-    reader = easyocr.Reader(["ar"])
+    
     cv2.imshow("coord", bi_img)
+    '''
     for key, val in data_coords[face].items():
         (x1, y1), (x2, y2) = val
         if key == "ID" or key == "expire_date":
@@ -117,10 +117,8 @@ def test_card(card):
     data = {"front_test": "",
             "back_test" : ""}
 
-    for coord in data_coords.values():
-        bi_img = cv2.rectangle(image, coord[0], coord[1], (0, 0, 0), 2)
+
     reader = easyocr.Reader(["ar"])
-    cv2.imshow("coord", bi_img)
     for key, val in data_coords.items():
         (x1, y1), (x2, y2) = val
         text_mat = reader.readtext(image[y1:y2, x1:x2])
