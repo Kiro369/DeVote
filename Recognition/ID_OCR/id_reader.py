@@ -4,6 +4,7 @@ import cv2
 import imutils
 import re
 import easyocr
+from difflib import SequenceMatcher
 
 
 def id_read(img, gray=False, *, data, face):
@@ -134,8 +135,17 @@ def is_front_back(img_path):
     data = [*test_card(cropped).values()]
     if data[0] is None and data[1] is None:
         return "None"
-    elif data[0] in "الشخصة":
+    elif SequenceMatcher(None, data[0], "الشخصية").ratio() >= .60:
         return "Front"
-    else:
+    elif False:
+        """call method for checking barcode"""
         return "Back"
+    else:
+        return "None"
 
+
+def is_there_card(img_path):
+    img = img_load(img_path)
+    test_cropped = np.array(id_crop(img).shape[:2]) >= 50
+    return test_cropped.all()
+    pass
