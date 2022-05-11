@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.IO;
+using System.Diagnostics;
 
 namespace DeVote
 {
@@ -45,7 +47,7 @@ namespace DeVote
 
             //#endregion
 
-            //#region Embedding Python in .Net Test
+            #region Embedding Python in .Net Test
 
             ////var testID = "1020304050";
             ////var votedDLT = new VotedDLT();
@@ -59,18 +61,48 @@ namespace DeVote
 
             ////var dePacket = new Network.Messages.Test(packet);
             ////dePacket.Read(null);
-            ////var PythonDLLPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\python37.dll";
-            ////var SitePackagesPath = @"C:\Users\Robot\AppData\Local\Programs\Python\Python37\Lib\site-packages";
 
-            ////Recognition recognition = new Recognition();
-            ////recognition.InitPythonInterpreter(PythonDLLPath, SitePackagesPath);
-            ////var imgPath = @"";
-            ////dynamic IDInfo = recognition.ExtractIDInfo(imgPath, "front");
-            ////Console.WriteLine("IDInfo {0}",IDInfo);
-            ////// reg.verifyVoter(imgPath, "front");
+            var imgPath = @"M:\GradutaionProject\Backend\front.jpg";
+            dynamic IDInfo = Recognition.Current.ExtractIDInfo(imgPath, "front");
+            Console.WriteLine($"IDInfo {IDInfo}");
+
+
+            string cardsDirectory = @"M:\GradutaionProject\barcode Test\back set\cards";
+            string[] cardImages = Directory.GetFiles(cardsDirectory);
+            foreach (string cardImage in cardImages)
+            {
+                Console.WriteLine($"Image: {cardImage}");
+                dynamic isCardPresent = Recognition.Current.ContainsCard(cardImage);
+                Console.WriteLine($"isCardPresent {isCardPresent}");
+            }
+
+            return;
+
+            string backDirectory = @"M:\GradutaionProject\barcode Test\back set\compressed-full-back";
+            string[] backImages = Directory.GetFiles(backDirectory);
+            foreach (string image in backImages)
+            {
+                Console.WriteLine($"Image: {image}");
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                bool isIdSideBackAPI = Recognition.Current.IsIdSideABackAPI(image);
+                stopWatch.Stop();
+
+                long ms = stopWatch.ElapsedMilliseconds;
+                Console.WriteLine($"Sending and getting respone took {ms}ms - {ms / 1000}s");
+                Console.WriteLine($"isIdSideBack: {isIdSideBackAPI}\n");
+            }
+
+            string[] framePaths = { @"M:\GradutaionProject\Backend\frame1.jpg", @"M:\GradutaionProject\Backend\frame2.jpg" };
+            for (int i = 0; i < framePaths.Length; i++)
+            {
+                bool isVerified = Recognition.Current.VerifyVoter(imgPath, framePaths[i]);
+                Console.WriteLine($"is frame {i} Verified ? {isVerified}");
+            }
+
             ////recognition.EndPythonInterpreter();
-            ////return;
-            //#endregion
+            return;
+            #endregion
 
             //#region Test
             //#endregion

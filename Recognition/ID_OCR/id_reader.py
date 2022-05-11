@@ -146,6 +146,10 @@ def is_front_back(img_path):
 
 def is_there_card(img_path):
     img = img_load(img_path)
-    test_cropped = np.array(id_crop(img).shape[:2]) >= 50
-    return test_cropped.all()
+    id = id_crop(img)
+    if(id is not None):
+      test_cropped = np.array(id.shape[:2]) >= 50
+      return test_cropped.all()
+    else:
+        return False
     pass

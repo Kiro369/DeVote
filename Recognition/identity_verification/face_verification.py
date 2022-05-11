@@ -5,13 +5,19 @@ from .cfg import *
 import time
 from tensorflow.keras.models import model_from_json
 
-face_detection = cv2.CascadeClassifier("../models/frontfaces.xml")
+from os import path
+import os
+# use the absolute directory path to avoid errors during execution.   
+dirPath = path.dirname(path.dirname(__file__))
+#print("dirPath", dirPath)
 
-with open("../models/spoofing_model.json", "r") as f:
+face_detection = cv2.CascadeClassifier(dirPath+"/models/frontfaces.xml")
+
+with open(dirPath+"/models/spoofing_model.json", "r") as f:
     loaded_model = f.read()
     model = model_from_json(loaded_model)
 
-model.load_weights('../models/spoofing_model.h5')
+model.load_weights(dirPath+'/models/spoofing_model.h5')
 
 def get_face_encodings(frame):
     '''

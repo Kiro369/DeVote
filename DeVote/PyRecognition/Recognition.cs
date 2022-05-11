@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using Python.Runtime;
 using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
 
 /**
  IronPython works only with pure python *.py modules, it does not support C Extension *.pyd modules.
@@ -54,9 +56,14 @@ namespace DeVote.PyRecognition
 
             var stopwatch = Stopwatch.StartNew();
             ocrModule = Py.Import("ID_OCR");
+            stopwatch.Stop();
+            Console.WriteLine($"Importing ocr module took { stopwatch.ElapsedMilliseconds } ms ");
+            stopwatch.Restart();
+
+            var stopwatch2 = Stopwatch.StartNew();
             faceVerificationModule = Py.Import("identity_verification");
             stopwatch.Stop();
-            Console.WriteLine($"Importing two modules took { stopwatch.ElapsedMilliseconds / 1024.0 } s ");
+            Console.WriteLine($"Importing verification module took { stopwatch.ElapsedMilliseconds } ms ");
             Console.WriteLine("Python runtime is initialized");
         }
 
@@ -65,21 +72,57 @@ namespace DeVote.PyRecognition
             var stopwatch = Stopwatch.StartNew();
             dynamic info = ocrModule.ocr_id(idpath,face);
             stopwatch.Stop();
-            Console.WriteLine($"Extracting IDInfo took { stopwatch.ElapsedMilliseconds / 1024.0 } s ");
+            Console.WriteLine($"Extracting IDInfo took { stopwatch.ElapsedMilliseconds } ms ");
             return info;
         }
 
         public bool VerifyVoter(string idPath, string voterImage)
         {
-            return faceVerificationModule.verify_id_frame(idPath, voterImage);
+            var stopwatch = Stopwatch.StartNew();
+            bool isVerified = faceVerificationModule.verify_id_frame(idPath, voterImage);
+            stopwatch.Stop();
+            Console.WriteLine($"Verifying a voter's frame against ID took { stopwatch.ElapsedMilliseconds } ms ");
+            return isVerified;
         }
+        
+        public bool IsIdSideABackAPI(string idPath)
+        {
+            bool isSideABack = false;
+            var multiForm = new MultipartFormDataContent();
+            multiForm.Add(new StringContent("Pdf417"), "types");
+            multiForm.Add(new StringContent("type,length"), "fields");
+            FileStream fs = File.OpenRead(idPath);
+            multiForm.Add(new StreamContent(fs), "file", Path.GetFileName(idPath));
+            var url = "https://wabr.inliteresearch.com/barcodes";
+            using var client = new HttpClient();
+            var response = client.PostAsync(url, multiForm).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Request is sent successfully");
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                JObject responseObj = JObject.Parse(responseString);
+                var Barcodes = responseObj.SelectToken("Barcodes[0]");
+                if (Barcodes != null)
+                {
+                    Console.WriteLine($"Barcodes {Barcodes}");
+                    isSideABack = true;
+                }
+                else
+                    Console.WriteLine($"No Barcode of type Pdf417 detected {Barcodes}");
+            }
+            else
+                Console.WriteLine($"Could not sent the Request");
+            return isSideABack;
+        }
+
         public void EndPythonInterpreter()
         {
             PythonEngine.Shutdown();
         }
-        public bool ContainsCard(/*object img*/)
+        public dynamic ContainsCard(string imagePath) /*object img*/
         {
-            return false;
+            dynamic isCardPresent = ocrModule.is_there_card(imagePath);
+            return isCardPresent;
         }
         public void PlayTTS(string text)
         {
