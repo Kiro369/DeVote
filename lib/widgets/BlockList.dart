@@ -75,31 +75,7 @@ class _BlockListState extends State<BlockList> {
     super.initState();
   }
 
-  _buildChild(
-          BuildContext context,
-          String miner,
-          int transactions,
-          int blockHeight,
-          int time,
-          String merkleRoot,
-          String hash,
-          String prevHash) =>
-      Container(
-          height: MediaQuery.of(context).size.height / 1.3,
-          width: MediaQuery.of(context).size.width / 2.8,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          child: BlockDetails(
-            miner: miner,
-            transactions: transactions,
-            time: time,
-            blockHeight: blockHeight,
-            hash: hash,
-            merkleRoot: merkleRoot,
-            prevhash: prevHash,
-          ));
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,26 +132,7 @@ class _BlockListState extends State<BlockList> {
                                     //key: UniqueKey(),
                                     itemCount: _foundsearch.length,
                                     itemBuilder: (context, index) => InkWell(
-                                      onTap: () => kIsWeb
-                                          ? showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return Dialog(
-                                                  elevation: 1,
-                                                  backgroundColor: Colors.transparent,
-                                                  child: _buildChild(
-                                                    context,
-                                                    _foundsearch[index].miner,
-                                                    _foundsearch[index].transactions,
-                                                    _foundsearch[index].blockHeight,
-                                                    _foundsearch[index].time,
-                                                    _foundsearch[index].merkleRoot,
-                                                    _foundsearch[index].hash,
-                                                    _foundsearch[index].prevHash,
-                                                  ),
-                                                );
-                                              })
-                                          : Navigator.of(context)
+                                      onTap: () =>Navigator.of(context)
                                               .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   BlockDetails(
@@ -192,97 +149,95 @@ class _BlockListState extends State<BlockList> {
                                                 _foundsearch[index].prevHash,
                                               ),
                                             )),
-                                      child: Expanded(
-                                        child: Column(
-                                          children: [
-                                            ListTile(
-                                              horizontalTitleGap: 3,
-                                              title: RichText(
-                                                maxLines: 1,
-                                                overflow: TextOverflow.fade,
-                                                softWrap: false,
-                                                text: TextSpan(
-                                                  text: 'Miner ',
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 13),
-                                                  children: <TextSpan>[
-                                                    TextSpan(
-                                                        text:
-                                                        _foundsearch[index].miner,
-                                                        style: const TextStyle(
-                                                            color: Colors.blue,
-                                                            fontSize: 13)),
-                                                  ],
-                                                ),
-                                              ),
-                                              subtitle: RichText(
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                softWrap: false,
-                                                text: TextSpan(
-                                                  text:  _foundsearch[index]
-                                                      .transactions
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 13),
-                                                  children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: ' txns',
-                                                        style: const TextStyle(
-                                                            color: Colors.blue,
-                                                            fontSize: 13)),
-                                                  ],
-                                                ),
-                                              ),
-                                              leading: Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      2.4,
-                                                  child: ListTile(
-                                                    leading: CircleAvatar(
-                                                      backgroundColor:
-                                                          Colors.grey[300],
-                                                      child: const Center(
-                                                          child: Text(
-                                                        'Bk',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.black),
-                                                      )),
-                                                    ),
-                                                    title: Text(
-                                                      _foundsearch[index]
-                                                          .blockHeight
-                                                          .toString(),
+                                      child: Column(
+                                        children: [
+                                          ListTile(
+                                            horizontalTitleGap: 3,
+                                            title: RichText(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.fade,
+                                              softWrap: false,
+                                              text: TextSpan(
+                                                text: 'Miner ',
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 13),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                      _foundsearch[index].miner,
                                                       style: const TextStyle(
-                                                          fontSize: 12),
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                    ),
-                                                    subtitle: Text(
-                                                      timeago.format(DateTime
-                                                          .fromMillisecondsSinceEpoch(
-                                                          _foundsearch[index]
-                                                                  .time)),
+                                                          color: Colors.blue,
+                                                          fontSize: 13)),
+                                                ],
+                                              ),
+                                            ),
+                                            subtitle: RichText(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              text: TextSpan(
+                                                text:  _foundsearch[index]
+                                                    .transactions
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 13),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text: ' txns',
                                                       style: const TextStyle(
-                                                          color: Colors.black45,
-                                                          fontSize: 10),
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                    ),
-                                                  )),
+                                                          color: Colors.blue,
+                                                          fontSize: 13)),
+                                                ],
+                                              ),
                                             ),
-                                            const Divider(
-                                              height: 2,
-                                              color: Colors.grey,
-                                            ),
-                                          ],
-                                        ),
+                                            leading: Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2.4,
+                                                child: ListTile(
+                                                  leading: CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.grey[300],
+                                                    child: const Center(
+                                                        child: Text(
+                                                      'Bk',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black),
+                                                    )),
+                                                  ),
+                                                  title: Text(
+                                                    _foundsearch[index]
+                                                        .blockHeight
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        fontSize: 12),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                  ),
+                                                  subtitle: Text(
+                                                    timeago.format(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                        _foundsearch[index]
+                                                                .time)),
+                                                    style: const TextStyle(
+                                                        color: Colors.black45,
+                                                        fontSize: 10),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                  ),
+                                                )),
+                                          ),
+                                          const Divider(
+                                            height: 2,
+                                            color: Colors.grey,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),

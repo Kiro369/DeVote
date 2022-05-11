@@ -70,22 +70,7 @@ class _TransactionsListState extends State<TransactionsList> {
     super.initState();
   }
 
-  _buildChild(BuildContext context, int block, int date, String elector,
-          String hash, String elected) =>
-      Container(
-          height: MediaQuery.of(context).size.height / 1.15,
-          width: MediaQuery.of(context).size.width / 2.8,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          child: TransactionDetails(
-            block: block,
-            dateTime: date,
-            hash: hash,
-            elected: elected,
-            elector: elector,
-          ));
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,29 +121,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                     itemCount: _foundsearch.length,
                                     itemBuilder: (context, index) => Container(
                                       child: InkWell(
-                                        onTap: () => kIsWeb
-                                            ? showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return Dialog(
-                                                    elevation: 1,
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    child: _buildChild(
-                                                      context,
-                                                      _foundsearch[index]
-                                                          .blockheight,
-                                                      _foundsearch[index]
-                                                          .dateTime,
-                                                      _foundsearch[index]
-                                                          .elector,
-                                                      _foundsearch[index].hash,
-                                                      _foundsearch[index]
-                                                          .elected,
-                                                    ),
-                                                  );
-                                                })
-                                            : Navigator.of(context)
+                                        onTap: () => Navigator.of(context)
                                                 .push(new MaterialPageRoute(
                                                 builder:
                                                     (BuildContext context) =>
@@ -175,106 +138,104 @@ class _TransactionsListState extends State<TransactionsList> {
                                                       .dateTime,
                                                 ),
                                               )),
-                                        child: Expanded(
-                                          child: Column(
-                                            children: [
-                                              ListTile(
-                                                horizontalTitleGap: 3,
-                                                title: RichText(
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.fade,
-                                                  softWrap: false,
-                                                  text: TextSpan(
-                                                    text: 'From ',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 13),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                          text: _foundsearch[
-                                                                  index]
-                                                              .elector,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.blue,
-                                                              fontSize: 13)),
-                                                    ],
-                                                  ),
-                                                ),
-                                                subtitle: RichText(
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                  text: TextSpan(
-                                                    text: 'To ',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 13),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                          text: _foundsearch[
-                                                                  index]
-                                                              .elected,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.blue,
-                                                              fontSize: 13)),
-                                                    ],
-                                                  ),
-                                                ),
-                                                leading: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2.4,
-                                                    child: ListTile(
-                                                      leading: CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.grey[300],
-                                                        child: Center(
-                                                            child: Text(
-                                                          'Tx',
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.black),
-                                                        )),
-                                                      ),
-                                                      title: Text(
-                                                        _foundsearch[index]
-                                                            .hash,
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        softWrap: false,
-                                                      ),
-                                                      subtitle: Text(
-                                                        timeago.format(DateTime
-                                                            .fromMillisecondsSinceEpoch(
-                                                                _foundsearch[
-                                                                        index]
-                                                                    .dateTime)),
+                                        child: Column(
+                                          children: [
+                                            ListTile(
+                                              horizontalTitleGap: 3,
+                                              title: RichText(
+                                                maxLines: 1,
+                                                overflow: TextOverflow.fade,
+                                                softWrap: false,
+                                                text: TextSpan(
+                                                  text: 'From ',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 13),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: _foundsearch[
+                                                                index]
+                                                            .elector,
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.black45,
-                                                            fontSize: 10),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        softWrap: false,
-                                                      ),
-                                                    )),
+                                                                Colors.blue,
+                                                            fontSize: 13)),
+                                                  ],
+                                                ),
                                               ),
-                                              Divider(
-                                                height: 2,
-                                                color: Colors.grey,
+                                              subtitle: RichText(
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                softWrap: false,
+                                                text: TextSpan(
+                                                  text: 'To ',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 13),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: _foundsearch[
+                                                                index]
+                                                            .elected,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.blue,
+                                                            fontSize: 13)),
+                                                  ],
+                                                ),
                                               ),
-                                            ],
-                                          ),
+                                              leading: Container(
+                                                  width:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2.4,
+                                                  child: ListTile(
+                                                    leading: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.grey[300],
+                                                      child: Center(
+                                                          child: Text(
+                                                        'Tx',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.black),
+                                                      )),
+                                                    ),
+                                                    title: Text(
+                                                      _foundsearch[index]
+                                                          .hash,
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                    subtitle: Text(
+                                                      timeago.format(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                              _foundsearch[
+                                                                      index]
+                                                                  .dateTime)),
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black45,
+                                                          fontSize: 10),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  )),
+                                            ),
+                                            Divider(
+                                              height: 2,
+                                              color: Colors.grey,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),

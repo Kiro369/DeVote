@@ -55,6 +55,7 @@ print(widget.block.toString());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: const Icon(
           Icons.arrow_back_ios_outlined,
@@ -68,7 +69,144 @@ print(widget.block.toString());
         centerTitle: true,
         backgroundColor: const Color(0xff26375f),
       ),
-      body: ListView(
+      body: kIsWeb? Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width/1.5,
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: ListTile(
+                      title: const Text(
+                        'Transaction Hash:',
+                        style:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: Text(
+                          widget.hash,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  ListTile(
+                    title: const Text(
+                      'Timestamp:',
+                      style:
+                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        DateTime.fromMillisecondsSinceEpoch(widget.dateTime).toString(),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+
+                  ListTile(
+                    title: const Text(
+                      'From:',
+                      style:
+                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      widget.elector,
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text(
+                      'To:',
+                      style:
+                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      widget.elected,
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                    ),
+                  ),
+                  FutureBuilder<BlockHeight>(
+                    future: blockks,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListTile(
+                          title: const Text(
+                            'Block:',
+                            style: TextStyle(
+                                color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: InkWell(
+                              onTap: () => block(
+                                snapshot.data!.block.miner,
+                                snapshot.data!.block.transactions,
+                                snapshot.data!.block.blockHeight,
+                                snapshot.data!.block.time,
+                                snapshot.data!.block.merkleRoot,
+                                snapshot.data!.block.hash,
+                                snapshot.data!.block.prevHash,
+                              ),
+                              child: Text(
+                                widget.block.toString(),
+                                style: const TextStyle(color: Colors.blue),
+                                overflow: TextOverflow.fade,
+                                softWrap: false,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      } // spinner
+                      return ListTile(
+                        title: const Text(
+                          'Block:',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            widget.block.toString(),
+                            style: const TextStyle(color: Colors.black),
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width/3.5,
+            child: Column(
+              children: [
+                Container(
+                    height: 300,
+                    width: 300,
+                    child: Image.asset('assets/a4.png',
+                        color: const Color(0xff26375f))),
+              ],
+            ),
+          )
+        ],
+      ):
+      ListView(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
