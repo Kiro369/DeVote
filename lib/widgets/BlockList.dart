@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/Call_api.dart';
 import '../models/block.dart';
 import 'BlockDetails.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:timeago/timeago.dart' as timeago;
 
 class BlockList extends StatefulWidget {

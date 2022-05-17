@@ -17,7 +17,7 @@ class Pagination{
 
   Pagination(this.next, this.prev, this.more, this.max);
   factory Pagination.fromJson(Map<String,dynamic> json){
-    return Pagination(json['next'], json['prev'], json['more'], json['max']);
+    return Pagination(json['next']??'', json['prev']??'', json['more']??'', json['max']??'');
   }
 }
 class BlockHeight{
@@ -40,6 +40,6 @@ final String miner;
 
   Results(this.blockHeight, this.transactions, this.time, this.merkleRoot, this.miner, this.hash, this.prevHash);
   factory Results.fromJson(Map<String,dynamic> json){
-    return Results(json['Height'], json['nTx'], json['Timestamp'], json['MerkleRoot'], json['Miner'],json['Hash'],json['PrevHash']);
+    return Results(json['Height']??'', json['nTx']??'', json['Timestamp']??'', json['MerkleRoot']??'', json['Miner']??'',json['Hash']??'',json['PrevHash']??'');
   }
 }

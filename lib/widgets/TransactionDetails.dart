@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Call_api.dart';
+import 'blockchain.dart';
 
 class TransactionDetails extends StatefulWidget {
   final String hash;
@@ -35,10 +36,14 @@ print(widget.block.toString());
         CallApi(Uri.https('devote-explorer-backend.herokuapp.com', 'blocks/block-height/${widget.block}'));
     blockks = block.getbyBlockHeight() ;
   }
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+
 
   void block(String miner, int transactions, int blockHeight, int time,
       String merkleRoot, String hash, String prevHash) async {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (context) => BlockDetails(
@@ -69,7 +74,7 @@ print(widget.block.toString());
         centerTitle: true,
         backgroundColor: const Color(0xff26375f),
       ),
-      body: kIsWeb? Row(
+      body: kIsWeb&&isLargeScreen(context)? Row(
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -148,7 +153,7 @@ print(widget.block.toString());
                           ),
                           subtitle: Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () => block(
                                 snapshot.data!.block.miner,
                                 snapshot.data!.block.transactions,
@@ -329,15 +334,6 @@ print(widget.block.toString());
               );
             },
           ),
-          kIsWeb
-              ? Center(
-                  child: SizedBox(
-                      height: 180,
-                      width: 180,
-                      child: Image.asset('assets/a4.png',
-                          color: const Color(0xff26375f))),
-                )
-              : const Text(''),
         ],
       ),
     );

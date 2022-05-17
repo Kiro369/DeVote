@@ -11,6 +11,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class BlockChain extends StatefulWidget {
     final ScrollController? scrollController;
+    static String id ='blockChain';
   BlockChain( [this.scrollController]);
 
   @override
@@ -45,13 +46,16 @@ class _BlockChainState extends State<BlockChain> {
     blockList = await blockks;
   }
 
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: kIsWeb ? Colors.white : Colors.grey[50],
-        appBar: kIsWeb
+        appBar: kIsWeb&&isLargeScreen(context)
             ? null
             : AppBar(
                 actions: const [
@@ -63,6 +67,7 @@ class _BlockChainState extends State<BlockChain> {
                 ],
                 leading: const Icon(
                   Icons.arrow_back_ios_outlined,
+                  color: const Color(0xff26375f),
                   size: 0,
                 ),
                 centerTitle: true,
@@ -80,9 +85,9 @@ class _BlockChainState extends State<BlockChain> {
                 ]),
               ),
         body: ListView(
-          controller: kIsWeb ? widget.scrollController:ScrollController(),
+          controller: kIsWeb&&isLargeScreen(context) ? widget.scrollController:ScrollController(),
           children: [
-            kIsWeb?
+            kIsWeb&&isLargeScreen(context)?
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(children: [
@@ -266,7 +271,7 @@ class _BlockChainState extends State<BlockChain> {
                             style:
                                 TextStyle(color: Colors.black, fontSize: 14),
                           ),
-                          onPressed: () => Navigator.of(context).push(
+                          onPressed: () =>blockList==null?null: Navigator.of(context).push(
                               new MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       new BlockList(blockList))),
@@ -444,7 +449,7 @@ class _BlockChainState extends State<BlockChain> {
                           'View all transactions',
                           style: TextStyle(color: Colors.black, fontSize: 14),
                         ),
-                        onPressed: () => Navigator.of(context).push(
+                        onPressed: () => transactionList==null?null:Navigator.of(context).push(
                             new MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     new TransactionsList(transactionList))),

@@ -7,6 +7,12 @@ class InfoPage extends StatelessWidget {
   final int index;
 
   const InfoPage({required this.motrsh7e, required this.index});
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+  static bool isSmallScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width < 1000;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +26,8 @@ class InfoPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        width: MediaQuery.of(context).size.width / 9,
-                        height: MediaQuery.of(context).size.width / 9,
+                        width: isSmallScreen(context)?MediaQuery.of(context).size.width / 3.5:MediaQuery.of(context).size.width / 9,
+                        height:isSmallScreen(context)?MediaQuery.of(context).size.width / 4: MediaQuery.of(context).size.width / 9,
                         child: CircleAvatar(
                             backgroundColor: Colors.white,
                             backgroundImage:

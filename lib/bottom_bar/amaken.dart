@@ -11,9 +11,9 @@ class Amaken extends StatefulWidget {
 }
 
 class _AmakenState extends State<Amaken> {
+  bool _mapLoading = true;
 
-  late LatLng location ;
- // late BitmapDescriptor icon;
+
 
   final Set<Marker> markers = new Set(); //markers for google map
   static const LatLng showLocation = const LatLng(30.033333, 31.233334);
@@ -25,14 +25,6 @@ class _AmakenState extends State<Amaken> {
    {'name':'Giza ','location':LatLng(	30.013056,	31.208853)},
    {'name':'Alex ','location':LatLng(31.205753	,29.924526)},
   ];
- /* getIcons() async {
-    var icon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 3.2),
-        "assets/images/markeruser.png");
-    setState(() {
-      this.icon = icon;
-    });
-  }*/
 
   Set<Marker> getmarkers() { //markers to place on map
     for(var i=0;i<locations.length;i++){
@@ -54,11 +46,13 @@ class _AmakenState extends State<Amaken> {
   @override
   void initState() {
     super.initState();
-    location= LatLng(30.286596, 31.740078);
+    //location= LatLng(30.286596, 31.740078);
     //getIcons();
   }
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -96,25 +90,37 @@ class _AmakenState extends State<Amaken> {
           ),
         ),
     ),
-        body: Column(
-            children: [
-           //   FlatButton(onPressed: _getlocation,child: Text('Current Location'),),
-              location ==null? Center(child: Text('Wait to get your location !'))
-              : Center(
-                         child: Container(
-                           height: MediaQuery.of(context).size.height*0.76,
+        body: Container(
+          height: size.height,
+          width: size.width,
+          child: Stack(
+              children: [
+                Center(
                            child: GoogleMap(
                              markers: getmarkers(),
                              myLocationButtonEnabled: true,
                               myLocationEnabled: true,
-                   // onMapCreated: _onMapCreated,
-                    initialCameraPosition: CameraPosition(
-                       target: location,
-                       zoom: 14,
-                      ),
-                    ),),)
-            ],
+
+                      initialCameraPosition: CameraPosition(
+                         target: LatLng(30.286596, 31.740078) ,
+                         zoom: 14,
+                        ),
+                             onMapCreated:(GoogleMapController controller) =>
+                     setState(() => _mapLoading = false),
+                      ),),
+                (_mapLoading)
+                    ? Container(
+                  height: size.height,
+                  width: size.width,
+                  color: Colors.grey[100],
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+                    : Container(),
+              ],
     ),
+        ),
     );
 
   }

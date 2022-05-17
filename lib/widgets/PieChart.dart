@@ -7,11 +7,19 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class PieChart extends StatelessWidget {
   final List<people> motrsh7;
   const PieChart({required this.motrsh7});
+  static bool isSmallScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width < 1000;
+  }
+
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+
 
 
   _buildChild(BuildContext context,int index,Color color) => Container(
     height: MediaQuery.of(context).size.height / 1.2,
-    width:MediaQuery.of(context).size.width / 2,
+    width:isSmallScreen(context)?MediaQuery.of(context).size.width / 1.3:MediaQuery.of(context).size.width / 2,
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -42,7 +50,7 @@ class PieChart extends StatelessWidget {
       children: [
         Container(
           height: MediaQuery.of(context).size.height / 4.5,
-          width: kIsWeb
+          width: kIsWeb&&isLargeScreen(context)
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.width / 2,
           //Initialize the chart widget
@@ -73,7 +81,7 @@ class PieChart extends StatelessWidget {
           ),
         ),
         Container(
-          width: kIsWeb ?MediaQuery.of(context).size.width / 4:MediaQuery.of(context).size.width / 2,
+          width: kIsWeb&&isLargeScreen(context) ?MediaQuery.of(context).size.width / 4:MediaQuery.of(context).size.width / 2,
           child: Column(
             children: [
               kIsWeb

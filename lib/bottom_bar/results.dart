@@ -81,6 +81,15 @@ final Color color1=const Color(0xff26375f);
     _numbers.dispose();
     super.dispose();
   }
+  static bool isSmallScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width < 1000;
+  }
+
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +153,7 @@ final Color color1=const Color(0xff26375f);
              , icon: Icon(Icons.location_on,size: 30,color: Colors.black,)),
         ):Text('') ,
       ),
-      body: kIsWeb? Scrollbar(
+      body: kIsWeb&&isLargeScreen(context)? Scrollbar(
         isAlwaysShown: true,
         scrollbarOrientation: ScrollbarOrientation.right,
         controller: _letters,

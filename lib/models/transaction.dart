@@ -28,7 +28,7 @@ class Pagination{
 
   Pagination(this.next, this.prev, this.more, this.max);
   factory Pagination.fromJson(Map<String,dynamic> json){
-    return Pagination(json['next'], json['prev'], json['more'], json['max']);
+    return Pagination(json['next']??'', json['prev']??'', json['more']??'', json['max']??'');
   }
 }
 class Result {
@@ -42,10 +42,10 @@ class Result {
 
   factory Result.fromJson(Map<String, dynamic> json) {
     return Result(
-        json['Hash'],
-        json['Date'],
-        json['Elector'],
-        json['Elected'],
-        json['BlockHeight']);
+        json['Hash']??'',
+        json['Date']??'',
+        json['Elector']??'',
+        json['Elected']??'',
+        json['BlockHeight']??'');
   }
 }

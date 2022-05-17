@@ -8,6 +8,9 @@ class MapChart extends StatelessWidget {
   late final MapShapeSource mapSource;
 
    MapChart({ required this.data, required this.mapSource}) ;
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class MapChart extends StatelessWidget {
                       ),
 
                       SizedBox(
-                        width: kIsWeb? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
+                        width: kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.1,
                         child: ListTile(
                           trailing: Icon(Icons.check_circle,color: const Color(0xff26375f),size: 16,),
                           title:  Text(
@@ -56,7 +59,7 @@ class MapChart extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width:kIsWeb? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
+                        width:kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
                         child: ListTile(
                           trailing: Icon(Icons.check_circle,color: const Color(
                               0xffffffff),size: 0,),

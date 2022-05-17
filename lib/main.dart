@@ -1,4 +1,5 @@
 import 'package:devote/bottom_bar/results.dart';
+import 'package:devote/widgets/blockchain.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'bottom_bar/bottom_bar.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //scrollBehavior: MaterialScrollBehavior().copyWith(
         //dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},),
-
+  
       title: 'DeVote',
       home: kIsWeb?Result():Bottom_bar(),
       debugShowCheckedModeBanner: false,

@@ -7,8 +7,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class TransactionsList extends StatefulWidget {
   final List transactions;
+  final bool more;
 
-  TransactionsList(this.transactions);
+  TransactionsList(this.transactions,[this.more=true]);
 
   @override
   _TransactionsListState createState() => _TransactionsListState();
@@ -240,7 +241,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                       ),
                                     ),
                                   ),
-                                  Row(
+                                  widget.more ==true?Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
@@ -303,7 +304,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                             color: Colors.blue),
                                       ),
                                     ],
-                                  ),
+                                  ):Text(''),
                                 ],
                               ),
                             );

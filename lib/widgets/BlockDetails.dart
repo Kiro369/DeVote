@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'TransactionsList.dart';
+import 'blockchain.dart';
 
 class BlockDetails extends StatefulWidget {
   final String miner;
@@ -30,7 +31,7 @@ class BlockDetails extends StatefulWidget {
 
 class _BlockDetailsState extends State<BlockDetails> {
   late Future<List<Result>> daata;
-  late List transactionList;
+   List transactionList=[];
 
 
   @override
@@ -48,12 +49,16 @@ class _BlockDetailsState extends State<BlockDetails> {
   void block() async {
 
     transactionList = await daata;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => TransactionsList(transactionList)),
+          builder: (context) => TransactionsList(transactionList,false)),
     );
   }
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +77,11 @@ class _BlockDetailsState extends State<BlockDetails> {
         centerTitle: true,
         backgroundColor: const Color(0xff26375f),
       ),
-      body: kIsWeb? Row(
+      body: kIsWeb&&isLargeScreen(context)? Row(
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Container(
+            child:  Container(
               width: MediaQuery.of(context).size.width/1.5,
               child: ListView(
                 children: [
@@ -131,7 +136,7 @@ class _BlockDetailsState extends State<BlockDetails> {
                     ),
                   ),
 
-                  ListTile(
+                  transactionList==null?ListTile(
                     title: const Text(
                       'Transactions:',
                       style:
@@ -139,7 +144,20 @@ class _BlockDetailsState extends State<BlockDetails> {
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: InkWell(
+                      child: Text(
+                        widget.transactions.toString(),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ):ListTile(
+                    title: const Text(
+                      'Transactions:',
+                      style:
+                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: GestureDetector(
                           onTap: () => block(),
                           child: Text(
                             widget.transactions.toString(),
