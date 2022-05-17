@@ -15,6 +15,7 @@ namespace DeVote
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int BlockchainExplorerPort { get; set; }
+        public bool FullNode { get; set; }
 
         public static readonly Settings Current;
 

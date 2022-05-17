@@ -12,14 +12,18 @@ namespace DeVote.Network.Messages
     {
         long ConsensusRN = long.MaxValue;
         string MachineID = string.Empty;
+        bool FullNode = false;
 
         public LRNConsensus(byte[] incomingPacket) : base(incomingPacket) { }
         public LRNConsensus() : base(null) { }
 
         public override void Handle(Node client)
         {
-            client.ConsensusRN = ConsensusRN;
+            if (ConsensusRN < long.MaxValue)
+                client.ConsensusRN = ConsensusRN;
+
             client.MachineID = MachineID;
+            client.FullNode = FullNode;
         }
 
         public override bool Read(Node client)
@@ -27,6 +31,7 @@ namespace DeVote.Network.Messages
             try
             {
                 Seek(4);
+                FullNode = ReadBoolean();
                 ConsensusRN = ReadLong();
                 MachineID = ReadString();
                 return true;
@@ -36,10 +41,11 @@ namespace DeVote.Network.Messages
                 return false;
             }
         }
-        public byte[] Create(long consensusRN)
+        public byte[] Create(long consensusRN, bool fullNode = false)
         {
             Resize(12 + Constants.MachineID.Length);
             Seek(4);
+            WriteBoolean(fullNode);
             WriteLong(ConsensusRN);
             WriteStringWithLength(Constants.MachineID);
             Finalize<LRNConsensus>();

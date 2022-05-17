@@ -14,7 +14,7 @@ namespace DeVote.Network
     {
         public long ConsensusRN = long.MaxValue;
         public string MachineID = string.Empty;
-
+        public bool FullNode = false;
         public Node(string ip, int port) : base(ip, port) { }
         public Node(string endPoint) : base(IPEndPoint.Parse(endPoint)) { }
         private Node(TcpClient client) : base(client) { }

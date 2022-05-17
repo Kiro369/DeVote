@@ -25,46 +25,53 @@ namespace DeVote.PyRecognition
 
         public void InitPythonInterpreter(string PythonDLLPath, string SitePackagesPath)
         {
-            // Set the path of the Python Interpreter's DLL file.
-            // It will be loaded to DeVote.exe process and the python thread will call it to run python code.
-            Runtime.PythonDLL = PythonDLLPath;
+            try
+            {
+                // Set the path of the Python Interpreter's DLL file.
+                // It will be loaded to DeVote.exe process and the python thread will call it to run python code.
+                Runtime.PythonDLL = PythonDLLPath;
 
-            var RecognitionModulesPath = Path.GetFullPath(@"../../../../Recognition");
+                var RecognitionModulesPath = Path.GetFullPath(@"../../../../Recognition");
 
-            // Set a list of paths that are searched for imported modules.            
-            Environment.SetEnvironmentVariable("PYTHONPATH", $"{SitePackagesPath};{RecognitionModulesPath};", EnvironmentVariableTarget.Process);
-           
-            // Append paths to python standard modules path
-            PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
+                // Set a list of paths that are searched for imported modules.            
+                Environment.SetEnvironmentVariable("PYTHONPATH", $"{SitePackagesPath};{RecognitionModulesPath};", EnvironmentVariableTarget.Process);
 
-            // Initialize the Python interpreter.
-            PythonEngine.Initialize();
+                // Append paths to python standard modules path
+                PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process) + "C:\\Users\\Kiro\\.conda\\envs\\DeVote\\Lib;";
 
-            // Console.WriteLine(PythonEngine.PythonPath);
-            // Console.WriteLine(PythonEngine.GetPythonThreadID());
+                // Initialize the Python interpreter.
+                PythonEngine.Initialize();
 
-            // Acquire the GIL to the current python thread.
-            // GIL: Global interpreter lock allows multi-threaded program to interact safely with the Python interpreter.
-            using var _ = Py.GIL();
+                // Console.WriteLine(PythonEngine.PythonPath);
+                // Console.WriteLine(PythonEngine.GetPythonThreadID());
 
-            // We can release the GIL to allow other python threads to run
-            // threadState = PythonEngine.BeginAllowThreads();
-            // or re-aquire it for the current thread
-            // PythonEngine.EndAllowThreads(threadState);
+                // Acquire the GIL to the current python thread.
+                // GIL: Global interpreter lock allows multi-threaded program to interact safely with the Python interpreter.
+                using var _ = Py.GIL();
 
-            // Console.WriteLine(threadState);
+                // We can release the GIL to allow other python threads to run
+                // threadState = PythonEngine.BeginAllowThreads();
+                // or re-aquire it for the current thread
+                // PythonEngine.EndAllowThreads(threadState);
 
-            var stopwatch = Stopwatch.StartNew();
-            ocrModule = Py.Import("ID_OCR");
-            stopwatch.Stop();
-            Console.WriteLine($"Importing ocr module took { stopwatch.ElapsedMilliseconds } ms ");
-            stopwatch.Restart();
+                // Console.WriteLine(threadState);
 
-            var stopwatch2 = Stopwatch.StartNew();
-            faceVerificationModule = Py.Import("identity_verification");
-            stopwatch.Stop();
-            Console.WriteLine($"Importing verification module took { stopwatch.ElapsedMilliseconds } ms ");
-            Console.WriteLine("Python runtime is initialized");
+                var stopwatch = Stopwatch.StartNew();
+                ocrModule = Py.Import("ID_OCR");
+                stopwatch.Stop();
+                Console.WriteLine($"Importing ocr module took {stopwatch.ElapsedMilliseconds} ms ");
+                stopwatch.Restart();
+
+                var stopwatch2 = Stopwatch.StartNew();
+                faceVerificationModule = Py.Import("identity_verification");
+                stopwatch.Stop();
+                Console.WriteLine($"Importing verification module took {stopwatch.ElapsedMilliseconds} ms ");
+                Console.WriteLine("Python runtime is initialized");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public dynamic ExtractIDInfo(string idpath,string face)
@@ -113,6 +120,12 @@ namespace DeVote.PyRecognition
             else
                 Console.WriteLine($"Could not sent the Request");
             return isSideABack;
+        }
+
+        public bool IsFrontOrBack(string imgPath)
+        {
+            var res = ocrModule.is_front_back(imgPath);
+            return false;
         }
 
         public void EndPythonInterpreter()

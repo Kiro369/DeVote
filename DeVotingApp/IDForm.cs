@@ -8,7 +8,7 @@ namespace DeVotingApp
     public partial class IDForm : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:4747/video");
+        readonly OpenCvSharp.VideoCapture _capture = new(0); //new("http://192.168.1.2:4747/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
 
@@ -87,7 +87,6 @@ namespace DeVotingApp
 
         DateTime flipTime = DateTime.MinValue;
         Bitmap First, Second;
-
         private void CaptureCameraCallback()
         {
             while (true)
@@ -96,12 +95,17 @@ namespace DeVotingApp
                 {
                     _capture.Read(_image);
                     if (_image.Empty()) return;
-                    var imageRes = new OpenCvSharp.Mat();
-                    OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
-                    var bmpWebCam = BitmapConverter.ToBitmap(imageRes);
-                    bmpWebCam.RotateFlip(RotateFlipType.Rotate90FlipXY);
+                    //var imageRes = new OpenCvSharp.Mat();
+                    //OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
+                    var bmpWebCam = BitmapConverter.ToBitmap(_image);
+                    //bmpWebCam.RotateFlip(RotateFlipType.Rotate90FlipXY);
                     pictureBox1.Image = bmpWebCam;
-                    if (false)//Recognition.Current.ContainsCard(/*bmpWebCam*/))
+                    try
+                    {
+                        bmpWebCam.Save("CameraFeed.png", System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    catch { }
+                    if (Recognition.Current.ContainsCard(Directory.GetCurrentDirectory() + "\\CameraFeed.png"))
                     {
                         if (flipTime == DateTime.MinValue)
                         {

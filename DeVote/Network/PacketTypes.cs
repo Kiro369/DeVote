@@ -7,6 +7,9 @@
         Transaction = 1000,
         Confirmation = 1001,
         LRNConsensus = 1002,
-        Mine = 1003
+        Mine = 1003,
+        LatestHeight = 1003,
+        GetBlock = 1004,
+        TransactionData = 1005
     }
 }

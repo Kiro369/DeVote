@@ -62,46 +62,47 @@ namespace DeVote
             ////var dePacket = new Network.Messages.Test(packet);
             ////dePacket.Read(null);
 
-            var imgPath = @"M:\GradutaionProject\Backend\front.jpg";
-            dynamic IDInfo = Recognition.Current.ExtractIDInfo(imgPath, "front");
+            var imgPath = @"C:\Users\Kiro\Desktop\cards\real-back5.jpg";
+
+            dynamic IDInfo = Recognition.Current.ContainsCard(imgPath);
             Console.WriteLine($"IDInfo {IDInfo}");
 
 
-            string cardsDirectory = @"M:\GradutaionProject\barcode Test\back set\cards";
-            string[] cardImages = Directory.GetFiles(cardsDirectory);
-            foreach (string cardImage in cardImages)
-            {
-                Console.WriteLine($"Image: {cardImage}");
-                dynamic isCardPresent = Recognition.Current.ContainsCard(cardImage);
-                Console.WriteLine($"isCardPresent {isCardPresent}");
-            }
+            ////string cardsDirectory = @"M:\GradutaionProject\barcode Test\back set\cards";
+            ////string[] cardImages = Directory.GetFiles(cardsDirectory);
+            ////foreach (string cardImage in cardImages)
+            ////{
+            ////    Console.WriteLine($"Image: {cardImage}");
+            ////    dynamic isCardPresent = Recognition.Current.ContainsCard(cardImage);
+            ////    Console.WriteLine($"isCardPresent {isCardPresent}");
+            ////}
 
-            return;
+            ////return;
 
-            string backDirectory = @"M:\GradutaionProject\barcode Test\back set\compressed-full-back";
-            string[] backImages = Directory.GetFiles(backDirectory);
-            foreach (string image in backImages)
-            {
-                Console.WriteLine($"Image: {image}");
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-                bool isIdSideBackAPI = Recognition.Current.IsIdSideABackAPI(image);
-                stopWatch.Stop();
+            ////string backDirectory = @"M:\GradutaionProject\barcode Test\back set\compressed-full-back";
+            ////string[] backImages = Directory.GetFiles(backDirectory);
+            ////foreach (string image in backImages)
+            ////{
+            ////    Console.WriteLine($"Image: {image}");
+            ////    Stopwatch stopWatch = new Stopwatch();
+            ////    stopWatch.Start();
+            ////    bool isIdSideBackAPI = Recognition.Current.IsIdSideABackAPI(image);
+            ////    stopWatch.Stop();
 
-                long ms = stopWatch.ElapsedMilliseconds;
-                Console.WriteLine($"Sending and getting respone took {ms}ms - {ms / 1000}s");
-                Console.WriteLine($"isIdSideBack: {isIdSideBackAPI}\n");
-            }
+            ////    long ms = stopWatch.ElapsedMilliseconds;
+            ////    Console.WriteLine($"Sending and getting respone took {ms}ms - {ms / 1000}s");
+            ////    Console.WriteLine($"isIdSideBack: {isIdSideBackAPI}\n");
+            ////}
 
-            string[] framePaths = { @"M:\GradutaionProject\Backend\frame1.jpg", @"M:\GradutaionProject\Backend\frame2.jpg" };
-            for (int i = 0; i < framePaths.Length; i++)
-            {
-                bool isVerified = Recognition.Current.VerifyVoter(imgPath, framePaths[i]);
-                Console.WriteLine($"is frame {i} Verified ? {isVerified}");
-            }
+            ////string[] framePaths = { @"M:\GradutaionProject\Backend\frame1.jpg", @"M:\GradutaionProject\Backend\frame2.jpg" };
+            ////for (int i = 0; i < framePaths.Length; i++)
+            ////{
+            ////    bool isVerified = Recognition.Current.VerifyVoter(imgPath, framePaths[i]);
+            ////    Console.WriteLine($"is frame {i} Verified ? {isVerified}");
+            ////}
 
-            ////recognition.EndPythonInterpreter();
-            return;
+            //////recognition.EndPythonInterpreter();
+            //return;
             #endregion
 
             //#region Test
@@ -184,6 +185,9 @@ namespace DeVote
 
                 // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
                 Task.Factory.StartNew(PacketsHandler.Handle);
+
+                // Tell the network our MachineID and if we're wether a FullNode or Not
+                NetworkManager.Broadcast(new Network.Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
             }
 
             Task.Factory.StartNew(async () =>
