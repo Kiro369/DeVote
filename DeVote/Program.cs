@@ -183,6 +183,8 @@ namespace DeVote
                 // Set the Key, so we can use it
                 AES.Key = key;
 
+                NetworkManager.Sync();
+
                 // Start the packet Handler since we have now our AES Key, we can Decrypt incoming packets from the network
                 Task.Factory.StartNew(PacketsHandler.Handle);
 

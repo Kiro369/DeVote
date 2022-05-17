@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DeVote.Structures;
 using Newtonsoft.Json;
 
 namespace DeVote.Network
@@ -29,6 +30,11 @@ namespace DeVote.Network
         /// Object to lock while adjusting the Nodes collection to avoid multi threading issues
         /// </summary>
         static readonly object lockable = new();
+
+        /// <summary>
+        /// Latest block height recieved from LatestHeight packet
+        /// </summary>
+        public static int LatestBlockHeight = 0; 
 
         /// <summary>
         /// Broadcast a packet to the whole network
@@ -126,6 +132,28 @@ namespace DeVote.Network
                     //JObject responseObj = JObject.Parse(responseString);
                     //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
                 }
+            }
+        }
+
+        public static void Sync()
+        {
+            var heightRequest = new Messages.LatestHeight() { Type = PacketType.Request }.Create();
+            Broadcast(heightRequest);
+
+            while (LatestBlockHeight == 0)
+                Task.Delay(100).Wait();
+
+            while (Blockchain.Current.Blocks.Last.Value.Height < LatestBlockHeight)
+            {
+                var block = new Block(new List<Transaction>());
+                var neededHeight = Blockchain.Current.Blocks.Last.Value.Height + 1;
+                // get block request (neededHeight); 
+
+                // foreach transaction in that block 
+                // get full transaction data TransactionData => verify then add it 
+                //block.AddTransaction(transaction)
+
+
             }
         }
     }
