@@ -1,7 +1,7 @@
-import 'package:devote/models/people.dart';
-import 'package:devote/widgets/MapChart.dart';
-import 'package:devote/widgets/PieChart.dart';
-import 'package:devote/widgets/blockchain.dart';
+import '/models/people.dart';
+import '/widgets/MapChart.dart';
+import '/widgets/PieChart.dart';
+import '/widgets/blockchain.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

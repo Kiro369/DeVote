@@ -1,5 +1,5 @@
-import 'package:devote/models/Call_api.dart';
-import 'package:devote/models/transaction.dart';
+import '/models/Call_api.dart';
+import '/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

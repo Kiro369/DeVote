@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:devote/models/transaction.dart';
+import '/models/transaction.dart';
 import 'package:http/http.dart' as http;
 
 import 'block.dart';

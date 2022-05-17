@@ -1,6 +1,6 @@
-import 'package:devote/bottom_bar/amaken.dart';
-import 'package:devote/bottom_bar/motrsh7en.dart';
-import 'package:devote/bottom_bar/results.dart';
+import '/bottom_bar/amaken.dart';
+import '/bottom_bar/motrsh7en.dart';
+import '/bottom_bar/results.dart';
 import 'package:flutter/material.dart';
 class Bottom_bar extends StatefulWidget {
   const Bottom_bar({Key? key}) : super(key: key);

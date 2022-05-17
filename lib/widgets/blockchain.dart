@@ -1,6 +1,6 @@
-import 'package:devote/widgets/BlockDetails.dart';
-import 'package:devote/widgets/BlockList.dart';
-import 'package:devote/widgets/TransactionsList.dart';
+import '/widgets/BlockDetails.dart';
+import '/widgets/BlockList.dart';
+import '/widgets/TransactionsList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/Call_api.dart';

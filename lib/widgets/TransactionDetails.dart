@@ -1,5 +1,5 @@
-import 'package:devote/models/block.dart';
-import 'package:devote/widgets/BlockDetails.dart';
+import '/models/block.dart';
+import '/widgets/BlockDetails.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,5 @@
-import 'package:devote/models/people.dart';
-import 'package:devote/widgets/InfoPage.dart';
+import '/models/people.dart';
+import '/widgets/InfoPage.dart';
 import 'package:flutter/material.dart';
 
 class Motrsh7en extends StatefulWidget {

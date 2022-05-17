@@ -1,4 +1,4 @@
-import 'package:devote/models/people.dart';
+import '/models/people.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
