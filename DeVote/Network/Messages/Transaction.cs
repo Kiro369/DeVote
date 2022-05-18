@@ -4,9 +4,10 @@ using DeVote.Network.Transmission;
 using DeVote.PyRecognition;
 using DeVote.Structures;
 using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Text;
 
 namespace DeVote.Network.Messages
 {
@@ -15,11 +16,16 @@ namespace DeVote.Network.Messages
     class Transaction : Packet
     {
         [ProtoMember(1)] public Structures.Transaction TransactionData { get; set; }
-        [ProtoMember(2)] (byte[] Front, byte[] Back) ID { get; set; }
-        [ProtoMember(3)] public byte[][] Images { get; set; }
+        [ProtoMember(2)] public TransactionRecord TxRecord { get; set; }
 
         public Transaction(byte[] incomingPacket) : base(incomingPacket) {}
 
+        // should only work with full node.
+        public void Save()
+        {
+            TxRecord.Hash = Encoding.UTF8.GetBytes(TransactionData.Hash);
+            TransactionsDLT.AddTxRecord(TxRecord);
+        }
         public override void Handle(Node client)
         {
             if (VotedDLT.Current.Contains(TransactionData.Elector))
@@ -28,14 +34,9 @@ namespace DeVote.Network.Messages
             }
             else
             {
-                DecompressID(out string frontIDPath, out _);
-                var verified = 0;
-                foreach (var imagePath in DecompressImages())
-                {
-                    if (Recognition.Current.VerifyVoter(frontIDPath, imagePath))
-                        verified++;
-                }
-                bool voterVerified = verified >= Images.Length / 2;
+                (string frontIDPath, string backIDPath) = TxRecord.DecompressID("webp");
+
+                bool voterVerified = TxRecord.IsVoterVerified(frontIDPath);
                 if (voterVerified)
                 {
                     var extractInfo = Recognition.Current.ExtractIDInfo(frontIDPath, "front");
@@ -87,73 +88,6 @@ namespace DeVote.Network.Messages
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Decompresses the front and back of the recieved compressed ID
-        /// </summary>
-        private void DecompressID(out string frontIDPath, out string backIDPath)
-        {
-            frontIDPath = Path.GetTempPath() + $"{TransactionData.Hash}front.png";
-            backIDPath = Path.GetTempPath() + $"{TransactionData.Hash}back.png";
-            Decompress(ID.Front, frontIDPath);
-            Decompress(ID.Back, backIDPath);
-        }
-
-        /// <summary>
-        /// Deflate compression for our PNGs
-        /// </summary>
-        /// <param name="images">Images to compress presented in byte arrays</param>
-        public void CompressImages(params byte[][] images)
-        {
-            Images = new byte[images.Length][];
-            for (var i = 0; i < images.Length; i++)
-            {
-                var image = images[i];
-                Images[i] = Compress(image);
-            }
-        }
-
-        /// <summary>
-        /// Compresses a byte[] image using Deflate compression algorithm
-        /// </summary>
-        /// <param name="image"></param>
-        /// <returns></returns>
-        public static byte[] Compress(byte[] image)
-        {
-            using var originalImageStream = new MemoryStream(image);
-            using var compressedImageStream = new MemoryStream();
-            using var compressor = new DeflateStream(compressedImageStream, CompressionMode.Compress);
-            originalImageStream.CopyTo(compressor);
-            return compressedImageStream.ToArray();
-        }
-
-        /// <summary>
-        /// Decompresses the images recieved from the Deflate compression and saves the images as temp files
-        /// </summary>
-        /// <returns>Temp images paths</returns>
-        public IEnumerable<string> DecompressImages()
-        {
-            for (var i = 0; i < Images.Length; i++)
-            {
-                var image = Images[i];
-                var outputPath = Path.GetTempPath() + $"{TransactionData.Hash}{i}.png";
-                Decompress(image, outputPath);
-                yield return outputPath;
-            }
-        }
-
-        /// <summary>
-        /// Decompresses a byte[] image using Deflate compression algorithm and saves it to the specified path
-        /// </summary>
-        /// <param name="image">image byte[] to be decompressed</param>
-        /// <param name="outputPath">the output path to save the image in</param>
-        public static void Decompress(byte[] image, string outputPath)
-        {
-            using var compressedImageStream = new MemoryStream(image);
-            using FileStream outputFileStream = File.Create(outputPath);
-            using var decompressor = new DeflateStream(compressedImageStream, CompressionMode.Decompress);
-            decompressor.CopyTo(outputFileStream);
         }
     }
 }

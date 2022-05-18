@@ -12,6 +12,8 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Text;
+using DeVote.Misc;
 
 namespace DeVote
 {
@@ -19,19 +21,81 @@ namespace DeVote
     {
         static void Main()
         {
+            #region TransactionDLT/Record Test
+            TransactionRecord transactionRecord = new TransactionRecord();
+            string frontImage = @"M:\GradutaionProject\sisi\front.jpg";
+            string backImage = @"M:\GradutaionProject\sisi\back.jpg";
+            string frameDir = @"M:\GradutaionProject\sisi\sisiFrames";
+
+            string[] frameImages = Directory.GetFiles(frameDir);
+
+            var fBitmap = File.ReadAllBytes(frontImage); 
+            var bBitmap = File.ReadAllBytes(backImage);
+
+            var fcompressed = ImgProcessor.Compress(fBitmap, 55, "webp");
+            var bcompressed = ImgProcessor.Compress(bBitmap, 55, "webp");
+
+            ImgProcessor.Decompress(fcompressed, @"M:\GradutaionProject\sisi\webp\Coutput3.webp");
+            ImgProcessor.Decompress(bcompressed, @"M:\GradutaionProject\sisi\webp\Coutput3.jpg");
+
+            transactionRecord.Hash = Encoding.UTF8.GetBytes("F644B7333382BBD4C6948FEEABAFD03649A89D93DE651D351A2FFD6283F6824B");
+            transactionRecord.Front = fcompressed;
+            transactionRecord.Back = bcompressed;
+
+            (string frontIDPath, string bacjIDPath) = transactionRecord.DecompressID("webp");
+
+            List<byte[]> images = new List<byte[]> { };
+
+            foreach (string frameImage in frameImages)
+            {
+                images.Add(ImgProcessor.Compress(File.ReadAllBytes(frameImage), 55, "jpg"));
+            };
+
+            transactionRecord.Images = images.ToArray();
+
+            ImgProcessor.DecompressImages(transactionRecord.Images, Encoding.UTF8.GetString(transactionRecord.Hash), "webp");
+
+
+            var stopWatch2 = new System.Diagnostics.Stopwatch(); stopWatch2.Start();
+            bool IsVerified = transactionRecord.IsVoterVerified(frontImage);
+            stopWatch2.Stop();
+
+            Console.WriteLine($"total time {stopWatch2.ElapsedMilliseconds}");
+            Console.WriteLine($"IsVerified {IsVerified}");
+
+            TransactionsDLT.AddTxRecord(transactionRecord);
+
+            TransactionRecord DeserializedTransactionRecord;
+            byte[] TransactionRecordBytes = TransactionsDLT.getTxRecord(transactionRecord.Hash);
+            DeserializedTransactionRecord = TransactionRecord.Deserialize(TransactionRecordBytes);
+
+            Console.WriteLine($"Og Hash {Encoding.UTF8.GetString(transactionRecord.Hash)}");
+            Console.WriteLine($"De Hash {Encoding.UTF8.GetString(DeserializedTransactionRecord.Hash)}");
+
+
+            for (int i = 0; i < DeserializedTransactionRecord.Images.Length; i++)
+            {
+                var dir = @"M:\GradutaionProject\sisi\sisiFramesGen\";
+                File.WriteAllBytes(dir + i + ".jpg", DeserializedTransactionRecord.Images[i]);
+            }
+
+            #endregion
             //#region Compression test
-            //var transaction = new Network.Messages.Transaction(null);
-            //var image = System.IO.File.ReadAllBytes(@"C:\Users\Kiro\Downloads\xyz.png");
-            //var stopWatch = new System.Diagnostics.Stopwatch(); stopWatch.Start();
-            //var compressed = transaction.Compress(image);
-            //stopWatch.Stop();
-            //Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
-            //stopWatch.Restart();
-            //transaction.Decompress(compressed, "output.jpg");
-            //stopWatch.Stop();
-            //Console.WriteLine($"Time to decompress: {stopWatch.ElapsedMilliseconds}");
-            //Console.ReadLine();
-            //return;
+            var stopWatch = new System.Diagnostics.Stopwatch(); stopWatch.Start();
+            var image = File.ReadAllBytes(@"M:\GradutaionProject\sisi\front.jpg");
+            var compressed = ImgProcessor.Compress(image,55, "jpg");
+            stopWatch.Stop();
+            Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
+            
+            stopWatch.Restart();
+            File.WriteAllBytes(@"M:\GradutaionProject\sisi\realoutput2.webp", compressed);
+            ImgProcessor.Decompress(compressed, @"M:\GradutaionProject\sisi\output2.jpg");
+            ImgProcessor.Decompress(compressed, @"M:\GradutaionProject\sisi\output2.webp");
+            stopWatch.Stop();
+            Console.WriteLine($"Time to decompress: {stopWatch.ElapsedMilliseconds}");
+            Console.ReadLine();
+            return;
+
             //#endregion
             //#region Settings Test
             //Console.WriteLine(Settings.Current.Argon2Salt);
@@ -62,10 +126,10 @@ namespace DeVote
             ////var dePacket = new Network.Messages.Test(packet);
             ////dePacket.Read(null);
 
-            var imgPath = @"C:\Users\Kiro\Desktop\cards\real-back5.jpg";
+            //var imgPath = @"C:\Users\Kiro\Desktop\cards\real-back5.jpg";
 
-            dynamic IDInfo = Recognition.Current.ContainsCard(imgPath);
-            Console.WriteLine($"IDInfo {IDInfo}");
+            //dynamic IDInfo = Recognition.Current.ContainsCard(imgPath);
+            //Console.WriteLine($"IDInfo {IDInfo}");
 
 
             ////string cardsDirectory = @"M:\GradutaionProject\barcode Test\back set\cards";

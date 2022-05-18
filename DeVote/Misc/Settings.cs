@@ -9,6 +9,8 @@ namespace DeVote
         public string Argon2Salt { get; set; }
         public string BlockchainPath { get; set; }
         public string VotedDLTPath { get; set; }
+        public string TransactionsDLTPath { get; set; }
+
         public string PythonDLLPath { get; set; }
         public string SitePackagesPath { get; set; }
         public string RecognitionModulesPath { get; set; }
