@@ -27,22 +27,25 @@ global.isProtoFileLoaded = false;
     if (!global.isDBsOpen || !isProtoFileLoaded) return;
 
     console.log("Opening Databases succeed.");
-    console.log(`Syncing Databases every ${MINS_TO_SYNC_DBS} minutes`)
-    console.log("===============================================");
+    console.log(`Syncing Databases every ${MINS_TO_SYNC_DBS} minutes\n`)
 
     console.log("App is ready to start.")
 
     setTimeout(async () => {
         console.log(`${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
         await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS)
+        console.log(`${new Date().toLocaleString()} : Setting initial NoVotes Of Candidates ...`)
+        await myDBWrapper.mySQLite.setNoVotesForCandidates();
     }, 1000 * 10)
 
+    // first sync databases then count and update votes.
     setInterval(async () => {
-        console.log("===============================================");
+        console.log("\n===============================================");
         console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
         await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS);
-        console.log("===============================================");
 
+        console.log(`${new Date().toLocaleString()} : Upadating NoVotes Of Candidates ...`)
+        await myDBWrapper.mySQLite.setNoVotesForCandidates();
     }, SYNC_DELAY_TIME);
 
     const express = require('express');
@@ -50,6 +53,7 @@ global.isProtoFileLoaded = false;
     const blockRouter = require('./routes/blockRouter.js');
     const txRouter = require('./routes/txRouter.js');
     const vmRouter = require('./routes/vmRouter.js');
+    const candidateRouter = require('./routes/candidateRouter.js');
 
     const app = express();
     const port = process.env.PORT || 3000;
@@ -72,6 +76,7 @@ global.isProtoFileLoaded = false;
     app.use('/blocks', blockRouter);
     app.use('/transactions', txRouter);
     app.use('/vms', vmRouter);
+    app.use('/candidates', candidateRouter);
 
     app.use(express.static('api-test'))
 
@@ -79,7 +84,7 @@ global.isProtoFileLoaded = false;
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
         console.log(`App will start the initial database sync in 10s`);
-        console.log("===============================================");
+        console.log("===============================================\n");
     })
 })()
 

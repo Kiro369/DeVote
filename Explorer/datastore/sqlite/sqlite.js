@@ -120,8 +120,7 @@ class SQLite {
         return targetTxs
     };
 
-    async insertVM(vm) {
-        const { id, lat, lng } = vm;
+    async insertVM({ id, lat, lng }) {
         await this.db.run(
             "INSERT INTO VMachines  VALUES (?,?,?)",
             id, lat, lng
@@ -132,6 +131,36 @@ class SQLite {
         let vms = await this.db.all("SELECT * FROM VMachines")
         // if (!vms.length) throw new Error("No VMs Found")
         return vms
+    }
+
+    async insertCandidate({ id, name }) {
+        await this.db.run(
+            "INSERT INTO Candidates  VALUES (?,?,?)",
+            id, name, 0
+        )
+    }
+
+    async getCandidates() {
+        return await this.db.all("Select * From Candidates")
+    }
+
+    async setNoVotesForCandidates() {
+        // get list of candidates 
+        const candidates = await this.db.all("SELECT * FROM Candidates")
+
+        // for each candidate, get votes count from transactions table.
+        for (let index = 0; index < candidates.length; index++) {
+            const { ID, NoVotes } = candidates[index];
+            const noVotesObj = await this.db.get("SELECT COUNT(Elected) FROM Transactions Where Elected == ?", ID)
+            const NewNoVotes = noVotesObj['COUNT(Elected)'];
+            await this.UpadteNoVotesForCandidate(ID, NoVotes, NewNoVotes)
+        }
+    }
+
+    async UpadteNoVotesForCandidate(id, oldNoVotes, newNoVotes) {
+        const SQL_QUERY = `UPDATE Candidates SET NoVotes = ?  WHERE ID == "${id}"`;
+        await this.db.run(SQL_QUERY, newNoVotes)
+        console.log(`ID: ${id}, Old: ${oldNoVotes} New: ${newNoVotes}`)
     }
 }
 

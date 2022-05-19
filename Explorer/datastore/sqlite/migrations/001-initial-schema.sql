@@ -23,3 +23,9 @@ CREATE TABLE VMachines (
     Lat       INTEGER NOT NULL,
     Lng       INTEGER NOT NULL
 );
+
+CREATE TABLE Candidates (
+    ID              TEXT PRIMARY KEY,
+    Name            Text NOT NULL,
+    NoVotes         INTEGER NOT NULL
+);

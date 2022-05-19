@@ -6,7 +6,7 @@ const BLOCK_HEIGHT_LIMIT = 2147483647;
 
 class DBWrapper {
     async initDBs(SQLiteDB_Name, LevelDB_Name, PROTO_File_Name) {
-        console.log("Opening Databases...")
+        console.log("\nOpening Databases...")
 
         this.mySQLite = new SQLite();
         await this.mySQLite.openSQLiteDB(SQLiteDB_Name)
@@ -19,19 +19,16 @@ class DBWrapper {
     }
 
     async syncDBs(MINS_TO_SYNC_DBS) {
-        console.log(`Getting Latest Block Height From SQLite`);
         const lbh_SQLite = await this.mySQLite.getLatestBlockHeight();
         console.log("latestBlockHeight_SQLite ", lbh_SQLite);
 
-        console.log(`Getting Latest Block Height From LevelDB`);
         const lbh_LevelDB = parseInt(await this.mylevelDB.getLatestBlockHeight_byteArray(lbh_SQLite, BLOCK_HEIGHT_LIMIT));
         console.log("latestBlockHeight_LevelDB", lbh_LevelDB);
 
         if (lbh_SQLite == lbh_LevelDB) {
-            console.log("===================================================");
-            console.log("Database Status : SQLiteDB is in sync with LevelDB ")
+            console.log("\nDatabase Status : SQLiteDB is in sync with LevelDB ")
             console.log(`Syncing  Time   : Every ${MINS_TO_SYNC_DBS} minutes`)
-            console.log("===================================================");
+            console.log("=====================================================\n");
             return;
         }
 
@@ -47,7 +44,7 @@ class DBWrapper {
 
             console.log("=======================================================");
             console.log(`Syncing  Time   : Every ${MINS_TO_SYNC_DBS} minutes`)
-            console.log("=======================================================");
+            console.log("=======================================================\n");
         }
 
     }

@@ -4,8 +4,8 @@
   "description": "Backend for deVote Explorer",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon node app.js",
-    "run": "node app.js"
+    "start": "node app.js",
+    "test": "nodemon node app.js"
   },
   "author": "",
   "license": "ISC",
