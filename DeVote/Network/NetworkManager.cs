@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DeVote.Logging;
 using DeVote.Structures;
 using Newtonsoft.Json;
 
@@ -34,19 +35,37 @@ namespace DeVote.Network
         /// <summary>
         /// Latest block height recieved from LatestHeight packet
         /// </summary>
-        public static int LatestBlockHeight = 0; 
+        public static int LatestBlockHeight = 0;
+
+        /// <summary>
+        /// Logger to log info/errors
+        /// </summary>
+        protected static readonly LogProxy Log = new("PacketProcessor");
 
         /// <summary>
         /// Broadcast a packet to the whole network
         /// </summary>
         /// <param name="packet">the packet to be broadcasted</param>
+        /// <param name="fullNodesOnly">Send to full nodes only</param>
         /// <param name="encrypt">encrypt the packet or not</param>
-        public static void Broadcast(byte[] packet, bool encrypt = true)
+        public static void Broadcast(byte[] packet, bool fullNodesOnly = false, bool encrypt = true)
         {
             foreach (var node in Nodes.Values)
             {
-                node.Send(packet, encrypt);
+                if (fullNodesOnly ? node.FullNode : true)
+                    node.Send(packet, encrypt);
             }
+        }
+
+        /// <summary>
+        /// Send a packet to a full node in the network
+        /// </summary>
+        /// <param name="packet">the packet to be sent</param>
+        /// <param name="encrypt">encrypt the packet or not</param>
+        public static void SendToFullNode(byte[] packet, bool encrypt = true)
+        {
+            var fullNode = Nodes.Values.First(node => node.FullNode);
+            fullNode.Send(packet, encrypt);
         }
 
         /// <summary>
@@ -59,7 +78,7 @@ namespace DeVote.Network
                 foreach (var node in Nodes.Values)
                 {
                     node.ConsensusRN = long.MaxValue;
-                }    
+                }
             }
         }
 
@@ -137,45 +156,49 @@ namespace DeVote.Network
 
         public static void Sync()
         {
+            void WaitFor(Func<bool> condition)
+            {
+                while (!condition())
+                    Task.Delay(100).Wait();
+            }
+
             var heightRequest = new Messages.LatestHeight() { Type = PacketType.Request }.Create();
             Broadcast(heightRequest);
 
-            while (LatestBlockHeight == 0)
-                Task.Delay(100).Wait();
+            WaitFor(() => LatestBlockHeight > 0);
 
             while (Blockchain.Current.Blocks.Last.Value.Height < LatestBlockHeight)
             {
-                var block = new Block(new List<Transaction>());
                 var neededHeight = Blockchain.Current.Blocks.Last.Value.Height + 1;
                 // get block request (neededHeight); 
                 var getBlockRequest = new Messages.GetBlock() { Type = PacketType.Request };
                 getBlockRequest.BlockHeight = neededHeight;
-                getBlockRequest.Create();
+                SendToFullNode(getBlockRequest.Create());
 
-                // get full node 
-                // send
+                WaitFor(() => Messages.GetBlock.RecievedBlocks.ContainsKey(neededHeight));
 
-                // no clue ?? maybe check for getBlockRequest.Block??
-                while (getBlockRequest.Block == null) { }
+                var neededBlock = Messages.GetBlock.RecievedBlocks[neededHeight];
 
                 // foreach transaction in that block 
-                foreach (Transaction tx in getBlockRequest.Block.Transactions)
+                foreach (Transaction tx in neededBlock.Transactions)
                 {
+                    SendToFullNode(new Messages.TransactionData() { Hash = tx.Hash }.Create());
+
                     // get full transaction data TransactionData => verify then add it 
-                    byte[] TxRecordBytes = TransactionsDLT.getTxRecord(Encoding.UTF8.GetBytes(tx.Hash));
-                    TransactionRecord TxRecord = TransactionRecord.Deserialize(TxRecordBytes); ;
-                    
+                    WaitFor(() => Messages.TransactionData.RecievedRecords.ContainsKey(tx.Hash));
+                    TransactionRecord txRecord = Messages.TransactionData.RecievedRecords[tx.Hash];
+
                     // TxRecord already have compressed images
-                    (string frontIDPath,string backIDPath) = TxRecord.DecompressID("jpg");
+                    (string frontIDPath, string backIDPath) = txRecord.DecompressID("jpg");
 
-                    // it will be good if we don't decompress and just pass byte[] to Recognition module.
-                    bool isTxRecordVerified = TxRecord.IsVoterVerified(frontIDPath);
-
-                    //block.AddTransaction(transaction)
-                    if (isTxRecordVerified) block.AddTransaction(tx);
+                    if (!txRecord.IsVoterVerified(frontIDPath))
+                    {
+                        Log.Error($"Couldn't verify a transaction: {tx.Hash}, In Block: {neededHeight}");
+                        Log.Error("Unable to SYNC properly");
+                        Environment.Exit(1);
+                        break;
+                    }
                 }
-
-
             }
         }
     }

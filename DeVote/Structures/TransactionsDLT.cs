@@ -1,5 +1,6 @@
 ﻿using LevelDB;
 using ProtoBuf;
+using System.Text;
 
 namespace DeVote.Structures
 {
@@ -7,16 +8,24 @@ namespace DeVote.Structures
     class TransactionsDLT
     {
         public static TransactionsDLT Current = new TransactionsDLT();
-        private static DB LevelDB  = new DB(new Options { CreateIfMissing = true }, Settings.Current.TransactionsDLTPath);
+        public DB LevelDB;
 
-        public static void AddTxRecord(TransactionRecord transactionRecord)
+        private TransactionsDLT()
+        {
+            LevelDB = new DB(new Options { CreateIfMissing = true }, Settings.Current.TransactionsDLTPath);
+        }
+
+        public void AddRecord(TransactionRecord transactionRecord)
         {
             LevelDB.Put(transactionRecord.Hash, TransactionRecord.Serialize(transactionRecord));
         }
-
-        public static byte[] getTxRecord(byte[] hash)
+        public TransactionRecord GetRecord(byte[] hash)
         {
-          return LevelDB.Get(hash);
+            return TransactionRecord.Deserialize(LevelDB.Get(hash));
+        }
+        public TransactionRecord GetRecord(string hash)
+        {
+            return GetRecord(Encoding.UTF8.GetBytes(hash));
         }
     }
 }

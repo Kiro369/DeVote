@@ -63,11 +63,9 @@ namespace DeVote
             Console.WriteLine($"total time {stopWatch2.ElapsedMilliseconds}");
             Console.WriteLine($"IsVerified {IsVerified}");
 
-            TransactionsDLT.AddTxRecord(transactionRecord);
+            TransactionsDLT.Current.AddRecord(transactionRecord);
 
-            TransactionRecord DeserializedTransactionRecord;
-            byte[] TransactionRecordBytes = TransactionsDLT.getTxRecord(transactionRecord.Hash);
-            DeserializedTransactionRecord = TransactionRecord.Deserialize(TransactionRecordBytes);
+            TransactionRecord DeserializedTransactionRecord = TransactionsDLT.Current.GetRecord(transactionRecord.Hash);
 
             Console.WriteLine($"Og Hash {Encoding.UTF8.GetString(transactionRecord.Hash)}");
             Console.WriteLine($"De Hash {Encoding.UTF8.GetString(DeserializedTransactionRecord.Hash)}");

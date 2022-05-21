@@ -10,8 +10,11 @@ using ProtoBuf;
 
 namespace DeVote.Network.Messages
 {
+    [ProtoContract(SkipConstructor = true)]
+    [Handling.NodePacketHandler(PacketTypes.GetBlock)]
     class GetBlock : Packet
     {
+        public static Dictionary<int, Block> RecievedBlocks = new Dictionary<int, Block>();
         [ProtoMember(1)] public PacketType Type { get; set; }
         [ProtoMember(2)] public int BlockHeight { get; set; }
         // fulldata => true 
@@ -30,23 +33,26 @@ namespace DeVote.Network.Messages
                     client.Send(Create());
                     break;
                 case PacketType.Response:
-                    // no idea
+                    if (Block != null && Block.Height > 0)
+                    {
+                        if (RecievedBlocks.ContainsKey(BlockHeight))
+                            RecievedBlocks[BlockHeight] = Block;
+                        else RecievedBlocks.Add(BlockHeight, Block);
+                    }
                     break;
             }
         }
 
         public override bool Read(Node client)
         {
+            try
             {
-                try
-                {
-                    Deserialize<GetBlock>().CopyProperties(this);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
+                Deserialize<GetBlock>().CopyProperties(this);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
         public byte[] Create()
