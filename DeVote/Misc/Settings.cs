@@ -16,6 +16,8 @@ namespace DeVote
         public string RecognitionModulesPath { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string Address { get; set; }
+        public string Governorate { get; set; }
         public int BlockchainExplorerPort { get; set; }
         public bool FullNode { get; set; }
 
