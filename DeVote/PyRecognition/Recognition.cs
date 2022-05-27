@@ -37,7 +37,7 @@ namespace DeVote.PyRecognition
                 Environment.SetEnvironmentVariable("PYTHONPATH", $"{SitePackagesPath};{RecognitionModulesPath};", EnvironmentVariableTarget.Process);
 
                 // Append paths to python standard modules path
-                PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process) + "C:\\Users\\Kiro\\.conda\\envs\\DeVote\\Lib;";
+                PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process) + "C:\\Users\\Kiro\\AppData\\Local\\Programs\\Python\\Python37\\Lib;";
 
                 // Initialize the Python interpreter.
                 PythonEngine.Initialize();
@@ -50,11 +50,11 @@ namespace DeVote.PyRecognition
                 using var _ = Py.GIL();
 
                 // We can release the GIL to allow other python threads to run
-                // threadState = PythonEngine.BeginAllowThreads();
+                //var threadState = PythonEngine.BeginAllowThreads();
                 // or re-aquire it for the current thread
-                // PythonEngine.EndAllowThreads(threadState);
+                //PythonEngine.EndAllowThreads(threadState);
 
-                // Console.WriteLine(threadState);
+                //Console.WriteLine(threadState);
 
                 var stopwatch = Stopwatch.StartNew();
                 ocrModule = Py.Import("ID_OCR");
@@ -72,6 +72,11 @@ namespace DeVote.PyRecognition
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        public Py.GILState GIL()
+        {
+            return Py.GIL();
         }
 
         public dynamic ExtractIDInfo(string idpath,string face)

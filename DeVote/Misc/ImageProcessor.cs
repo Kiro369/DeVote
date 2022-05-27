@@ -7,7 +7,7 @@ using ImageProcessor.Plugins.WebP.Imaging.Formats;
 
 namespace DeVote.Misc
 {
-    class ImgProcessor
+    class ImageProcessor
     {
         /// <summary>
         /// Compresses a byte[] image using ImageProcessor library.
@@ -18,8 +18,8 @@ namespace DeVote.Misc
         /// <returns>byte[] of compressed image.</returns> 
         public static byte[] Compress(byte[] image, int quality, string outputFormat = "webp")
         {
-            using MemoryStream compressedImageStream = new MemoryStream();
-            using ImageFactory imageFactory = new ImageFactory(preserveExifData: false);
+            using MemoryStream compressedImageStream = new();
+            using ImageFactory imageFactory = new(preserveExifData: false);
             dynamic format = new WebPFormat();
             if (outputFormat == "png") format = new PngFormat();
             if (outputFormat == "jpg") format = new JpegFormat();

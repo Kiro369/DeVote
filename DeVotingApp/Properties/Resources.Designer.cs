@@ -71,6 +71,36 @@ namespace DeVotingApp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap card_scan {
+            get {
+                object obj = ResourceManager.GetObject("card_scan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cc {
+            get {
+                object obj = ResourceManager.GetObject("cc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap face_scan {
+            get {
+                object obj = ResourceManager.GetObject("face_scan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] KMR {
@@ -86,6 +116,16 @@ namespace DeVotingApp.Properties {
         internal static System.Drawing.Bitmap logo_final {
             get {
                 object obj = ResourceManager.GetObject("logo_final", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap moussa {
+            get {
+                object obj = ResourceManager.GetObject("moussa", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -52,7 +52,7 @@ namespace DeVote.Network
         {
             foreach (var node in Nodes.Values)
             {
-                if (fullNodesOnly ? node.FullNode : true)
+                if (!fullNodesOnly || node.FullNode)
                     node.Send(packet, encrypt);
             }
         }
@@ -136,27 +136,25 @@ namespace DeVote.Network
                 endpoint = "https://devote-explorer-backend.herokuapp.com/vms";
             }
 
-            using (var client = new HttpClient())
+            using var client = new HttpClient();
+            var requestBody = new StringContent(JsonConvert.SerializeObject(values).ToString(), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = client.PostAsync(endpoint, requestBody).Result;
+            if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
+
+            else
             {
-                var requestBody = new StringContent(JsonConvert.SerializeObject(values).ToString(), Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = client.PostAsync(endpoint, requestBody).Result;
-                if (response.IsSuccessStatusCode) Console.WriteLine("Machine's location sent and added successfully");
-
-                else
-                {
-                    Console.WriteLine("Sending machine's location failed");
-                    Console.WriteLine(response.StatusCode.ToString());
-                    //string responseString = response.Content.ReadAsStringAsync().Result;
-                    //JObject responseObj = JObject.Parse(responseString);
-                    //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
-                }
+                Console.WriteLine("Sending machine's location failed");
+                Console.WriteLine(response.StatusCode.ToString());
+                //string responseString = response.Content.ReadAsStringAsync().Result;
+                //JObject responseObj = JObject.Parse(responseString);
+                //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
             }
         }
 
         public static void Sync()
         {
-            void WaitFor(Func<bool> condition)
+            static void WaitFor(Func<bool> condition)
             {
                 while (!condition())
                     Task.Delay(100).Wait();
@@ -171,8 +169,11 @@ namespace DeVote.Network
             {
                 var neededHeight = Blockchain.Current.Blocks.Last.Value.Height + 1;
                 // get block request (neededHeight); 
-                var getBlockRequest = new Messages.GetBlock() { Type = PacketType.Request };
-                getBlockRequest.BlockHeight = neededHeight;
+                var getBlockRequest = new Messages.GetBlock
+                {
+                    Type = PacketType.Request,
+                    BlockHeight = neededHeight
+                };
                 SendToFullNode(getBlockRequest.Create());
 
                 WaitFor(() => Messages.GetBlock.RecievedBlocks.ContainsKey(neededHeight));

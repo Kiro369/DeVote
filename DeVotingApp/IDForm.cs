@@ -35,12 +35,6 @@ namespace DeVotingApp
 
             label1.Font = new Font(KMRFont.Families[0], 30);
             label1.Location = new Point(pictureBox2.Location.X, pictureBox2.Location.Y + Height / 10 + pictureBox2.Height);
-            //processLabel.Font = new Font(KMRFont.Families[0], 30);
-            //processLabel.Location = new Point(Width / 2 - processLabel.Width / 2, pictureBox1.Location.Y + (int)(Height / 2.75));
-
-            //startButton.Font = new Font(KMRFont.Families[0], 30);
-            //startButton.Size = new Size(Width / 10, Height / 20);
-            //startButton.Location = new Point(Width / 2 - startButton.Width / 2, processLabel.Location.Y + (int)(Height / 15));
         }
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -83,10 +77,9 @@ namespace DeVotingApp
         {
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
+
         }
 
-        DateTime flipTime = DateTime.MinValue;
-        Bitmap First, Second;
         private void CaptureCameraCallback()
         {
             while (true)
@@ -95,40 +88,16 @@ namespace DeVotingApp
                 {
                     _capture.Read(_image);
                     if (_image.Empty()) return;
-                    //var imageRes = new OpenCvSharp.Mat();
-                    //OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
-                    var bmpWebCam = BitmapConverter.ToBitmap(_image);
-                    //bmpWebCam.RotateFlip(RotateFlipType.Rotate90FlipXY);
+                    var imageRes = new OpenCvSharp.Mat();
+                    OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
+                    var bmpWebCam = BitmapConverter.ToBitmap(imageRes);
                     pictureBox1.Image = bmpWebCam;
-                    try
-                    {
-                        bmpWebCam.Save("CameraFeed.png", System.Drawing.Imaging.ImageFormat.Png);
-                    }
-                    catch { }
-                    if (Recognition.Current.ContainsCard(Directory.GetCurrentDirectory() + "\\CameraFeed.png"))
-                    {
-                        if (flipTime == DateTime.MinValue)
-                        {
-                            flipTime = DateTime.Now;
-                            First = bmpWebCam;
-                            Recognition.Current.PlayTTS("Please flip your ID card");
-                        }
-                        else if (DateTime.Now > flipTime.AddSeconds(10))
-                        {
-                            Second = bmpWebCam;
-                            Recognition.Current.PlayTTS("Please hold on while we are processing");
-                            ExtractInfo(out dynamic Info);
-                            Task.Factory.StartNew(() => { new IDForm().ShowDialog(); });
-                            break;
-                        }
-                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
             }
-            Close();
         }
 
         private void ExtractInfo(out dynamic info)

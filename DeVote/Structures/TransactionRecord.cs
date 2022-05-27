@@ -22,7 +22,7 @@ namespace DeVote.Structures
         public bool IsVoterVerified(string frontIDPath)
         {
             var verified = 0;
-            foreach (var imagePath in ImgProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash),"jpg"))
+            foreach (var imagePath in Misc.ImageProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash),"jpg"))
             {
                 if (Recognition.Current.VerifyVoter(frontIDPath, imagePath))
                     verified++;
@@ -37,7 +37,7 @@ namespace DeVote.Structures
         /// <returns>tuple of paths where front and back is saved</returns>
         public (string,string) DecompressID(string outputformat)
         {
-            ImgProcessor.DecompressID(Front, Back, Hash, outputformat, out string frontIDPath, out string backIDPath);
+            Misc.ImageProcessor.DecompressID(Front, Back, Hash, outputformat, out string frontIDPath, out string backIDPath);
             return (frontIDPath, backIDPath);
         }
 

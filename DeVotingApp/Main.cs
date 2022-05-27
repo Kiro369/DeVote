@@ -65,7 +65,11 @@ namespace DeVotingApp
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            new IDForm().ShowDialog();
+            Hide();
+            var form2 = new IDForm();
+            form2.Closed += (s, args) => Close();
+            form2.Show();
+            form2.Activate();
         }
     }
 }

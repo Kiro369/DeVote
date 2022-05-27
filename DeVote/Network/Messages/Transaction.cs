@@ -24,7 +24,7 @@ namespace DeVote.Network.Messages
         public void Save()
         {
             TxRecord.Hash = Encoding.UTF8.GetBytes(TransactionData.Hash);
-            TransactionsDLT.AddTxRecord(TxRecord);
+            TransactionsDLT.Current.AddRecord(TxRecord);
         }
         public override void Handle(Node client)
         {
