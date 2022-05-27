@@ -21,6 +21,8 @@ namespace DeVote.Structures
         /// <returns></returns>
         public bool IsVoterVerified(string frontIDPath)
         {
+            using var _ = Recognition.Current.GIL();
+
             var verified = 0;
             foreach (var imagePath in Misc.ImageProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash),"jpg"))
             {

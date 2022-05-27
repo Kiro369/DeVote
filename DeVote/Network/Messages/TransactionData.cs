@@ -57,7 +57,7 @@ namespace DeVote.Network.Messages
         public byte[] Create()
         {
             Serialize(this);
-            Finalize<GetBlock>();
+            Finalize<TransactionData>();
             return Buffer;
         }
     }

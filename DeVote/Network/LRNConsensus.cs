@@ -1,4 +1,6 @@
 ﻿using DeVote.Extensions;
+using DeVote.Network.Messages;
+using DeVote.Structures;
 using System;
 using System.Globalization;
 using System.IO;
@@ -35,7 +37,9 @@ namespace DeVote.Network
 
                     if (Choosen.Equals(Constants.MachineID))
                     {
-                        // Add block
+                        Blockchain.Current.AddBlock(Blockchain.Current.Block);
+                        var addBlock = new AddBlock() { Block = Blockchain.Current.Blocks.Last.Value };
+                        NetworkManager.Broadcast(addBlock.Create());
                     }
 
                 }

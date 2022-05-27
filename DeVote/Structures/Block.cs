@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ProtoBuf;
 using System.IO;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DeVote.Structures
 {
@@ -37,6 +38,19 @@ namespace DeVote.Structures
             byte[] SerializedBlock = SerializeBlock(this);
             byte[] height = BitConverter.GetBytes(Height);
             levelDB.Put(height, SerializedBlock);
+        }
+
+        public bool Remove(string hash)
+        {
+            return Transactions.RemoveAll(tx => tx.Hash.Equals(hash)) > 0;
+        }
+
+        public bool Contains(string hash)
+        {
+            foreach (var tx in Transactions)
+                if (tx.Hash.Equals(hash))
+                    return true;
+            return false;
         }
 
         // Save Block into LevelDB as string -json- representation.

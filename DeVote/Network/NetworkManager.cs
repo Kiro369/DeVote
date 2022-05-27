@@ -152,13 +152,15 @@ namespace DeVote.Network
             }
         }
 
+        public static void WaitFor(Func<bool> condition)
+        {
+            while (!condition())
+                Task.Delay(100).Wait();
+        }
+
         public static void Sync()
         {
-            static void WaitFor(Func<bool> condition)
-            {
-                while (!condition())
-                    Task.Delay(100).Wait();
-            }
+
 
             var heightRequest = new Messages.LatestHeight() { Type = PacketType.Request }.Create();
             Broadcast(heightRequest);
