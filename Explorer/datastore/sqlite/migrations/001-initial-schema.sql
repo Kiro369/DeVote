@@ -21,11 +21,23 @@ CREATE TABLE Transactions (
 CREATE TABLE VMachines (
     ID        TEXT PRIMARY KEY,
     Lat       INTEGER NOT NULL,
-    Lng       INTEGER NOT NULL
+    Lng       INTEGER NOT NULL,
+    Address   TEXT NOT NULL,
+    Governorate Text NO NULL
 );
 
 CREATE TABLE Candidates (
     ID              TEXT PRIMARY KEY,
     Name            Text NOT NULL,
-    NoVotes         INTEGER NOT NULL
+    NoVotes         INTEGER NOT NULL,
+    Color           INTEGER NOT NULL
+);
+
+CREATE TABLE Governorates (
+    ID              INTEGER PRIMARY KEY AUTOINCREMENT,
+    ArabicName      Text NOT NULL,
+    EnglishName     Text NOT NULL,
+    IDsOfVMs        Text,
+    Votes           String NOT NULL,
+    Color           INTEGER NOT NULL
 );

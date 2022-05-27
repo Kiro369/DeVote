@@ -4,8 +4,9 @@ require('dotenv').config();
 const SQLITEDB_NAME = process.env.SQLITEDB_NAME;
 const LEVELDB_NAME = process.env.LEVELDB_NAME;
 const PROTO_FILE_NAME = process.env.PROTO_FILE_NAME;
-const MINS_TO_SYNC_DBS = parseInt(process.env.MINS_TO_SYNC_DBS);
+const MINS_TO_SYNC_DBS = parseFloat(process.env.MINS_TO_SYNC_DBS);
 const SYNC_DELAY_TIME = 1000 * 60 * MINS_TO_SYNC_DBS;
+global.defaultTieColor = parseInt("0xffb4b4b4");
 
 global.isDBsOpen = false;
 global.isProtoFileLoaded = false;
@@ -31,14 +32,23 @@ global.isProtoFileLoaded = false;
 
     console.log("App is ready to start.")
 
+    // handle the unhandled 
+    process.on("unhandledRejection", error => {
+        console.error(error)
+    });
+
     setTimeout(async () => {
         console.log(`${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
         await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS)
+
         console.log(`${new Date().toLocaleString()} : Setting initial NoVotes Of Candidates ...`)
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
-    }, 1000 * 10)
 
-    // first sync databases then count and update votes.
+        console.log(`\n${new Date().toLocaleString()} : Inserting initial Governorates ...`)
+        await myDBWrapper.mySQLite.insertInitialGovernorates();
+    }, 1000 * 5)
+
+    // keep syncing databases then counting and updating votes for candidates and governorates.
     setInterval(async () => {
         console.log("\n===============================================");
         console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
@@ -46,6 +56,9 @@ global.isProtoFileLoaded = false;
 
         console.log(`${new Date().toLocaleString()} : Upadating NoVotes Of Candidates ...`)
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
+
+        console.log(`\n${new Date().toLocaleString()} : Upadating Votes For Governorates ...`)
+        await myDBWrapper.mySQLite.setNoVotesForGovernorates();
     }, SYNC_DELAY_TIME);
 
     const express = require('express');
@@ -54,6 +67,7 @@ global.isProtoFileLoaded = false;
     const txRouter = require('./routes/txRouter.js');
     const vmRouter = require('./routes/vmRouter.js');
     const candidateRouter = require('./routes/candidateRouter.js');
+    const governorateRouter = require('./routes/governorateRouter.js');
 
     const app = express();
     const port = process.env.PORT || 3000;
@@ -77,13 +91,14 @@ global.isProtoFileLoaded = false;
     app.use('/transactions', txRouter);
     app.use('/vms', vmRouter);
     app.use('/candidates', candidateRouter);
+    app.use('/governorates', governorateRouter);
 
     app.use(express.static('api-test'))
 
     app.listen(app.get('port'), function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
-        console.log(`App will start the initial database sync in 10s`);
+        console.log(`App initialization process will start in 5s`);
         console.log("===============================================\n");
     })
 })()
