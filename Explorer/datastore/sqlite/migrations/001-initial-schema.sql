@@ -1,29 +1,29 @@
 CREATE TABLE  Blocks (
-    Height      INTEGER UNIQUE,
-    PrevHash    TEXT,
-    Timestamp   INTEGER,
-    MerkleRoot  TEXT,
-    Hash        TEXT PRIMARY KEY,
-    Miner       TEXT,
-    nTx         INTEGER
+    Height          INTEGER UNIQUE,
+    PrevHash        TEXT,
+    Timestamp       INTEGER,
+    MerkleRoot      TEXT,
+    Hash            TEXT PRIMARY KEY,
+    Miner           TEXT,
+    nTx             INTEGER
 );
 
 CREATE TABLE Transactions (
-    Date          INTEGER,
-    Hash          TEXT PRIMARY KEY,
-    Elector       TEXT,
-    Elected       TEXT,
-    Confirmations INTEGER NOT NULL,
-    BlockHeight   INTEGER,
+    Date            INTEGER,
+    Hash            TEXT PRIMARY KEY,
+    Elector         TEXT,
+    Elected         TEXT,
+    Confirmations   INTEGER NOT NULL,
+    BlockHeight     INTEGER,
     FOREIGN KEY (BlockHeight) REFERENCES Blocks (Height)
 );
 
 CREATE TABLE VMachines (
-    ID        TEXT PRIMARY KEY,
-    Lat       INTEGER NOT NULL,
-    Lng       INTEGER NOT NULL,
-    Address   TEXT NOT NULL,
-    Governorate Text NO NULL
+    ID              TEXT PRIMARY KEY,
+    Lat             INTEGER NOT NULL,
+    Lng             INTEGER NOT NULL,
+    Address         TEXT NOT NULL,
+    Governorate     Text NOT NULL
 );
 
 CREATE TABLE Candidates (
@@ -38,6 +38,6 @@ CREATE TABLE Governorates (
     ArabicName      Text NOT NULL,
     EnglishName     Text NOT NULL,
     IDsOfVMs        Text,
-    Votes           String NOT NULL,
+    Votes           Text NOT NULL,
     Color           INTEGER NOT NULL
 );

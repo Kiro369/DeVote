@@ -6,8 +6,8 @@ const LEVELDB_NAME = process.env.LEVELDB_NAME;
 const PROTO_FILE_NAME = process.env.PROTO_FILE_NAME;
 const MINS_TO_SYNC_DBS = parseFloat(process.env.MINS_TO_SYNC_DBS);
 const SYNC_DELAY_TIME = 1000 * 60 * MINS_TO_SYNC_DBS;
-global.defaultTieColor = parseInt("0xffb4b4b4");
 
+global.defaultTieColor = parseInt("0xffb4b4b4");
 global.isDBsOpen = false;
 global.isProtoFileLoaded = false;
 
@@ -54,10 +54,10 @@ global.isProtoFileLoaded = false;
         console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
         await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS);
 
-        console.log(`${new Date().toLocaleString()} : Upadating NoVotes Of Candidates ...`)
+        console.log(`${new Date().toLocaleString()} : Updating NoVotes Of Candidates ...`)
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
 
-        console.log(`\n${new Date().toLocaleString()} : Upadating Votes For Governorates ...`)
+        console.log(`\n${new Date().toLocaleString()} : Updating Votes For Governorates ...`)
         await myDBWrapper.mySQLite.setNoVotesForGovernorates();
     }, SYNC_DELAY_TIME);
 

@@ -159,11 +159,11 @@ class SQLite {
             const { ID, NoVotes } = candidates[index];
             const noVotesObj = await this.db.get("SELECT COUNT(Elected) FROM Transactions Where Elected == ?", ID)
             const NewNoVotes = noVotesObj['COUNT(Elected)'];
-            await this.UpadteNoVotesForCandidate(ID, NoVotes, NewNoVotes)
+            await this.UpdateNoVotesForCandidate(ID, NoVotes, NewNoVotes)
         }
     }
 
-    async UpadteNoVotesForCandidate(id, oldNoVotes, newNoVotes) {
+    async UpdateNoVotesForCandidate(id, oldNoVotes, newNoVotes) {
         const SQL_QUERY = `UPDATE Candidates SET NoVotes = ?  WHERE ID == "${id}"`;
         await this.db.run(SQL_QUERY, newNoVotes)
         console.log(`Candidate: ${id}, Old noVotes: ${oldNoVotes} New noVotes: ${newNoVotes}`)
@@ -219,22 +219,22 @@ class SQLite {
         // if current ids is empty
         if (!currentIDs) newIDs = newID;
         else newIDs = currentIDs + "," + newID;
-        await this.UpadteIDsofVMsForGovernorate(governorate, currentIDs, newIDs);
+        await this.UpdateIDsofVMsForGovernorate(governorate, currentIDs, newIDs);
     }
 
-    async UpadteIDsofVMsForGovernorate(governorate, oldIDs, newIDs) {
+    async UpdateIDsofVMsForGovernorate(governorate, oldIDs, newIDs) {
         const SQL_QUERY = `UPDATE Governorates SET IDsOfVMs = ?  WHERE EnglishName == "${governorate}"`;
         await this.db.run(SQL_QUERY, newIDs)
         // console.log(`Governorate:  ${governorate} | Old IDs: ${oldIDs} | New newIDs: ${newIDs}`)
     }
 
-    async UpadteVotesForGovernorate(governorate, oldVotes, newVotes) {
+    async UpdateVotesForGovernorate(governorate, oldVotes, newVotes) {
         const SQL_QUERY = `UPDATE Governorates SET Votes = ?  WHERE EnglishName == "${governorate}"`;
         await this.db.run(SQL_QUERY, newVotes)
         // console.log(`Governorate: ${governorate} | Old noVotes: ${oldVotes} | New newIDs: ${newVotes}`)
     }
 
-    async UpadteColorForGovernorate(governorate, oldColor, newColor) {
+    async UpdateColorForGovernorate(governorate, oldColor, newColor) {
         const SQL_QUERY = `UPDATE Governorates SET Color = ?  WHERE EnglishName == "${governorate}"`;
         await this.db.run(SQL_QUERY, newColor)
         // console.log(`Governorate: ${governorate} | Old Color: ${oldColor} | New Color: ${newColor}`)
@@ -251,8 +251,8 @@ class SQLite {
                 const { ID, Name } = candidates[index];
                 candidateList.push({ "ID": ID, "Name": Name, "NoVotes": 0 })
             }
-            await this.UpadteVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
-            await this.UpadteColorForGovernorate(EnglishName, Color, global.defaultTieColor)
+            await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
+            await this.UpdateColorForGovernorate(EnglishName, Color, global.defaultTieColor)
         }
     }
 
@@ -316,8 +316,8 @@ class SQLite {
             console.log("candidateList", candidateList)
 
             // update dominant candidate color and votes for each governorate.
-            await this.UpadteColorForGovernorate(EnglishName, Color, dominantColor);
-            await this.UpadteVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
+            await this.UpdateColorForGovernorate(EnglishName, Color, dominantColor);
+            await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
         }
     }
 }
