@@ -127,6 +127,8 @@ namespace DeVote.Network
             values["id"] = Constants.MachineID;
             values["lat"] = Settings.Current.Latitude.ToString();
             values["lng"] = Settings.Current.Longitude.ToString();
+            values["address"] = Settings.Current.Address;
+            values["governorate"] = Settings.Current.Governorate;
 
             // for the sake of testing and avoiding endpoint error.
             if (isTest)

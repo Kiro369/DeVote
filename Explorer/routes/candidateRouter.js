@@ -11,14 +11,11 @@ candidateRouter.get('/', async (req, res) => {
 });
 
 candidateRouter.post('/', async (req, res) => {
-    let { id, name } = req.body;
     console.log(req.body);
-
-    let insertCandidate = handleErrors(mySQLite.insertCandidate, { id, name });
+    let insertCandidate = handleErrors(mySQLite.insertCandidate, req.body);
     let isErrorCatched = await catchErrors(insertCandidate, req, res);
-
     console.log("isErrorCatched", isErrorCatched)
-    if (!isErrorCatched) res.send({ result: { id, name } });
+    if (!isErrorCatched) res.send({ result: req.body });
 });
 
 module.exports = candidateRouter;

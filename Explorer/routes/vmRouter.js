@@ -11,14 +11,11 @@ vmRouter.get('/', async (req, res) => {
 });
 
 vmRouter.post('/', async (req, res) => {
-    let { id, lat, lng } = req.body;
-    console.log({ id, lat, lng });
-
-    let insertVM = handleErrors(mySQLite.insertVM, { id, lat, lng });
+    console.log(req.body);
+    let insertVM = handleErrors(mySQLite.insertVM, req.body);
     let isErrorCatched = await catchErrors(insertVM, req, res);
-
     console.log("isErrorCatched", isErrorCatched)
-    if (!isErrorCatched) res.send({ result: { id, lat, lng } });
+    if (!isErrorCatched) res.send({ result: req.body });
 });
 
 module.exports = vmRouter;

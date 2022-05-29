@@ -37,7 +37,8 @@ namespace DeVote.Structures
             })
                 {
                     Height = 1,
-                    Miner = "DeVote"
+                    Miner = "DeVote",
+                    PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
                 };
                 genesisBlock.Hash = Argon2.ComputeHash(genesisBlock.Timestamp.ToString());
                 return genesisBlock;

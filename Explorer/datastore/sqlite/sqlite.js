@@ -1,6 +1,7 @@
 const { open } = require('sqlite')
 const sqlite3 = require('sqlite3')
-const path = require('path')
+const path = require('path');
+const fs = require('fs');
 
 class SQLite {
 
@@ -120,11 +121,13 @@ class SQLite {
         return targetTxs
     };
 
-    async insertVM({ id, lat, lng }) {
+    async insertVM({ id, lat, lng, address, governorate }) {
         await this.db.run(
-            "INSERT INTO VMachines  VALUES (?,?,?)",
-            id, lat, lng
+            "INSERT INTO VMachines  VALUES (?,?,?,?,?)",
+            id, lat, lng, address, governorate
         )
+        // also add id of vm to certain governorate
+        await this.addIDofVMToGovernorate(governorate, id)
     };
 
     async getVMs() {
@@ -133,10 +136,10 @@ class SQLite {
         return vms
     }
 
-    async insertCandidate({ id, name }) {
+    async insertCandidate({ id, name, color }) {
         await this.db.run(
-            "INSERT INTO Candidates  VALUES (?,?,?)",
-            id, name, 0
+            "INSERT INTO Candidates (ID,Name,NoVotes,Color) VALUES (?,?,?,?)",
+            id, name, 0, parseInt(color)
         )
     }
 
@@ -147,20 +150,175 @@ class SQLite {
     async setNoVotesForCandidates() {
         // get list of candidates 
         const candidates = await this.db.all("SELECT * FROM Candidates")
-
+        if (!candidates.length) {
+            console.log("There are no candidates added at the moment.")
+            return
+        }
         // for each candidate, get votes count from transactions table.
         for (let index = 0; index < candidates.length; index++) {
             const { ID, NoVotes } = candidates[index];
             const noVotesObj = await this.db.get("SELECT COUNT(Elected) FROM Transactions Where Elected == ?", ID)
             const NewNoVotes = noVotesObj['COUNT(Elected)'];
-            await this.UpadteNoVotesForCandidate(ID, NoVotes, NewNoVotes)
+            await this.UpdateNoVotesForCandidate(ID, NoVotes, NewNoVotes)
         }
     }
 
-    async UpadteNoVotesForCandidate(id, oldNoVotes, newNoVotes) {
+    async UpdateNoVotesForCandidate(id, oldNoVotes, newNoVotes) {
         const SQL_QUERY = `UPDATE Candidates SET NoVotes = ?  WHERE ID == "${id}"`;
         await this.db.run(SQL_QUERY, newNoVotes)
-        console.log(`ID: ${id}, Old: ${oldNoVotes} New: ${newNoVotes}`)
+        console.log(`Candidate: ${id}, Old noVotes: ${oldNoVotes} New noVotes: ${newNoVotes}`)
+    }
+
+    async insertInitialGovernorates() {
+        let currentgovernorateList = await this.getGovernorates();
+        if (currentgovernorateList.length) {
+            console.log(`${new Date().toLocaleString()} : Governorates is already inserted and set.`)
+            return;
+        }
+
+        const governorateJson = fs.readFileSync("governorates.json")
+        const governorateList = JSON.parse(governorateJson)
+        // console.log("governorateList", governorateList)
+        for (let index = 0; index < governorateList.length; index++) {
+            const { ar, en } = governorateList[index];
+            await this.insertGovernorate({ ar, en })
+        }
+        console.log(`${new Date().toLocaleString()} : Governorates has been inserted and set.`)
+    }
+
+    async insertGovernorate({ ar, en }) {
+        await this.db.run("INSERT INTO Governorates (ArabicName,EnglishName,Votes,Color) VALUES (?,?,?,?)",
+            ar, en, "[]", global.defaultTieColor)
+    }
+
+    async getGovernorates() {
+        return await this.db.all("Select * From Governorates")
+    }
+
+    async getGovernorates_API() {
+        const governorates = await this.db.all("Select ArabicName,EnglishName,Color,Votes From Governorates");
+        const governorateList = governorates.map((governorate, index) => {
+            const { Votes } = governorate;
+            governorate["Votes"] = JSON.parse(Votes)
+            return governorate
+        })
+        return governorateList
+    }
+
+    async getIDsofVMsForGovernorate(governorate) {
+        const { IDsOfVMs } = await this.db.get("SELECT IDsOfVMs FROM Governorates Where EnglishName == ?", governorate)
+        return IDsOfVMs
+    }
+
+    // invoked every time a vm got added
+    async addIDofVMToGovernorate(governorate, newID) {
+        // first get governorates's current ids of vms 
+        const currentIDs = await this.getIDsofVMsForGovernorate(governorate);
+        // append new vm id then update
+        let newIDs = "";
+        // if current ids is empty
+        if (!currentIDs) newIDs = newID;
+        else newIDs = currentIDs + "," + newID;
+        await this.UpdateIDsofVMsForGovernorate(governorate, currentIDs, newIDs);
+    }
+
+    async UpdateIDsofVMsForGovernorate(governorate, oldIDs, newIDs) {
+        const SQL_QUERY = `UPDATE Governorates SET IDsOfVMs = ?  WHERE EnglishName == "${governorate}"`;
+        await this.db.run(SQL_QUERY, newIDs)
+        // console.log(`Governorate:  ${governorate} | Old IDs: ${oldIDs} | New newIDs: ${newIDs}`)
+    }
+
+    async UpdateVotesForGovernorate(governorate, oldVotes, newVotes) {
+        const SQL_QUERY = `UPDATE Governorates SET Votes = ?  WHERE EnglishName == "${governorate}"`;
+        await this.db.run(SQL_QUERY, newVotes)
+        // console.log(`Governorate: ${governorate} | Old noVotes: ${oldVotes} | New newIDs: ${newVotes}`)
+    }
+
+    async UpdateColorForGovernorate(governorate, oldColor, newColor) {
+        const SQL_QUERY = `UPDATE Governorates SET Color = ?  WHERE EnglishName == "${governorate}"`;
+        await this.db.run(SQL_QUERY, newColor)
+        // console.log(`Governorate: ${governorate} | Old Color: ${oldColor} | New Color: ${newColor}`)
+    }
+
+    async setNoVotesAndColorForNullGovernorates() {
+        // get list on null ids governorates
+        const nullGovernorateList = await this.db.all("SELECT EnglishName,Color,Votes FROM Governorates Where IDsOfVMs IS NULL ")
+        for (let index = 0; index < nullGovernorateList.length; index++) {
+            const { EnglishName, Color, Votes } = nullGovernorateList[index];
+            let candidateList = []
+            const candidates = await this.getCandidates();
+            for (let index = 0; index < candidates.length; index++) {
+                const { ID, Name } = candidates[index];
+                candidateList.push({ "ID": ID, "Name": Name, "NoVotes": 0 })
+            }
+            await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
+            await this.UpdateColorForGovernorate(EnglishName, Color, global.defaultTieColor)
+        }
+    }
+
+    async setNoVotesForGovernorates() {
+        // first set 0 votes and default color for null-ids governorates.
+        await this.setNoVotesAndColorForNullGovernorates();
+
+        // get the non null-ids governorates.
+        const governorateList = await this.db.all("SELECT EnglishName,IDsOfVMs,Votes FROM Governorates Where IDsOfVMs IS NOT NULL ")
+        if (!governorateList.length) {
+            console.log("There are no voting machines added at the moment to any governorates.")
+            return
+        }
+
+        const candidates = await this.getCandidates();
+        if (!candidates.length) {
+            console.log("There are no candidates added at the moment.")
+            return
+        }
+
+        for (let index = 0; index < governorateList.length; index++) {
+            console.log("============================================================");
+
+            const { IDsOfVMs, EnglishName, Votes, Color } = governorateList[index];
+            // get list of vm ids of each governorate.
+            const vmIDList = IDsOfVMs.split(",");
+            console.log(`Governorate: ${EnglishName} has ${vmIDList.length} voting machines`)
+            console.log(`vmIDList: ${vmIDList}`)
+
+            // a list of candidates object {ID,Name,NoVotes} for each governorate.
+            let candidateList = [];
+            let maxNoVotes = 0;
+            let dominantColor;
+
+            for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
+                let TotalNoVotesForCandidate = 0;
+
+                let candidate = candidates[candidateIndex];
+                const candidateID = candidate["ID"];
+                const candidateName = candidate["Name"]
+                const candidateColor = candidate["Color"]
+
+                // for each candidate, get number of votes from each voting machine.
+                for (let index = 0; index < vmIDList.length; index++) {
+                    const vmID = vmIDList[index];
+                    const SQL_QUERY = `SELECT COUNT(Elector) FROM Transactions Where Elector == "${vmID}" AND Elected == "${candidateID}"`;
+                    const noVotesObj = await this.db.get(SQL_QUERY)
+                    const noVotesByVM = noVotesObj['COUNT(Elector)'];
+                    TotalNoVotesForCandidate += parseInt(noVotesByVM);
+                    console.log(`candidate ${candidateID} has ${noVotesByVM} votes from VM ${vmID}`)
+                }
+
+                // set the dominant color for each governorate.
+                if (TotalNoVotesForCandidate > maxNoVotes) {
+                    maxNoVotes = TotalNoVotesForCandidate;
+                    dominantColor = candidateColor
+                }
+                candidateList.push({ "ID": candidateID, "Name": candidateName, "NoVotes": TotalNoVotesForCandidate });
+            }
+
+            console.log("candidateList", candidateList)
+
+            // update dominant candidate color and votes for each governorate.
+            await this.UpdateColorForGovernorate(EnglishName, Color, dominantColor);
+            await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
+        }
     }
 }
 
