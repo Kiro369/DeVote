@@ -6,6 +6,7 @@ const LEVELDB_NAME = process.env.LEVELDB_NAME;
 const PROTO_FILE_NAME = process.env.PROTO_FILE_NAME;
 const MINS_TO_SYNC_DBS = parseFloat(process.env.MINS_TO_SYNC_DBS);
 const SYNC_DELAY_TIME = 1000 * 60 * MINS_TO_SYNC_DBS;
+const BLKS_PATH = process.env.BLKS_PATH;
 
 global.defaultTieColor = parseInt("0xffb4b4b4");
 global.isDBsOpen = false;
@@ -14,23 +15,23 @@ global.isProtoFileLoaded = false;
 (async () => {
 
     const myDBWrapper = new DBWrapper();
-    await myDBWrapper.initDBs(SQLITEDB_NAME, LEVELDB_NAME, PROTO_FILE_NAME)
+    await myDBWrapper.initSQliteAndBlksDir(SQLITEDB_NAME, BLKS_PATH, PROTO_FILE_NAME, MINS_TO_SYNC_DBS)
         .then(async () => {
             // share a single global DB connection with routes.
             global.SQLite = myDBWrapper.mySQLite;
         })
         .catch(err => {
-            console.error("Opening Databases failed");
+            console.error("\x1b[31m%s\x1b[0m", "Opening Databases failed");
             console.error(err);
             return;
         });
 
     if (!global.isDBsOpen || !isProtoFileLoaded) return;
 
-    console.log("Opening Databases succeed.");
-    console.log(`Syncing Databases every ${MINS_TO_SYNC_DBS} minutes\n`)
+    console.log("\x1b[32m%s\x1b[0m", "\nOpening Databases succeed.");
+    console.log('\x1b[36m%s\x1b[0m', `Syncing Databases every ${MINS_TO_SYNC_DBS} minutes\n`)
 
-    console.log("App is ready to start.")
+    console.log("\x1b[32m%s\x1b[0m", "App is ready to start.")
 
     // handle the unhandled 
     process.on("unhandledRejection", error => {
@@ -38,21 +39,23 @@ global.isProtoFileLoaded = false;
     });
 
     setTimeout(async () => {
-        console.log(`${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
-        await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS)
+        console.log(`\n${new Date().toLocaleString()} : Inserting initial Governorates ...`)
+        await myDBWrapper.mySQLite.insertInitialGovernorates();
+
+        console.log(`\n${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
+        await myDBWrapper.syncSQLWithBlks();
 
         console.log(`${new Date().toLocaleString()} : Setting initial NoVotes Of Candidates ...`)
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
 
-        console.log(`\n${new Date().toLocaleString()} : Inserting initial Governorates ...`)
-        await myDBWrapper.mySQLite.insertInitialGovernorates();
+
     }, 1000 * 5)
 
     // keep syncing databases then counting and updating votes for candidates and governorates.
     setInterval(async () => {
         console.log("\n===============================================");
         console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
-        await myDBWrapper.syncDBs(MINS_TO_SYNC_DBS);
+        await myDBWrapper.syncSQLWithBlks();
 
         console.log(`${new Date().toLocaleString()} : Updating NoVotes Of Candidates ...`)
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
@@ -98,7 +101,7 @@ global.isProtoFileLoaded = false;
     app.listen(app.get('port'), function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
-        console.log(`App initialization process will start in 5s`);
+        console.log("\x1b[36m%s\x1b[0m", `App initialization process will start in 5s`);
         console.log("===============================================\n");
     })
 })()

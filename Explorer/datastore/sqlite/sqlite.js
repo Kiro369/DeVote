@@ -15,7 +15,7 @@ class SQLite {
             migrationsPath: path.join(__dirname, 'migrations'),
         }).catch(err => { throw err; })
 
-        console.log(`Connection to ${dbName} SQLiteDB is successful.`)
+        console.log("\x1b[32m%s\x1b[0m", `Connection to ${dbName} SQLiteDB is successful.`)
         return this
     };
 
@@ -151,7 +151,7 @@ class SQLite {
         // get list of candidates 
         const candidates = await this.db.all("SELECT * FROM Candidates")
         if (!candidates.length) {
-            console.log("There are no candidates added at the moment.")
+            console.log("\x1b[31m%s\x1b[0m", "There are no candidates added at the moment.")
             return
         }
         // for each candidate, get votes count from transactions table.
@@ -263,13 +263,13 @@ class SQLite {
         // get the non null-ids governorates.
         const governorateList = await this.db.all("SELECT EnglishName,IDsOfVMs,Votes FROM Governorates Where IDsOfVMs IS NOT NULL ")
         if (!governorateList.length) {
-            console.log("There are no voting machines added at the moment to any governorates.")
+            console.log("\x1b[31m%s\x1b[0m", "There are no voting machines added at the moment to any governorates.")
             return
         }
 
         const candidates = await this.getCandidates();
         if (!candidates.length) {
-            console.log("There are no candidates added at the moment.")
+            console.log("\x1b[31m%s\x1b[0m", "There are no candidates added at the moment.")
             return
         }
 

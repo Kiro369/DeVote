@@ -14,7 +14,7 @@ class ProtoBuf {
 
         this.message = this.root.lookupType(`${protofileName}Package.Block`);
 
-        console.log(`Loading ${fileName} succeed.`)
+        console.log("\x1b[32m%s\x1b[0m", `Loading ${fileName} succeed.`)
         return this
     }
 
