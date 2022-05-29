@@ -1,1 +1,1 @@
-from .id_reader import ocr_id, is_front_back, is_there_card
+from .id_reader import ocr_id, scan_card

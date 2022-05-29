@@ -6,8 +6,14 @@ import re
 import easyocr
 from difflib import SequenceMatcher
 import os
+import time
+import requests
+import json
+import simpleaudio
+
 
 dir_path = os.path.dirname(os.path.dirname(__file__))
+reader = easyocr.Reader(["ar"])
 
 
 def id_read(img, gray=False, *, data, face):
@@ -23,13 +29,14 @@ def id_read(img, gray=False, *, data, face):
     image = cv2.resize(image, (1410, 900))
     thresh = 91
     bi_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
-
+    #bi_img = image
     # bi_img = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 201, 70)
-    data_coords = {"front": {"first_name": [(900, 220), (1380, 300)],
-                             "full_name": [(480, 310), (1380, 400)],
-                             "address": [(480, 420), (1380, 570)],
-                             "ID": [(620, 685), (1380, 780)]},
-                   "back": {"expire_date": [(450, 350), (750, 500)]}}
+    data_coords = {"Front": {"first_name" : [(900, 220), (1380, 300)],
+                             "full_name"  : [(480, 310), (1380, 400)],
+                             "address"    : [(480, 420), (1380, 570)],
+                             "ID"         : [(620, 685), (1380, 780)]},
+                   "Back" : {"expire_date": [(450, 350), (750, 500)],
+                             "job"        : [(450, 100), (1130, 260)]}}
 
     '''
     for coord in data_coords[face].values():
@@ -40,11 +47,17 @@ def id_read(img, gray=False, *, data, face):
     for key, val in data_coords[face].items():
         (x1, y1), (x2, y2) = val
         if key == "ID" or key == "expire_date":
-            data[face][key] = "".join(image_to_string(bi_img[y1:y2, x1:x2], lang="hin").split());
+            data[face][key] = "".join(image_to_string(bi_img[y1:y2, x1:x2], lang="hin").split())
             continue
 
-        data[face][key] = re.sub('[^A-Za-zا-ي0 -9]+', '',
-                                 image_to_string(bi_img[y1:y2, x1:x2], lang="ara").replace("\n", " "))
+        #text_mat = reader.readtext(bi_img[y1:y2, x1:x2])
+        #data[face][key] = text_mat[0][-2] if len(text_mat) > 0 else ""
+        data[face][key] = re.sub('[^A-Za-zا-ي0 -9]+', '', image_to_string(bi_img[y1:y2, x1:x2], lang="ara").replace("\n", " "))
+    if face == "Back":
+        ex_date = data[face]["expire_date"]
+        if len(ex_date) > 3:
+            data[face]["expire_date"] = ex_date[0:4]
+
 
     pass
 
@@ -83,9 +96,12 @@ def id_crop(id_img, gray=False):
     :param gray: indicator if image passed with grayscale or Not
     :return: cropped ID
     '''
-    image = id_img if gray else cv2.cvtColor(id_img, cv2.COLOR_BGR2GRAY)
+    temp = id_img.copy()
+    image = id_img if gray else cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
+    #blurred = cv2.GaussianBlur(image, (7, 7), 0)
+
     blurred = cv2.bilateralFilter(image, 33, 40, 40)
-    canny = cv2.Canny(blurred, 70, 200)
+    canny = cv2.Canny(blurred, 120, 200)
     # cv2.imshow("canny", canny)
     contours = get_contours(canny)
     contours = select_contour(contours)
@@ -95,7 +111,7 @@ def id_crop(id_img, gray=False):
         return id
     else:
         print("can't find the ID")
-        return
+        return None
     pass
 
 
@@ -129,22 +145,29 @@ def ocr_id(id_path, face):
     :return: extracting data from the card
     '''
     ID_img = img_load(id_path)
-    info = {"front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
-            "back": {"expire_date": ""}}
+    info = {"Front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
+            "Back": {"expire_date": "", "job": ""}}
 
     cropped = id_crop(ID_img)
-    id_read(cropped, data=info, face=face)
+    #cv2.imshow("crooped", cropped)
+    #cv2.waitKey(1)
+    if cropped is not None:
+        id_read(cropped, data=info, face=face)
+
     return info
     pass
 
 
-def img_load(img_path):
+def img_load(img_ref):
     '''
     helps method for loading image using specific path
-    :param img_path: image path
+    :param img_ref: image path as str or opencv image
     :return: resize loaded image
     '''
-    img = cv2.imread(img_path, 1)
+    if type(img_ref) is not str:
+        img_path = cv2.resize(img_ref, (800, 600))
+        return img_path
+    img = cv2.imread(img_ref, 1)
     return cv2.resize(img, (800, 600))
 
 
@@ -162,11 +185,12 @@ def test_card(card):
     data = {"front_test": "",
             "back_test": ""}
 
-    reader = easyocr.Reader(["ar"])
+    #reader = easyocr.Reader(["ar"])
     for key, val in data_coords.items():
         (x1, y1), (x2, y2) = val
         text_mat = reader.readtext(image[y1:y2, x1:x2])
         data[key] = text_mat[0][-2] if len(text_mat) > 0 else None
+        #data[key] = image_to_string(image[y1:y2, x1:x2], lang="ara").replace("\n", " ")
 
     return data
     pass
@@ -183,15 +207,16 @@ def is_front_back(img_path):
     cropped = id_crop(img)
     data = [*test_card(cropped).values()]
     if data[0] is None and data[1] is None:
-        return "None", ""
+        return "None"
     elif data[0] is not None and SequenceMatcher(None, data[0], "الشخصية").ratio() >= .60:
-        return "Front", ""
+        return "Front"
     else:
         barcode = get_barcode(cropped)
         if barcode[0]:
-            return "Back", barcode[1]
+            is_Pdf417 = is_back_API(barcode[1])
+            return "Back" if is_Pdf417 else "None"
         else:
-            return "None", ""
+            return "None"
 
 
 def is_there_card(img_path):
@@ -202,6 +227,10 @@ def is_there_card(img_path):
     '''
     img = img_load(img_path)
     cropped = id_crop(img)
+
+    #if cropped is not None:
+     #   cv2.imshow("test", cropped)
+      #  cv2.waitKey(1)
     if cropped is not None:
         test_cropped = np.array(cropped.shape[:2]) >= 50
         return test_cropped.all()
@@ -238,13 +267,112 @@ def get_barcode(img):
     :return: a tuple with 1st element indicate if there is a barcode or Not
     and the path to the cropped barcode
     '''
+    '''
     processed_img = preprocess_img(img)
     contours = get_contours(processed_img)[0]
     rect = cv2.minAreaRect(contours)
     box = cv2.cv.BoxPoints(rect) if imutils.is_cv2() else cv2.boxPoints(rect)
     box = np.int0(box)
     x, y, w, h = cv2.boundingRect(box)
-    barcode = img.copy()[y:y + h, x: x + w]
+    barcode = img.copy()[y:y + h, x: x + w]'''
     path = dir_path + "/barcode.jpg"
-    saved = cv2.imwrite(path, barcode)
+    #saved = cv2.imwrite(path, barcode)
+    saved = cv2.imwrite(path, img)
     return saved, path
+
+
+def is_back_API(filePath):
+    url = "https://wabr.inliteresearch.com/barcodes"
+    formData = {'types': 'Pdf417', 'fields': 'type,length', }
+    files = {'file': (filePath, open(filePath, 'rb'), 'application/octet-stream')}
+    response = requests.post(url, data=formData, files=files)
+
+    # print(response.text)
+
+    if response.status_code != 200:
+        print("Could not sent the Request")
+        return False
+
+    resJson = json.loads(response.text)
+    Pdf417BarcodeList = resJson["Barcodes"]
+
+    if not len(Pdf417BarcodeList):
+        print("No Barcode of type Pdf417 detected")
+        return False
+
+    return True
+
+
+sounds_path = {"Front": "ask_enter_card.wav", "Back": "ask_flip_card.wav", "End": "thanks.wav"}
+sounds = {}
+for f in sounds_path.keys():
+    sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/data/voice_cmd/"+sounds_path[f])
+
+
+def scan(frame, face):
+    data = ocr_id(frame, face)
+    if check_acc(data, face):
+        if face == "Front":
+            front_path = dir_path + "/front.jpg"
+            cv2.imwrite(front_path, frame)
+            data[face]["front_path"] = front_path
+        return data[face]
+    else:
+        return None
+
+
+def check_acc(data, face):
+    if face == "Front":
+        return len(data[face]["first_name"]) > 2 and len(data[face]["ID"]) == 14
+    else:
+        return len(data[face]["expire_date"]) == 4
+
+
+def scan_card(path, execution_time=60):
+    face = {"Front": None, "Back": None}
+    data = {}
+    video = cv2.VideoCapture(path)
+    if not video.isOpened():
+        return False, {}
+    elapsed_time = max(execution_time, 60)
+    frames_count = 0
+
+    for face_key in face.keys():
+        voice_ord = sounds[face_key].play()
+        voice_ord.wait_done()
+        process_this_frame = True
+        start = time.time()
+        while video.isOpened():
+            ret, frame = video.read()
+            if ret and process_this_frame:
+                is_card = is_there_card(frame)
+                if is_card:
+                    #front_or_back = is_front_back(frame)
+                    if face[face_key] is None:# and front_or_back == face_key:
+                        temp = scan(frame, face_key)
+                        if temp is not None:
+                            data[face_key] = temp
+                            face[face_key] = True
+
+                            break
+
+            if frames_count < 5:
+                frames_count += 1
+                process_this_frame = False
+            else:
+                frames_count = 0
+                process_this_frame = True
+            end = time.time()
+            if (end-start) > elapsed_time:
+                terminate(video)
+                return False, data
+    terminate(video)
+    return all(list(face.values())), data
+
+
+def terminate(cam_ref):
+    cam_ref.release()
+    cv2.destroyAllWindows()
+    voice_th = sounds["End"].play()
+    voice_th.wait_done()
+
