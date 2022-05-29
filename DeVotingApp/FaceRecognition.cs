@@ -127,6 +127,7 @@ namespace DeVotingApp
 
         bool CanVerify = true;
         System.Diagnostics.Stopwatch sp = new();
+        List<string> Paths = new List<string>();
         void Recognize()
         {
             if (CanVerify)
@@ -141,7 +142,7 @@ namespace DeVotingApp
                 }
                 else
                 {
-                    var path = $"CurrentImage{Tries}.jpg";
+                    var path = Directory.GetCurrentDirectory() + "\\" + $"CurrentImage{Tries}.jpg";
                     while (true)
                     {
                         try
@@ -153,10 +154,12 @@ namespace DeVotingApp
                     }
                     sp.Restart();
                     using var _ = DeVote.PyRecognition.Recognition.Current.GIL();
-                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, Directory.GetCurrentDirectory() + "\\" + path);
+                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, );
                     sp.Stop();
-                    if (verified)
+                    if (verified) {
                         Verifications++;
+                        Paths.Add(path);
+                    }
                     Tries++;
                     CanVerify = true;
                 }

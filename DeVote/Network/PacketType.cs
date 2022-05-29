@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeVote.Network
 {
-    enum PacketType
+    enum PacketType : byte
     {
         Request,
         Response

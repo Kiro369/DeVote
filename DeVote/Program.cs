@@ -22,7 +22,16 @@ namespace DeVote
         static void Main()
         {
             #region TransactionDLT/Record Test
-            var x = Recognition.Current;
+            var pkt = new List<byte>();
+            pkt.AddRange(BitConverter.GetBytes((short)5));
+            pkt.AddRange(BitConverter.GetBytes((short)1004));
+            pkt.Add(0);
+            pkt.AddRange(BitConverter.GetBytes(50));
+
+            var x = Blockchain.Current.LevelDB.Handle;
+            Blockchain.Current.LevelDB.Close();
+            var y = Blockchain.Current.LevelDB.Handle == IntPtr.Zero;
+            Console.ReadLine();
             //TransactionRecord transactionRecord = new();
             //string frontImage = @"M:\GradutaionProject\sisi\front.jpg";
             //string backImage = @"M:\GradutaionProject\sisi\back.jpg";
@@ -85,7 +94,7 @@ namespace DeVote
             //var compressed = Misc.ImageProcessor.Compress(image, 55, "jpg");
             //stopWatch.Stop();
             //Console.WriteLine($"Compressed size from {image.Length} to {compressed.Length} => {1 - compressed.Length / (double)image.Length}% reduced => in {stopWatch.ElapsedMilliseconds}");
-            
+
             //stopWatch.Restart();
             //File.WriteAllBytes(@"M:\GradutaionProject\sisi\realoutput2.webp", compressed);
             //Misc.ImageProcessor.Decompress(compressed, @"M:\GradutaionProject\sisi\output2.jpg");

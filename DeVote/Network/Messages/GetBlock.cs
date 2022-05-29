@@ -28,7 +28,8 @@ namespace DeVote.Network.Messages
             switch (Type)
             {
                 case PacketType.Request:
-                    Block = Block.LoadProtobuffedBlock(BlockHeight, Blockchain.Current.LevelDB);
+                    Block = Blockchain.Current.GetBlock(BlockHeight);
+                    Type = PacketType.Response;
                     // response
                     client.Send(Create());
                     break;
