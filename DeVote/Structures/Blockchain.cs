@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using DeVote.Cryptography;
 using LevelDB;
-using Newtonsoft.Json;
 using ProtoBuf;
 
 
@@ -25,7 +22,6 @@ namespace DeVote.Structures
             // Create a new leveldb
             LevelDB = new DB(new Options { CreateIfMissing = true, CompressionLevel = CompressionLevel.NoCompression }, Constants.BlockchainPath);
             //SaveBlock(GenesisBlock);
-
         }
 
         public static Block GenesisBlock
@@ -40,7 +36,9 @@ namespace DeVote.Structures
                     Miner = "DeVote",
                     PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
                 };
-                genesisBlock.Hash = Argon2.ComputeHash(genesisBlock.Timestamp.ToString());
+                genesisBlock.MerkleRoot = Argon2.ComputeMerkleRoot(genesisBlock.Transactions);
+                string blockHeader = genesisBlock.PrevHash + genesisBlock.Timestamp.ToString() + genesisBlock.MerkleRoot;
+                genesisBlock.Hash = Argon2.ComputeHash(blockHeader);
                 return genesisBlock;
             }
         }
@@ -59,14 +57,14 @@ namespace DeVote.Structures
             SaveBlk(block);
         }
 
-        void SaveBlk(Block blk)
+       public void SaveBlk(Block blk)
         {
             if (!Directory.Exists("Blocks"))
                 Directory.CreateDirectory("Blocks");
             using var stream = new MemoryStream();
             Serializer.Serialize(stream, blk);
             var srlzed = stream.ToArray();
-            File.WriteAllBytes($"{blk.Height}.blk", srlzed);
+            File.WriteAllBytes($"./Blocks/{blk.Height}.blk", srlzed);
         }
 
         public Block GetBlock(int height)
@@ -75,7 +73,7 @@ namespace DeVote.Structures
         }
 
         // Load Blockchain saved in byte array representation from levelDB into memory
-        public async Task LoadProtobuffedBlockchain()
+        public void LoadBlockchain()
         {
             var snapShot = this.LevelDB.CreateSnapshot();
             var readOptions = new ReadOptions { Snapshot = snapShot };
@@ -89,39 +87,14 @@ namespace DeVote.Structures
             }
         }
 
-        // Load Blockchain saved in string representation from levelDB into memory
-        public async Task LoadStringifiedBlockchain()
-        {
-            var snapShot = this.LevelDB.CreateSnapshot();
-            var readOptions = new ReadOptions { Snapshot = snapShot };
-
-            using var iterator = this.LevelDB.CreateIterator(readOptions);
-            for (iterator.SeekToFirst(); iterator.IsValid(); iterator.Next())
-            {
-                string StringifiedBlock = iterator.ValueAsString();
-                Block block = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
-                this.Blocks.AddLast(block);
-            }
-        }
-
         // Save Blockchain as byte array representation of Protobuf Encoding.
-        public async Task SaveBlockchainAsByteArray()
+        public void SaveBlockchain()
         {
             foreach (Block block in this.Blocks)
             {
                 byte[] SerializedBlock = Block.SerializeBlock(block);
                 byte[] Height = BitConverter.GetBytes(block.Height);
                 this.LevelDB.Put(Height, SerializedBlock);
-            }
-        }
-
-        // Save Blockchain as string representation.
-        public async Task SaveBlockchainAsString()
-        {
-            foreach (Block block in this.Blocks)
-            {
-                string StringifiedBlock = JsonConvert.SerializeObject(block);
-                this.LevelDB.Put(block.Height.ToString(), StringifiedBlock);
             }
         }
 

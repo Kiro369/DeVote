@@ -10,6 +10,7 @@ namespace DeVote
         public string BlockchainPath { get; set; }
         public string VotedDLTPath { get; set; }
         public string TransactionsDLTPath { get; set; }
+        public string BlocksPath { get; set; }
 
         public string PythonDLLPath { get; set; }
         public string SitePackagesPath { get; set; }

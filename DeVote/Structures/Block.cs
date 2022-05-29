@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using ProtoBuf;
 using System.IO;
-using Newtonsoft.Json;
-using System.Linq;
 
 namespace DeVote.Structures
 {
@@ -33,7 +31,7 @@ namespace DeVote.Structures
         }
 
         // Save Block into LevelDB as byte array representation of Protobuf Encoding.
-        public void SaveBlockAsByteArray(LevelDB.DB levelDB)
+        public void SaveBlock(LevelDB.DB levelDB)
         {
             byte[] SerializedBlock = SerializeBlock(this);
             byte[] height = BitConverter.GetBytes(Height);
@@ -53,32 +51,14 @@ namespace DeVote.Structures
             return false;
         }
 
-        // Save Block into LevelDB as string -json- representation.
-        public void SaveBlockAsString(LevelDB.DB levelDB)
-        {
-            string StringifiedBlock = JsonConvert.SerializeObject(this);
-            levelDB.Put(Height.ToString(), StringifiedBlock);
-        }
-
         // Load Single Block saved as byte array representation from LevelDB.
-        public static Block LoadProtobuffedBlock(int height,LevelDB.DB levelDB)
+        public static Block LoadBlock(int height,LevelDB.DB levelDB)
         {
             byte[] HeightByte = BitConverter.GetBytes(height);
             var SerializedBlock = levelDB.Get(HeightByte);
             if (SerializedBlock != null)
             {
                 return DeserializeBlock(SerializedBlock) ;
-            }
-            else return new Block(new List<Transaction>());
-        }
-        // Load Single Block saved as string representation from LevelDB.
-        public static Block LoadStringifiedBlock(int height, LevelDB.DB levelDB)
-        {
-            String StringifiedBlock = levelDB.Get(height.ToString());
-            if (StringifiedBlock != null)
-            {
-                Block LoadedBlock = JsonConvert.DeserializeObject<Block>(StringifiedBlock);
-                return LoadedBlock;
             }
             else return new Block(new List<Transaction>());
         }
