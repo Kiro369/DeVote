@@ -61,12 +61,12 @@ def compare_faces(cammera_connection, ID_face):
                     iterations = iterations - 1
 
                 time.sleep(min(1, delay_time))
-                print("True ") if (face_distances[0] <= tolerance) else print("False: ")
+                #print("True ") if (face_distances[0] <= tolerance) else print("False: ")
             else:
                 print("please look at the camera and be alone")
 
 
-            display_rec(frame, temp[1])
+            #display_rec(frame, temp[1])
 
         process_this_frame = not process_this_frame
 
@@ -95,7 +95,7 @@ def display_rec(frame, locations, scale=1):
 
 def compare_faces_frame(ID_face, frame):
     face_encodings = get_face_encodings(frame)[0]
-    face_distances = face_recognition.face_distance(ID_face, face_encodings[0])
+    face_distances = face_recognition.face_distance(ID_face, face_encodings[0]) if len(face_encodings) == 1 else [1, ]
     return face_distances[0]
     pass
 
