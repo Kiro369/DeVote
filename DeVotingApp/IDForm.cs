@@ -11,7 +11,7 @@ namespace DeVotingApp
         readonly OpenCvSharp.VideoCapture _capture = new(0); //new("http://192.168.1.2:4747/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
-
+        string Info = string.Empty;
         public IDForm()
         {
             InitializeComponent();
@@ -77,7 +77,7 @@ namespace DeVotingApp
         {
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
-
+            new Thread(ExtractInfo).Start();
         }
 
         private void CaptureCameraCallback()
@@ -92,6 +92,11 @@ namespace DeVotingApp
                     OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
                     var bmpWebCam = BitmapConverter.ToBitmap(imageRes);
                     pictureBox1.Image = bmpWebCam;
+                    if (!string.IsNullOrEmpty(Info))
+                    {
+                        MessageBox.Show(Info);
+                        break;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -100,10 +105,10 @@ namespace DeVotingApp
             }
         }
 
-        private void ExtractInfo(out dynamic info)
+        private void ExtractInfo()
         {
-            info = null;
-            //Recognition.Current.ExtractIDInfo
+            var xyz = Recognition.Current.test();
+            Info = Recognition.Current.ScanCard(0, 60);
         }
     }
 }

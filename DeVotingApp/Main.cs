@@ -67,7 +67,7 @@ namespace DeVotingApp
         {
             Hide();
             var form2 = new IDForm();
-            form2.Closed += (s, args) => Close();
+            form2.Closed += (s, args) => Show();
             form2.Show();
             form2.Activate();
         }

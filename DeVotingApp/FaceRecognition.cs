@@ -154,7 +154,7 @@ namespace DeVotingApp
                     }
                     sp.Restart();
                     using var _ = DeVote.PyRecognition.Recognition.Current.GIL();
-                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, );
+                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, path);
                     sp.Stop();
                     if (verified) {
                         Verifications++;
