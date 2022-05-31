@@ -37,7 +37,7 @@ namespace DeVote.PyRecognition
                 Environment.SetEnvironmentVariable("PYTHONPATH", $"{SitePackagesPath};{RecognitionModulesPath};", EnvironmentVariableTarget.Process);
 
                 // Append paths to python standard modules path
-                PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process) + "C:\\Users\\Kiro\\AppData\\Local\\Programs\\Python\\Python37\\Lib;" + "C:\\Program Files\\Tesseract-OCR;";
+                PythonEngine.PythonPath = PythonEngine.PythonPath + ";" + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process) + "C:\\Users\\Kiro\\AppData\\Local\\Programs\\Python\\Python37\\Lib;";
 
                 // Initialize the Python interpreter.
                 PythonEngine.Initialize();
@@ -96,7 +96,7 @@ namespace DeVote.PyRecognition
         {
             return ocrModule != null;
         }
-        public string ScanCard(int path, int execution_time)
+        public dynamic ScanCard(int path, int execution_time)
         {
             return ocrModule.scan_card(path, execution_time);
         }

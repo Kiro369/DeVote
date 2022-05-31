@@ -15,7 +15,6 @@ import simpleaudio
 dir_path = os.path.dirname(os.path.dirname(__file__))
 reader = easyocr.Reader(["ar"])
 
-
 def id_read(img, gray=False, *, data, face):
     '''
     reading ID card info

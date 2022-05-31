@@ -88,9 +88,7 @@ namespace DeVotingApp
                 {
                     _capture.Read(_image);
                     if (_image.Empty()) return;
-                    var imageRes = new OpenCvSharp.Mat();
-                    OpenCvSharp.Cv2.Resize(_image, imageRes, new OpenCvSharp.Size(pictureBox1.Height, pictureBox1.Width));
-                    var bmpWebCam = BitmapConverter.ToBitmap(imageRes);
+                    var bmpWebCam = BitmapConverter.ToBitmap(_image);
                     pictureBox1.Image = bmpWebCam;
                     if (!string.IsNullOrEmpty(Info))
                     {
@@ -108,7 +106,7 @@ namespace DeVotingApp
         private void ExtractInfo()
         {
             var xyz = Recognition.Current.test();
-            Info = Recognition.Current.ScanCard(0, 60);
+            var z = Recognition.Current.ScanCard(0, 60);
         }
     }
 }
