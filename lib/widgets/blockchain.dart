@@ -1,3 +1,7 @@
+
+
+import 'package:devote/widgets/shimmerLoading.dart';
+
 import '/widgets/BlockDetails.dart';
 import '/widgets/BlockList.dart';
 import '/widgets/TransactionsList.dart';
@@ -12,7 +16,7 @@ import 'package:timeago/timeago.dart' as timeago;
 class BlockChain extends StatefulWidget {
     final ScrollController? scrollController;
     static String id ='blockChain';
-  BlockChain( [this.scrollController]);
+   BlockChain( [this.scrollController]);
 
   @override
   _BlockChainState createState() => _BlockChainState();
@@ -37,7 +41,7 @@ class _BlockChainState extends State<BlockChain> {
     daata = network.getTransaction();
     blockks = block.getBlocks();
     all_blocks=block.pagination();
-    all_transactions=network.TransactionPagination();
+    all_transactions=network.transactionPagination();
     getlist();
   }
 
@@ -67,7 +71,7 @@ class _BlockChainState extends State<BlockChain> {
                 ],
                 leading: const Icon(
                   Icons.arrow_back_ios_outlined,
-                  color: const Color(0xff26375f),
+                  color:  Color(0xff26375f),
                   size: 0,
                 ),
                 centerTitle: true,
@@ -102,7 +106,7 @@ class _BlockChainState extends State<BlockChain> {
                   ),
                 )
               ]),
-            ):Text('',style: TextStyle(fontSize: 0),),
+            ):const Text('',style:  TextStyle(fontSize: 0),),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -135,148 +139,158 @@ class _BlockChainState extends State<BlockChain> {
                               child: ListView.builder(
                                   controller: ScrollController(),
                                 itemCount: 8,
-                                itemBuilder: (context, index) => Container(
-                                  child: InkWell(
-                                    onTap: () =>  Navigator.of(context)
-                                            .push( MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                 BlockDetails(
-                                              blockHeight:
-                                              snapshot.data!.blocks[index].blockHeight,
-                                              miner: snapshot.data!.blocks[index].miner,
-                                              time: snapshot.data!.blocks[index].time,
-                                              transactions:
-                                              snapshot.data!.blocks[index].transactions,
-                                              merkleRoot:
-                                              snapshot.data!.blocks[index].merkleRoot,
-                                                  prevhash: snapshot.data!.blocks[index].prevHash,
-                                                  hash: snapshot.data!.blocks[index].hash,
-                                            ),
-                                          )),
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          horizontalTitleGap: 3,
-                                          title: RichText(
-                                            maxLines: 1,
-                                            overflow: TextOverflow.fade,
-                                            softWrap: false,
-                                            text: TextSpan(
-                                              text: 'Miner ',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text: snapshot.data?.blocks[index].miner??
-                                                        'error',
-                                                    style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 13)),
-                                              ],
-                                            ),
+                                itemBuilder: (context, index) => InkWell(
+                                  onTap: () =>  Navigator.of(context)
+                                          .push( MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                               BlockDetails(
+                                            blockHeight:
+                                            snapshot.data!.blocks[index].blockHeight,
+                                            miner: snapshot.data!.blocks[index].miner,
+                                            time: snapshot.data!.blocks[index].time,
+                                            transactions:
+                                            snapshot.data!.blocks[index].transactions,
+                                            merkleRoot:
+                                            snapshot.data!.blocks[index].merkleRoot,
+                                                prevhash: snapshot.data!.blocks[index].prevHash,
+                                                hash: snapshot.data!.blocks[index].hash,
                                           ),
-                                          subtitle: RichText(
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            softWrap: false,
-                                            text: TextSpan(
-                                              text: snapshot.data?.blocks[index]
-                                                  .transactions
-                                                  .toString()??
-                                                  'error',
-                                              style: TextStyle(
-                                                  color: Colors.blue,
-                                                  fontSize: 13),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text:
-                                                        ' txns',
-                                                    style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 13)),
-                                              ],
-                                            ),
-                                          ),
-                                          leading: Container(
-                                              width: kIsWeb
-                                                  ? MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      4
-                                                  : MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      2.4,
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor:
-                                                      Colors.grey[300],
-                                                  child: Center(
-                                                      child: Text(
-                                                    'Bk',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black),
-                                                  )),
-                                                ),
-                                                title: Text(
-                                                  snapshot.data?.blocks[index]
-                                                      .blockHeight
-                                                      .toString()??
+                                        )),
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        horizontalTitleGap: 3,
+                                        title: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.fade,
+                                          softWrap: false,
+                                          text: TextSpan(
+                                            text: 'Miner ',
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 13),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: snapshot.data?.blocks[index].miner??
                                                       'error',
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                ),
-                                                subtitle: Text(
-                                                  timeago.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data!.blocks[index].time)),
+                                                  style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
+                                        subtitle: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                          text: TextSpan(
+                                            text: snapshot.data?.blocks[index]
+                                                .transactions
+                                                .toString()??
+                                                'error',
+                                            style: const TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 13),
+                                            children: const <TextSpan>[
+                                               TextSpan(
+                                                  text:
+                                                      ' txns',
                                                   style: TextStyle(
-                                                      color: Colors.black45,
-                                                      fontSize: 10),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                ),
-                                              )),
+                                                      color: Colors.blue,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
                                         ),
-                                        Divider(
-                                          height: 2,
-                                          color: Colors.grey,
-                                        ),
-                                      ],
-                                    ),
+                                        leading: SizedBox(
+                                            width: kIsWeb
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    4
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2.4,
+                                            child: ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundColor:
+                                                    Colors.grey[300],
+                                                child: const Center(
+                                                    child: Text(
+                                                  'Bk',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black),
+                                                )),
+                                              ),
+                                              title: Text(
+                                                snapshot.data?.blocks[index]
+                                                    .blockHeight
+                                                    .toString()??
+                                                    'error',
+                                                style:
+                                                    const TextStyle(fontSize: 12),
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                softWrap: false,
+                                              ),
+                                              subtitle: Text(
+                                                timeago.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data!.blocks[index].time)),
+                                                style: const TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 10),
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                softWrap: false,
+                                              ),
+                                            )),
+                                      ),
+                                      const Divider(
+                                        height: 2,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             );
                           } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: Image.asset(
+                                  'assets/no_internet.gif',
+                                  height: MediaQuery.of(context).size.height / 2.5,
+                                  // width: 125.0,
+                                ),
+                              ),
+                            );
                           } // spinner
-                          return Center(child: CircularProgressIndicator());
+                          return  Center(child:  ShimmerLo(),);
                         },
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
+                        // ignore: deprecated_member_use
                         child: FlatButton(
-                          child: Text(
+                          child: const Text(
                             'View all blocks',
                             style:
                                 TextStyle(color: Colors.black, fontSize: 14),
                           ),
+                          // ignore: unnecessary_null_comparison
                           onPressed: () =>blockList==null?null: Navigator.of(context).push(
-                              new MaterialPageRoute(
+                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      new BlockList(blockList))),
+                                       BlockList(blockList))),
                           textColor: Colors.white,
-                          splashColor: Color(0xff6ca0ff),
+                          splashColor: Colors.white,
+                          hoverColor: Colors.white,
                         ),
                       ),
                     ),
@@ -291,18 +305,18 @@ class _BlockChainState extends State<BlockChain> {
                 decoration: BoxDecoration(
                   color: Colors.white54,
                   border: Border.all(color: Colors.grey, width: 0.5),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  borderRadius: const BorderRadius.all( Radius.circular(20.0)),
                 ),
                 child: Column(
                   children: [
-                    ListTile(
+                    const ListTile(
                       title: Text(
                         'Latest Transactions',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       height: 2,
                       color: Colors.grey,
                     ),
@@ -316,145 +330,155 @@ class _BlockChainState extends State<BlockChain> {
                               child: ListView.builder(
                                 controller: ScrollController(),
                                 itemCount: 8,
-                                itemBuilder: (context, index) => Container(
-                                  child: InkWell(
-                                    onTap: () =>  Navigator.of(context)
-                                            .push(new MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                new TransactionDetails(
-                                              elector:
-                                                  snapshot.data!.transaction[index].elector,
-                                              elected:
-                                                  snapshot.data!.transaction[index].elected,
-                                              hash: snapshot.data!.transaction[index].hash,
-                                              block: snapshot
-                                                  .data!.transaction[index].blockheight,
-                                              dateTime:
-                                                  snapshot.data!.transaction[index].dateTime,
-                                            ),
-                                          )),
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          horizontalTitleGap: 3,
-                                          title: RichText(
-                                            maxLines: 1,
-                                            overflow: TextOverflow.fade,
-                                            softWrap: false,
-                                            text: TextSpan(
-                                              text: 'From ',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text: snapshot
-                                                            .data?.transaction[index]
-                                                            .elector ??
-                                                        'error',
-                                                    style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 13)),
-                                              ],
-                                            ),
+                                itemBuilder: (context, index) => InkWell(
+                                  onTap: () =>  Navigator.of(context)
+                                          .push( MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                               TransactionDetails(
+                                            elector:
+                                                snapshot.data!.transaction[index].elector,
+                                            elected:
+                                                snapshot.data!.transaction[index].elected,
+                                            hash: snapshot.data!.transaction[index].hash,
+                                            block: snapshot
+                                                .data!.transaction[index].blockheight,
+                                            dateTime:
+                                                snapshot.data!.transaction[index].dateTime,
                                           ),
-                                          subtitle: RichText(
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            softWrap: false,
-                                            text: TextSpan(
-                                              text: 'To ',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text: snapshot
-                                                            .data?.transaction[index]
-                                                            .elected ??
-                                                        'error',
-                                                    style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 13)),
-                                              ],
-                                            ),
-                                          ),
-                                          leading: Container(
-                                              width: kIsWeb
-                                                  ? MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      4
-                                                  : MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      2.4,
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor:
-                                                      Colors.grey[300],
-                                                  child: Center(
-                                                      child: Text(
-                                                    'Tx',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black),
-                                                  )),
-                                                ),
-                                                title: Text(
-                                                  snapshot.data?.transaction[index]
-                                                          .hash ??
+                                        )),
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        horizontalTitleGap: 3,
+                                        title: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.fade,
+                                          softWrap: false,
+                                          text: TextSpan(
+                                            text: 'From ',
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 13),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: snapshot
+                                                          .data?.transaction[index]
+                                                          .elector ??
                                                       'error',
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                ),
-                                                subtitle: Text(
-                                                  timeago.format( DateTime.fromMillisecondsSinceEpoch(snapshot.data!.transaction[index].dateTime))
-                                                    ,
+                                                  style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
+                                        subtitle: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                          text: TextSpan(
+                                            text: 'To ',
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 13),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: snapshot
+                                                          .data?.transaction[index]
+                                                          .elected ??
+                                                      'error',
+                                                  style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
+                                        leading: SizedBox(
+                                            width: kIsWeb
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    4
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2.4,
+                                            child: ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundColor:
+                                                    Colors.grey[300],
+                                                child: const Center(
+                                                    child: Text(
+                                                  'Tx',
                                                   style: TextStyle(
-                                                      color: Colors.black45,
-                                                      fontSize: 10),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                ),
-                                              )),
-                                        ),
-                                        Divider(
-                                          height: 2,
-                                          color: Colors.grey,
-                                        ),
-                                      ],
-                                    ),
+                                                      fontSize: 16,
+                                                      color: Colors.black),
+                                                )),
+                                              ),
+                                              title: Text(
+                                                snapshot.data?.transaction[index]
+                                                        .hash ??
+                                                    'error',
+                                                style:
+                                                    const TextStyle(fontSize: 12),
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                softWrap: false,
+                                              ),
+                                              subtitle: Text(
+                                                timeago.format( DateTime.fromMillisecondsSinceEpoch(snapshot.data!.transaction[index].dateTime))
+                                                  ,
+                                                style:const  TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 10),
+                                                maxLines: 1,
+                                                overflow:
+                                                    TextOverflow.ellipsis,
+                                                softWrap: false,
+                                              ),
+                                            )),
+                                      ),
+                                      const Divider(
+                                        height: 2,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             );
                           } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: Image.asset(
+                                  'assets/no_internet.gif',
+                                  height: MediaQuery.of(context).size.height / 2.5,
+                                  // width: 125.0,
+                                ),
+                              ),
+                            );
                           } // spinner
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child:  ShimmerLo(),);
                         },
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
+                      // ignore: deprecated_member_use
                       child: FlatButton(
-                        child: Text(
+                        child: const Text(
                           'View all transactions',
                           style: TextStyle(color: Colors.black, fontSize: 14),
                         ),
+                        // ignore: unnecessary_null_comparison
                         onPressed: () => transactionList==null?null:Navigator.of(context).push(
-                            new MaterialPageRoute(
+                            MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    new TransactionsList(transactionList))),
+                                     TransactionsList(transactionList))),
                         textColor: Colors.white,
-                        splashColor: Color(0xff6ca0ff),
+                        splashColor: Colors.white,
+                        hoverColor:  Colors.white,
                       ),
                     ),
                   ],

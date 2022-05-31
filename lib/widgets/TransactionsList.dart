@@ -1,3 +1,5 @@
+import 'package:devote/widgets/shimmerLoading.dart';
+
 import '/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +35,7 @@ class _TransactionsListState extends State<TransactionsList> {
     block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
         'transactions', queryParameters));
     trans = block.getTransaction();
-    all = block.TransactionPagination();
+    all = block.transactionPagination();
     await getlist();
     setState(() {
       _foundsearch = tansactionList;
@@ -65,7 +67,7 @@ class _TransactionsListState extends State<TransactionsList> {
   void initState() {
     trans = block.getTransaction();
     tansactionList = widget.transactions;
-    all = block.TransactionPagination();
+    all = block.transactionPagination();
     getlist();
     _foundsearch = tansactionList;
     super.initState();
@@ -311,7 +313,7 @@ class _TransactionsListState extends State<TransactionsList> {
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
                           } // spinner
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child:  ShimmerLo(),);
                         },
                       ),
                     )

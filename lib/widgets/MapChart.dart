@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../models/mapModel.dart';
 class MapChart extends StatelessWidget {
-  late final List<Model> data;
-  late final MapShapeSource mapSource;
+   final List<Model> data;
+   final MapShapeSource mapSource;
 
    MapChart({ required this.data, required this.mapSource}) ;
   static bool isLargeScreen(BuildContext context) {
@@ -41,28 +41,29 @@ class MapChart extends StatelessWidget {
                         ),
                       ),
 
+
                       SizedBox(
-                        width: kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.1,
-                        child: ListTile(
-                          trailing: Icon(Icons.check_circle,color: const Color(0xff26375f),size: 16,),
-                          title:  Text(
-                            'السيسي ',textAlign: TextAlign.right,
-                            style:  TextStyle(color: Colors.black,fontSize: 12),
-                          ),
-                          leading: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              '873988937 صوت',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
-                              style:  TextStyle(color: Colors.black,fontSize: 9,),
+                          width: kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.1,
+                          child: ListTile(
+                            trailing: Icon(Icons.check_circle,color:  data[index].votes[0].result>data[index].votes[1].result?Color(0xff26375f):Colors.white,size: 16,),
+                            title:  Text(
+                              'السيسي ',textAlign: TextAlign.right,
+                              style:  TextStyle(color: Colors.black,fontSize: 12),
+                            ),
+                            leading: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                ' ${data[index].votes[0].result} صوت ',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
+                                style:  TextStyle(color: Colors.black,fontSize: 9,),
+                              ),
                             ),
                           ),
-                        ),
+
                       ),
                       SizedBox(
                         width:kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
                         child: ListTile(
-                          trailing: Icon(Icons.check_circle,color: const Color(
-                              0xffffffff),size: 0,),
+                          trailing: Icon(Icons.check_circle,color: data[index].votes[1].result>data[index].votes[0].result?Color(0xffd82148):Colors.white,size: 16,),
                           title:  Text(
                             'موسي ',textAlign: TextAlign.right,
                             style:  TextStyle(color: Colors.black,fontSize: 12),
@@ -70,7 +71,7 @@ class MapChart extends StatelessWidget {
                           leading: Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
-                              ' 98937 صوت',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
+                              ' ${data[index].votes[1].result} صوت ',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
                               style:  TextStyle(color: Colors.black,fontSize: 9,),
                             ),
                           ),

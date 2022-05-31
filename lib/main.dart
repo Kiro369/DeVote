@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'bottom_bar/results.dart';
 
 void main() {
+
   runApp(MyApp());
 }
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //scrollBehavior: MaterialScrollBehavior().copyWith(
         //dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},),
-
+      color: Colors.grey[50],
       title: 'DeVote',
       home: kIsWeb?Result():Bottom_bar(),
       debugShowCheckedModeBanner: false,

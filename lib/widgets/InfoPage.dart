@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class InfoPage extends StatelessWidget {
-  final List<people> motrsh7e;
+  final List<People> motrsh7e;
   final int index;
 
   const InfoPage({required this.motrsh7e, required this.index});

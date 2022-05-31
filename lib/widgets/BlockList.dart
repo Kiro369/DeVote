@@ -1,3 +1,4 @@
+import 'package:devote/widgets/shimmerLoading.dart';
 import 'package:flutter/material.dart';
 import '../models/Call_api.dart';
 import '../models/block.dart';
@@ -296,7 +297,7 @@ class _BlockListState extends State<BlockList> {
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
                           } // spinner
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child:  ShimmerLo(),);
                         },
                       ),
                     )
