@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using DeVote.Misc;
 using DeVote.PyRecognition;
@@ -14,6 +15,16 @@ namespace DeVote.Structures
         [ProtoMember(3)] public byte[] Back { get; set; }
         [ProtoMember(4)] public byte[][] Images { get; set; }
 
+
+        public TransactionRecord(byte[] hash, byte[] front, byte[] back, byte[][] images)
+        {
+            Hash = hash;
+            Front = front;
+            Back = back;
+            Images = images;
+        }
+
+
         /// <summary>
         /// Verify the face of the voter from captured images against face from ID.
         /// </summary>
@@ -21,8 +32,6 @@ namespace DeVote.Structures
         /// <returns></returns>
         public bool IsVoterVerified(string frontIDPath)
         {
-            using var _ = Recognition.Current.GIL();
-
             var verified = 0;
             foreach (var imagePath in Misc.ImageProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash),"jpg"))
             {

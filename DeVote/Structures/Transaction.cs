@@ -13,13 +13,11 @@ namespace DeVote.Structures
         [ProtoMember(2)] public long Date { get; set; }
         [ProtoMember(3)] public string Elector { get; set; }
         [ProtoMember(4)] public string Elected { get; set; }
-        [ProtoMember(5)] public int Confirmations { get; set; }
         public Transaction(string elector, string elected)
         {
-            Date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            Date = DateTimeOffset.UtcNow.Date.Ticks;
             Elector = elector;
             Elected = elected;
-            Confirmations = 0;
             var stopwatch = Stopwatch.StartNew();
             Hash = Argon2.ComputeHash(Date + Elector + Elected);
             stopwatch.Stop();

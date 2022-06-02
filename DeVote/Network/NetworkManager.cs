@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DeVote.Cryptography;
 using DeVote.Logging;
 using DeVote.Structures;
 using Newtonsoft.Json;
 
 namespace DeVote.Network
 {
-    internal class NetworkManager
+    public class NetworkManager
     {
         /// <summary>
         /// An instance of our consensus algorithm
@@ -152,6 +154,33 @@ namespace DeVote.Network
                 //JObject responseObj = JObject.Parse(responseString);
                 //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
             }
+        }
+
+        public static string BroadcastTransaction(string candidateHash, DeVotingApp.IDInfo info, List<string> imagesPaths)
+        {
+            var txData = new Transaction(Argon2.ComputeHash(info.ID), candidateHash);
+            var hash = txData.Hash;
+            var imgsData = imagesPaths.Select(imgPath => File.ReadAllBytes(imgPath)).ToArray();
+            var compressedData = Misc.ImageProcessor.CompressImages(imgsData);
+            var front = Misc.ImageProcessor.Compress(File.ReadAllBytes(info.FrontIDPath));
+            var transaction = new Messages.Transaction(null)
+            {
+                TransactionData = txData,
+                TxRecord = new TransactionRecord(Encoding.UTF8.GetBytes(hash), front, new byte[] { }, compressedData)
+            };
+
+            var packet = transaction.Create();
+
+            if (!VotedDLT.Current.Contains(txData.Elector))
+            {
+                VotedDLT.Current.Add(txData.Elector, Constants.MachineID);
+                txData.Elector = Constants.MachineID;
+                Blockchain.Current.Block.AddTransaction(txData);
+                Broadcast(packet);
+                return hash;
+            }
+
+            return string.Empty;
         }
 
         public static void WaitFor(Func<bool> condition)

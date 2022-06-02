@@ -15,8 +15,11 @@ namespace DeVotingApp
     public partial class VotingForm : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        public VotingForm()
+        IDInfo Info; List<string> Paths;
+        public VotingForm(IDInfo info, List<string> paths)
         {
+            Info = info;
+            Paths = paths;
             InitializeComponent();
             Bounds = Screen.PrimaryScreen.Bounds;
             ControlBox = false;
@@ -38,6 +41,8 @@ namespace DeVotingApp
 
             metroButton1.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 2 - metroButton1.Width / 2, pictureBox1.Location.Y + pictureBox1.Height + Height / 30);
             metroButton2.Location = new Point(pictureBox2.Location.X + pictureBox2.Width / 2 - metroButton2.Width / 2, pictureBox2.Location.Y + pictureBox2.Height + Height / 30);
+
+            metroButton1.Font = metroButton2.Font = new Font(KMRFont.Families[0], 30);
 
         }
         protected override void OnPaint(PaintEventArgs e)
@@ -68,6 +73,30 @@ namespace DeVotingApp
             KMRFont.AddMemoryFont(data, fontLength);
 
             titleLabel.Font = new Font(KMRFont.Families[0], 18);
+        }
+
+        void Vote(string candidateHash)
+        {
+            var res = DeVote.Network.NetworkManager.BroadcastTransaction(candidateHash, Info, Paths);
+
+            if (string.IsNullOrEmpty(res))
+            {
+                MessageBox.Show("You already VOTED", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+                MessageBox.Show("You voted successfully, your tx_hash= " + res, "VOTED", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            Close();
+        }
+
+        private void metroButton1_Click(object sender, EventArgs e)
+        {
+            Vote(DeVote.Constants.Candidate1ID);
+        }
+
+        private void metroButton2_Click(object sender, EventArgs e)
+        {
+            Vote(DeVote.Constants.Candidate2ID);
         }
     }
 }

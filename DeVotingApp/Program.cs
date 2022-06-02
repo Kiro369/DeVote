@@ -1,4 +1,4 @@
-namespace DeVotingApp
+﻿namespace DeVotingApp
 {
     /// <summary>
     /// TODO: Re-do this project using MAUI when it's released to maintain cross-platform/ability
@@ -14,7 +14,7 @@ namespace DeVotingApp
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Main());
+            Application.Run(new VotingForm(new IDInfo() { ID = "30001130100113" }));
         }
     }
 }

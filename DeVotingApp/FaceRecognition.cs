@@ -17,34 +17,27 @@ namespace DeVotingApp
     public partial class FaceRecognition : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new(0); //new("http://192.168.1.2:4747/video");
+        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:8080/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
         BitmapContainer ImageContainer;
-        string FrontIDPath;
         byte Verifications, Tries, RecognitionState;
-        public FaceRecognition(string FrontIDPath)
+        IDInfo Info;
+        public FaceRecognition(IDInfo info)
         {
+            Info = info;
             InitializeComponent();
             Bounds = Screen.PrimaryScreen.Bounds;
             ControlBox = false;
             AutoScaleMode = AutoScaleMode.Dpi;
+
+            firstName.Text = info.Name;
+            lastName.Text = info.LastName;
+            address.Text = info.Address;
+            national_id.Text = info.ID;
+
             CustomHeader();
-            // test data
-
-            firstName.Text = "كيرلس";
-            lastName.Text = "تادرس";
-            address.Text = "عين شمس";
-            national_id.Text = "123456";
-
             AdjustComponents();
-
-            this.FrontIDPath = FrontIDPath;
-
-            //var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, Directory.GetCurrentDirectory() + "\\" + $"CurrentImage{0}.jpg");
-            //var verified2 = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, Directory.GetCurrentDirectory() + "\\" + $"CurrentImage{1}.jpg");
-
-
         }
         private void AdjustComponents()
         {
@@ -153,8 +146,7 @@ namespace DeVotingApp
                         catch { }
                     }
                     sp.Restart();
-                    using var _ = DeVote.PyRecognition.Recognition.Current.GIL();
-                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(FrontIDPath, path);
+                    var verified = DeVote.PyRecognition.Recognition.Current.VerifyVoter(Info.FrontIDPath, path);
                     sp.Stop();
                     if (verified) {
                         Verifications++;
@@ -171,13 +163,13 @@ namespace DeVotingApp
             if (RecognitionState == 0)
             {
                 Task.Factory.StartNew(() => Recognize());
-                titleLabel.Text = $"{Verifications} / {Tries} in {sp.Elapsed.TotalSeconds.ToString()}";
+                titleLabel.Text = $"Decentralized Voting Application (DeVoting) | {Verifications} / {Tries} in {sp.Elapsed.TotalSeconds}";
 
             }
             else if (RecognitionState == 1)
             {
                 Hide();
-                var form2 = new VotingForm();
+                var form2 = new VotingForm(Info, Paths);
                 form2.Closed += (s, args) => Close();
                 form2.Show();
                 form2.Activate();

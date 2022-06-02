@@ -8,10 +8,12 @@ namespace DeVotingApp
     public partial class IDForm : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new(0); //new("http://192.168.1.2:4747/video");
+        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:8080/video"); //new("http://192.168.1.2:4747/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
-        string Info = string.Empty;
+        IDInfo Info = null;
+        BitmapContainer ImageContainer;
+
         public IDForm()
         {
             InitializeComponent();
@@ -33,7 +35,7 @@ namespace DeVotingApp
             pictureBox2.Size = new Size((int)((Width / 3) * 0.635), (int)(pictureBox1.Height * 0.80));
             pictureBox2.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 2 + Width / 3, Height / 10);
 
-            label1.Font = new Font(KMRFont.Families[0], 30);
+            label1.Font = new Font(KMRFont.Families[0], 22);
             label1.Location = new Point(pictureBox2.Location.X, pictureBox2.Location.Y + Height / 10 + pictureBox2.Height);
         }
         protected override void OnPaint(PaintEventArgs e)
@@ -88,13 +90,11 @@ namespace DeVotingApp
                 {
                     _capture.Read(_image);
                     if (_image.Empty()) return;
-                    var bmpWebCam = BitmapConverter.ToBitmap(_image);
-                    pictureBox1.Image = bmpWebCam;
-                    if (!string.IsNullOrEmpty(Info))
-                    {
-                        MessageBox.Show(Info);
+                    ImageContainer = new BitmapContainer(BitmapConverter.ToBitmap(_image));
+                    pictureBox1.Image = ImageContainer.ToBitmap();
+                    if (Info != null)
                         break;
-                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -105,8 +105,26 @@ namespace DeVotingApp
 
         private void ExtractInfo()
         {
-            var xyz = Recognition.Current.test();
-            var z = Recognition.Current.ScanCard(0, 60);
+            try
+            {
+                Info = Recognition.Current.ScanCard("http://192.168.1.2:8080/video", 60);
+            }
+            catch (Exception e) {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (Info != null)
+            {
+                Hide();
+                var form2 = new WaitForm(Info);
+                form2.Closed += (s, args) => Close();
+                form2.Show();
+                form2.Activate();
+                timer1.Enabled = false;
+            }
         }
     }
 }

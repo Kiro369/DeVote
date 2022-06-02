@@ -4,6 +4,8 @@ using Python.Runtime;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using Newtonsoft.Json;
+using DeVotingApp;
 
 /**
  IronPython works only with pure python *.py modules, it does not support C Extension *.pyd modules.
@@ -41,32 +43,36 @@ namespace DeVote.PyRecognition
 
                 // Initialize the Python interpreter.
                 PythonEngine.Initialize();
+                PythonEngine.BeginAllowThreads();
 
                 // Console.WriteLine(PythonEngine.PythonPath);
                 // Console.WriteLine(PythonEngine.GetPythonThreadID());
 
                 // Acquire the GIL to the current python thread.
                 // GIL: Global interpreter lock allows multi-threaded program to interact safely with the Python interpreter.
-                using var _ = Py.GIL();
+                using (var _ = Py.GIL())
+                {
 
+
+                    //Console.WriteLine(threadState);
+
+                    var stopwatch = Stopwatch.StartNew();
+                    ocrModule = Py.Import("ID_OCR");
+                    stopwatch.Stop();
+                    Console.WriteLine($"Importing ocr module took {stopwatch.ElapsedMilliseconds} ms ");
+                    stopwatch.Restart();
+
+                    var stopwatch2 = Stopwatch.StartNew();
+                    faceVerificationModule = Py.Import("identity_verification");
+                    stopwatch.Stop();
+                    Console.WriteLine($"Importing verification module took {stopwatch.ElapsedMilliseconds} ms ");
+                    Console.WriteLine("Python runtime is initialized");
+                }
                 // We can release the GIL to allow other python threads to run
-                //var threadState = PythonEngine.BeginAllowThreads();
+                //threadState = PythonEngine.BeginAllowThreads();
                 // or re-aquire it for the current thread
                 //PythonEngine.EndAllowThreads(threadState);
 
-                //Console.WriteLine(threadState);
-
-                var stopwatch = Stopwatch.StartNew();
-                ocrModule = Py.Import("ID_OCR");
-                stopwatch.Stop();
-                Console.WriteLine($"Importing ocr module took {stopwatch.ElapsedMilliseconds} ms ");
-                stopwatch.Restart();
-
-                var stopwatch2 = Stopwatch.StartNew();
-                faceVerificationModule = Py.Import("identity_verification");
-                stopwatch.Stop();
-                Console.WriteLine($"Importing verification module took {stopwatch.ElapsedMilliseconds} ms ");
-                Console.WriteLine("Python runtime is initialized");
             }
             catch (Exception e)
             {
@@ -74,42 +80,74 @@ namespace DeVote.PyRecognition
             }
         }
 
-        public Py.GILState GIL()
+        public string ExtractID(string idpath)
         {
-            return Py.GIL();
+            string ID = string.Empty;
+
+            using (Py.GIL())
+            {
+
+                dynamic info = ocrModule.ocr_id(idpath, "front");
+                ID = info.ID;
+
+            }
+
+            return ID;
+
         }
 
-        public dynamic ExtractIDInfo(string idpath,string face)
+        public IDInfo ScanCard(string path, int execution_time)
         {
-            var stopwatch = Stopwatch.StartNew();
-            dynamic info = ocrModule.ocr_id(idpath,face);
-            stopwatch.Stop();
-            Console.WriteLine($"Extracting IDInfo took { stopwatch.ElapsedMilliseconds } ms ");
-            return info;
+            IDInfo Info;
+            Py.GILState gil;
+            using (gil = Py.GIL())
+            {
+                var z = ocrModule.scan_card(path, execution_time);
+                var y = z[0].ToString().Equals("True");
+                var x = z[1]["Front"];
+                Info = new IDInfo()
+                {
+                    Name = x["first_name"],
+                    LastName = x["full_name"],
+                    Address = x["address"],
+                    ID = x["ID"],
+                    FrontIDPath = x["front_path"],
+                };
+            }
+
+            return Info;
+
         }
 
-        public string ScanCard(string path, int execution_time)
+        public IDInfo ScanCard(int path, int execution_time)
         {
-            return ocrModule.scan_card(path, execution_time);
-        }
-        public bool test()
-        {
-            return ocrModule != null;
-        }
-        public dynamic ScanCard(int path, int execution_time)
-        {
-            return ocrModule.scan_card(path, execution_time);
+            using (Py.GIL())
+            {
+                var z = ocrModule.scan_card(path, execution_time);
+                var y = z[0].ToString().Equals("True");
+                var x = z[1]["Front"];
+                var Info = new IDInfo()
+                {
+                    Name = x["first_name"],
+                    LastName = x["full_name"],
+                    Address = x["address"],
+                    ID = x["ID"],
+                    FrontIDPath = x["front_path"],
+                };
+
+                return Info;
+            }
         }
 
         public bool VerifyVoter(string idPath, string voterImage)
         {
-            var stopwatch = Stopwatch.StartNew();
-            bool isVerified = faceVerificationModule.verify_id_frame(idPath, voterImage);
-            stopwatch.Stop();
-            Console.WriteLine($"Verifying a voter's frame against ID took { stopwatch.ElapsedMilliseconds } ms ");
-            return isVerified;
+            using (Py.GIL())
+            {
+                bool isVerified = faceVerificationModule.verify_id_frame(idPath, voterImage);
+                return isVerified;
+            }
         }
-        
+
         public bool IsIdSideABackAPI(string idPath)
         {
             bool isSideABack = false;
@@ -140,24 +178,9 @@ namespace DeVote.PyRecognition
             return isSideABack;
         }
 
-        public bool IsFrontOrBack(string imgPath)
-        {
-            var res = ocrModule.is_front_back(imgPath);
-            return false;
-        }
-
         public void EndPythonInterpreter()
         {
             PythonEngine.Shutdown();
-        }
-        public dynamic ContainsCard(string imagePath) /*object img*/
-        {
-            dynamic isCardPresent = ocrModule.is_there_card(imagePath);
-            return isCardPresent;
-        }
-        public void PlayTTS(string text)
-        {
-
         }
     }
 }

@@ -16,7 +16,7 @@ namespace DeVote.Misc
         /// <param name="quality">percentage to alter the image quality, defaulting to 55.</param> 
         /// <param name="outputFormat">output format defaulting to .webp</param> 
         /// <returns>byte[] of compressed image.</returns> 
-        public static byte[] Compress(byte[] image, int quality, string outputFormat = "webp")
+        public static byte[] Compress(byte[] image, int quality = 55, string outputFormat = "webp")
         {
             using MemoryStream compressedImageStream = new();
             using ImageFactory imageFactory = new(preserveExifData: false);

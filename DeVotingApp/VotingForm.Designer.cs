@@ -73,6 +73,7 @@
             this.metroButton1.Size = new System.Drawing.Size(75, 23);
             this.metroButton1.TabIndex = 7;
             this.metroButton1.Text = "Vote";
+            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // metroButton2
             // 
@@ -81,6 +82,7 @@
             this.metroButton2.Size = new System.Drawing.Size(75, 23);
             this.metroButton2.TabIndex = 8;
             this.metroButton2.Text = "Vote";
+            this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
             // VotingForm
             // 

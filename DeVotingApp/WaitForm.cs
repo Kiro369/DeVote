@@ -15,8 +15,10 @@ namespace DeVotingApp
     public partial class WaitForm : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        public WaitForm()
+        IDInfo Info;
+        public WaitForm(IDInfo info)
         {
+            Info = info;
             InitializeComponent();
             Bounds = Screen.PrimaryScreen.Bounds;
             ControlBox = false;
@@ -79,7 +81,7 @@ namespace DeVotingApp
             if (DateTime.Now > d)
             {
                 Hide();
-                var form2 = new FaceRecognition("E:/front_id.jpg");
+                var form2 = new FaceRecognition(Info);
                 form2.Closed += (s, args) => Close();
                 form2.Show();
                 form2.Activate();

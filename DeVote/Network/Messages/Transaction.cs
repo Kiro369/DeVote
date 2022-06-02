@@ -34,40 +34,31 @@ namespace DeVote.Network.Messages
             }
             else
             {
-                (string frontIDPath, string backIDPath) = TxRecord.DecompressID("webp");
+                (string frontIDPath, _) = TxRecord.DecompressID("webp");
 
                 bool voterVerified = TxRecord.IsVoterVerified(frontIDPath);
                 if (voterVerified)
                 {
-                    var extractInfo = Recognition.Current.ExtractIDInfo(frontIDPath, "front");
-                    if (extractInfo != null)
+                    var extractedID = Recognition.Current.ExtractID(frontIDPath);
+                    if (!string.IsNullOrEmpty(extractedID))
                     {
-                        var extractedID = (string)extractInfo.ID;
-                        if (string.IsNullOrEmpty(extractedID))
+                        var hash = Argon2.ComputeHash(extractedID);
+                        if (hash.Equals(TransactionData.Elector))
                         {
-                            var hash = Argon2.ComputeHash(extractedID);
-                            if (hash.Equals(TransactionData.Elector)) 
-                            {
-                                VotedDLT.Current.Add(TransactionData.Elector, client.MachineID);
-                                TransactionData.Confirmations++;
-                                TransactionData.Elector = client.MachineID;
-                                Blockchain.Current.Block.AddTransaction(TransactionData);
+                            VotedDLT.Current.Add(TransactionData.Elector, client.MachineID);
+                            TransactionData.Elector = client.MachineID;
+                            Blockchain.Current.Block.AddTransaction(TransactionData);
 
-                                // TODO: Send confirmation
-                            }
-                            else
-                            {
-                                // TODO: Hash didn't match the supplied hash, this transaction is compromised, or maybe its the machine????! 
-                            }
+                            // TODO: Send confirmation
                         }
                         else
                         {
-                            // TODO: Acknowledge that we couldn't extract the ID number from the supplied ID image
+                            // TODO: Hash didn't match the supplied hash, this transaction is compromised, or maybe its the machine????! 
                         }
                     }
                     else
                     {
-                        // TODO: Acknowledge that we couldn't verify extract ID info from the supplied ID
+                        // TODO: Acknowledge that we couldn't extract the ID number from the supplied ID image
                     }
                 }
                 else
@@ -88,6 +79,12 @@ namespace DeVote.Network.Messages
             {
                 return false;
             }
+        }
+        public byte[] Create()
+        {
+            Serialize(this);
+            Finalize<Transaction>();
+            return Buffer;
         }
     }
 }
