@@ -1,5 +1,6 @@
 const protobuf = require("protobufjs");
 const path = require("path");
+const { _success, _warn, _info } = require("../misc/logger")
 
 class ProtoBuf {
 
@@ -14,7 +15,7 @@ class ProtoBuf {
 
         this.message = this.root.lookupType(`${protofileName}Package.Block`);
 
-        console.log("\x1b[32m%s\x1b[0m", `Loading ${fileName} succeed.`)
+        _success(`Loading ${fileName} succeed.`)
         return this
     }
 

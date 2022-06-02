@@ -1,29 +1,30 @@
-from .face_verification import compare_faces, get_id_face_encoding, compare_faces_frame
-from .cfg import tolerance, video_stream_camera
+from .face_verification import compare_faces, get_id_face_encoding, compare_faces_frame, compare_faces_without_antispoofing, tts
+from .cfg import tolerance, video_stream_camera, num_of_frames
+from .helper import read_img
 import numpy as np
-import cv2
 
 
+camera_source = video_stream_camera-1
 
-video_capture = cv2.VideoCapture(video_stream_camera-1)
 
-def verify(front_ID, frame=np.array(0)):
+def verify(front_ID_path, frame=np.array(0)):
+    front_ID = read_img(front_ID_path)
     id_face = get_id_face_encoding(front_ID)
     if len(id_face) != 1:
-        print("Enter a valid ID front image");return
+        tts("Invalid_card")
+        return False
     if frame.any():
-        distance = compare_faces_frame(id_face, frame)
+        verified = compare_faces_frame(id_face, frame)[2]
     else:
-        distance = compare_faces(video_capture, id_face).mean()
-    return True if distance <= tolerance else False
+        verified = compare_faces_without_antispoofing(camera_source, id_face)[0]
+    return verified
 
-    pass
 
 def verify_id_frame(ID_path, frame_path):
-    ID = read_img(ID_path)
     frame = read_img(frame_path)
-    return verify(ID, frame)
+    return verify(ID_path, frame)
     pass
+
 
 def verify_id_frames(ID_path, frames_paths):
     results = np.empty(0, dtype="bool")
@@ -32,9 +33,14 @@ def verify_id_frames(ID_path, frames_paths):
     return True if 1-results.mean() <= tolerance else False
     pass
 
-def read_img(img_path):
-    img = cv2.imread(img_path, 1);
-    return img
 
+def verify_personality(cam_ref, ID_path, frames_num=num_of_frames):
+    front_ID = read_img(ID_path)
+    id_face = get_id_face_encoding(front_ID)
+    if len(id_face) != 1:
+        tts("Invalid_card")
+        return False
 
-
+    result = compare_faces(cam_ref, id_face, frames_num)
+    return result
+    pass

@@ -15,6 +15,7 @@ import simpleaudio
 dir_path = os.path.dirname(os.path.dirname(__file__))
 reader = easyocr.Reader(["ar"])
 
+
 def id_read(img, gray=False, *, data, face):
     '''
     reading ID card info
@@ -305,7 +306,7 @@ def is_back_API(filePath):
 sounds_path = {"Front": "ask_enter_card.wav", "Back": "ask_flip_card.wav", "End": "thanks.wav"}
 sounds = {}
 for f in sounds_path.keys():
-    sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/data/voice_cmd/"+sounds_path[f])
+    sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/data/voice_cmd/card_cmd/"+sounds_path[f])
 
 
 def scan(frame, face):
@@ -327,6 +328,15 @@ def check_acc(data, face):
         return len(data[face]["expire_date"]) == 4
 
 
+def pass_frames(cam_ref, number_to_pass=20):
+    passed = 0
+    while cam_ref.isOpened() and passed < number_to_pass:
+        ret, frame = cam_ref.read()
+        if ret:
+            passed += +1
+    return cam_ref.read()[1]
+
+
 def scan_card(path, execution_time=60):
     face = {"Front": None, "Back": None}
     data = {}
@@ -334,16 +344,15 @@ def scan_card(path, execution_time=60):
     if not video.isOpened():
         return False, {}
     elapsed_time = max(execution_time, 60)
-    frames_count = 0
 
     for face_key in face.keys():
         voice_ord = sounds[face_key].play()
         voice_ord.wait_done()
-        process_this_frame = True
+        pass_frames(video, 20)
         start = time.time()
         while video.isOpened():
             ret, frame = video.read()
-            if ret and process_this_frame:
+            if ret:
                 is_card = is_there_card(frame)
                 if is_card:
                     #front_or_back = is_front_back(frame)
@@ -355,12 +364,7 @@ def scan_card(path, execution_time=60):
 
                             break
 
-            if frames_count < 5:
-                frames_count += 1
-                process_this_frame = False
-            else:
-                frames_count = 0
-                process_this_frame = True
+            pass_frames(video, 5)
             end = time.time()
             if (end-start) > elapsed_time:
                 terminate(video)
