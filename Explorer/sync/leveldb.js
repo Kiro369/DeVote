@@ -1,8 +1,8 @@
 const { Level } = require('level');
 const path = require('path');
 const fs = require('fs');
-const { getByteArrayFromInt, getIntFromByteArray } = require("./protobuf/buffer-utils.js");
-const { ProtoBuf } = require('./protobuf/protobuf.js');
+const { getByteArrayFromInt, getIntFromByteArray } = require("../protobuf/buffer-utils.js");
+const { ProtoBuf } = require('../protobuf/protobuf.js');
 
 class levelDB {
     async openLevelDB(dbPath) {

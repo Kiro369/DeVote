@@ -1,4 +1,5 @@
-const { DBWrapper } = require('./db-utils');
+const { DBWrapper } = require('./sync/db-utils.js');
+const { _success, _warn, _info, _breaker, _time } = require("./misc/logger.js");
 require('dotenv').config();
 
 const SQLITEDB_NAME = process.env.SQLITEDB_NAME;
@@ -21,17 +22,17 @@ global.isProtoFileLoaded = false;
             global.SQLite = myDBWrapper.mySQLite;
         })
         .catch(err => {
-            console.error("\x1b[31m%s\x1b[0m", "Opening Databases failed");
+            _warn("Opening Databases failed");
             console.error(err);
             return;
         });
 
     if (!global.isDBsOpen || !isProtoFileLoaded) return;
 
-    console.log("\x1b[32m%s\x1b[0m", "\nOpening Databases succeed.");
-    console.log('\x1b[36m%s\x1b[0m', `Syncing Databases every ${MINS_TO_SYNC_DBS} minutes\n`)
+    _success("\nOpening Databases succeed.");
+    _info(`Syncing Databases every ${MINS_TO_SYNC_DBS} minutes\n`)
 
-    console.log("\x1b[32m%s\x1b[0m", "App is ready to start.")
+    _success("App is ready to start.")
 
     // handle the unhandled 
     process.on("unhandledRejection", error => {
@@ -39,28 +40,26 @@ global.isProtoFileLoaded = false;
     });
 
     setTimeout(async () => {
-        console.log(`\n${new Date().toLocaleString()} : Inserting initial Governorates ...`)
+        _time("Inserting initial Governorates ...", false)
         await myDBWrapper.mySQLite.insertInitialGovernorates();
 
-        console.log(`\n${new Date().toLocaleString()} : Initializing Databases Syncing ...`)
+        _time("Initializing Databases Syncing ...", false)
         await myDBWrapper.syncSQLWithBlks();
 
-        console.log(`${new Date().toLocaleString()} : Setting initial NoVotes Of Candidates ...`)
+        _time("Setting initial NoVotes Of Candidates ...")
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
-
-
     }, 1000 * 5)
 
     // keep syncing databases then counting and updating votes for candidates and governorates.
     setInterval(async () => {
-        console.log("\n===============================================");
-        console.log(`${new Date().toLocaleString()} : Syncing Databases ...`)
+        _breaker()
+        _time("Syncing Databases ...")
         await myDBWrapper.syncSQLWithBlks();
 
-        console.log(`${new Date().toLocaleString()} : Updating NoVotes Of Candidates ...`)
+        _time("Updating NoVotes Of Candidates ...")
         await myDBWrapper.mySQLite.setNoVotesForCandidates();
 
-        console.log(`\n${new Date().toLocaleString()} : Updating Votes For Governorates ...`)
+        _time("Updating Votes For Governorates ...", false)
         await myDBWrapper.mySQLite.setNoVotesForGovernorates();
     }, SYNC_DELAY_TIME);
 
@@ -101,8 +100,8 @@ global.isProtoFileLoaded = false;
     app.listen(app.get('port'), function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
         console.log(`App started on http://localhost:${app.get('port')}`);
-        console.log("\x1b[36m%s\x1b[0m", `App initialization process will start in 5s`);
-        console.log("===============================================\n");
+        _info(`App initialization process will start in 5s`);
+        _breaker(false);
     })
 })()
 

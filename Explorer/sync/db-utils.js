@@ -1,8 +1,9 @@
-const { SQLite } = require('./datastore/sqlite/sqlite.js');
+const { SQLite } = require('../datastore/sqlite/sqlite.js');
 const { levelDB } = require('./leveldb.js');
 const fs = require("fs");
-const { ProtoBuf } = require('./protobuf/protobuf.js');
+const { ProtoBuf } = require('../protobuf/protobuf.js');
 const path = require('path');
+const { _success, _warn, _info, _breaker } = require("../misc/logger.js")
 
 // The maximum positive value for a 32-bit signed integer.
 const BLOCK_HEIGHT_LIMIT = 2147483647;
@@ -17,7 +18,7 @@ class DBWrapper {
         global.isDBsOpen = true;
 
         if (!fs.existsSync(BLKS_PATH)) throw new Error(`Blocks Directory not found. "${BLKS_PATH}"`);
-        console.log("\x1b[32m%s\x1b[0m", `Blocks Directory found.\n`)
+        _success(`Blocks Directory found.\n`)
 
         this.protobuf = new ProtoBuf();
         this.deserializer = await this.protobuf.loadProtoFile(PROTO_FILE_NAME);
@@ -39,12 +40,12 @@ class DBWrapper {
         console.log("latestBlockHeight_Blks   ", lbh_Blks);
 
         if (lbh_SQLite == lbh_Blks) {
-            console.log("\x1b[32m%s\x1b[0m", "\nDatabase Status : SQLiteDB is in sync with Blks Dir")
+            _success("\nDatabase Status : SQLiteDB is in sync with Blks Dir")
             this.logSyncTime()
             return;
         }
         if (lbh_SQLite < lbh_Blks) {
-            console.log("\x1b[31m%s\x1b[0m", "\nDatabase Status : SQLiteDB is out of sync with Blks Dir.\n")
+            _warn("\nDatabase Status : SQLiteDB is out of sync with Blks Dir.\n")
             let offset = lbh_SQLite + 1;
             let noBlocksToSync = lbh_Blks - lbh_SQLite;
 
@@ -55,7 +56,7 @@ class DBWrapper {
             }
 
             console.log(`Offset: ${offset} | End : ${lbh_Blks}`)
-            console.log('\x1b[36m%s\x1b[0m', `Syncing ${noBlocksToSync} Blocks`)
+            _info(`Syncing ${noBlocksToSync} Blocks`)
 
 
             for (let index = offset; index <= lbh_Blks; index++) {
@@ -94,29 +95,28 @@ class DBWrapper {
         if (lbh_SQLite == lbh_LevelDB) {
             console.log("\nDatabase Status : SQLiteDB is in sync with LevelDB ")
             console.log(`Syncing  Time   : Every ${syncTime} minutes`)
-            console.log("=====================================================\n");
+            _breaker(false);
             return;
         }
 
         if (lbh_SQLite < lbh_LevelDB) {
-            console.log("=======================================================");
+            _breaker();
             console.log("Database Status : SQLiteDB is out of sync with LevelDB ")
-            console.log("=======================================================");
+            _breaker();
             const myNewBlocks = await this.mylevelDB.getBlocksFromTo_byteArray(lbh_SQLite, lbh_LevelDB)
             // console.log(myNewBlocks.map(block => block.Height))
             console.log(`Syncing ${myNewBlocks.length} Blocks`)
             await this.mySQLite.insertBlocks(myNewBlocks)
             console.log(`Done inserting ${myNewBlocks.length} Blocks`);
 
-            console.log("=======================================================");
-            console.log(`Syncing  Time   : Every ${this.syncTime} minutes`)
-            console.log("=======================================================\n");
+            _breaker();
+            this.logSyncTime()
         }
     }
 
     logSyncTime() {
-        console.log('\x1b[36m%s\x1b[0m', `\nSyncing  Time   : Every ${this.syncTime} minutes`)
-        console.log("=======================================================\n");
+        _info(`\nSyncing  Time   : Every ${this.syncTime} minutes`)
+        _breaker(false);
     }
 }
 

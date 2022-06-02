@@ -2,6 +2,7 @@ const { open } = require('sqlite')
 const sqlite3 = require('sqlite3')
 const path = require('path');
 const fs = require('fs');
+const { _success, _warn, _info, _breaker, _time } = require("../../misc/logger")
 
 class SQLite {
 
@@ -15,7 +16,7 @@ class SQLite {
             migrationsPath: path.join(__dirname, 'migrations'),
         }).catch(err => { throw err; })
 
-        console.log("\x1b[32m%s\x1b[0m", `Connection to ${dbName} SQLiteDB is successful.`)
+        _success(`Connection to ${dbName} SQLiteDB is successful.`)
         return this
     };
 
@@ -151,7 +152,7 @@ class SQLite {
         // get list of candidates 
         const candidates = await this.db.all("SELECT * FROM Candidates")
         if (!candidates.length) {
-            console.log("\x1b[31m%s\x1b[0m", "There are no candidates added at the moment.")
+            _warn("There are no candidates added at the moment.")
             return
         }
         // for each candidate, get votes count from transactions table.
@@ -172,18 +173,18 @@ class SQLite {
     async insertInitialGovernorates() {
         let currentgovernorateList = await this.getGovernorates();
         if (currentgovernorateList.length) {
-            console.log(`${new Date().toLocaleString()} : Governorates is already inserted and set.`)
+            _time("Governorates is already inserted and set.")
             return;
         }
 
-        const governorateJson = fs.readFileSync("governorates.json")
+        const governorateJson = fs.readFileSync(path.join(__dirname, "../../misc/governorates.json"))
         const governorateList = JSON.parse(governorateJson)
         // console.log("governorateList", governorateList)
         for (let index = 0; index < governorateList.length; index++) {
             const { ar, en } = governorateList[index];
             await this.insertGovernorate({ ar, en })
         }
-        console.log(`${new Date().toLocaleString()} : Governorates has been inserted and set.`)
+        _time("Governorates has been inserted and set.")
     }
 
     async insertGovernorate({ ar, en }) {
@@ -263,18 +264,18 @@ class SQLite {
         // get the non null-ids governorates.
         const governorateList = await this.db.all("SELECT EnglishName,IDsOfVMs,Votes FROM Governorates Where IDsOfVMs IS NOT NULL ")
         if (!governorateList.length) {
-            console.log("\x1b[31m%s\x1b[0m", "There are no voting machines added at the moment to any governorates.")
+            _warn("There are no voting machines added at the moment to any governorates.")
             return
         }
 
         const candidates = await this.getCandidates();
         if (!candidates.length) {
-            console.log("\x1b[31m%s\x1b[0m", "There are no candidates added at the moment.")
+            _warn("There are no candidates added at the moment.")
             return
         }
 
         for (let index = 0; index < governorateList.length; index++) {
-            console.log("============================================================");
+            _breaker();
 
             const { IDsOfVMs, EnglishName, Votes, Color } = governorateList[index];
             // get list of vm ids of each governorate.
