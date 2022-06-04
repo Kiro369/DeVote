@@ -70,12 +70,20 @@ global.isProtoFileLoaded = false;
     const vmRouter = require('./routes/vmRouter.js');
     const candidateRouter = require('./routes/candidateRouter.js');
     const governorateRouter = require('./routes/governorateRouter.js');
+    const { lookup } = require('dns').promises;
+    const { hostname } = require('os');
 
     const app = express();
     const port = process.env.PORT || 3000;
 
     app.set('port', port);
     app.disable('x-powered-by');
+
+    async function getLocalIPAddress() {
+        return (await lookup(hostname(), { family: 4 })).address;
+    }
+
+    let ip = await getLocalIPAddress()
 
     app.use(cors())
     app.use(express.json())
@@ -97,9 +105,9 @@ global.isProtoFileLoaded = false;
 
     app.use(express.static('api-test'))
 
-    app.listen(app.get('port'), function () {
+    app.listen(app.get('port'), ip, function () {
         console.log(`App started at ${new Date().toLocaleString()}`);
-        console.log(`App started on http://localhost:${app.get('port')}`);
+        _success(`App started on ${ip}:${app.get('port')}`);
         _info(`App initialization process will start in 5s`);
         _breaker(false);
     })

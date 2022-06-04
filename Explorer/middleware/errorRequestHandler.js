@@ -46,6 +46,15 @@ async function catchErrors(fn, req, res) {
                 errors.push(error)
                 res.status(400).send({ request: req.query, errors })
             }
+
+            // No Governorate matched
+            if (errorNo == 10011) {
+                let error = {}
+                error["detail"] = err.message
+                errors.push(error)
+                res.status(400).send({ request: req.body, errors })
+            }
+
             isErrorCatched = true;
         });
 

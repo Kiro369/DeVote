@@ -123,6 +123,16 @@ class SQLite {
     };
 
     async insertVM({ id, lat, lng, address, governorate }) {
+        // check if vm's governorate exists in election's governorate list
+        const GovernorateExists = await this.DoesGovernorateExist(governorate);
+        console.log(GovernorateExists)
+        if (!GovernorateExists) {
+            let err = new Error('Governorate does not exist');
+            err.errno = 10011;
+            err.message = `No Governorate matches ${governorate}`;
+            throw err;
+        }
+
         await this.db.run(
             "INSERT INTO VMachines  VALUES (?,?,?,?,?)",
             id, lat, lng, address, governorate
@@ -204,6 +214,12 @@ class SQLite {
             return governorate
         })
         return governorateList
+    }
+
+    async DoesGovernorateExist(governorate) {
+        const DoesGovernorateExist = await this.db.get("SELECT EnglishName FROM Governorates Where EnglishName == ?", governorate)
+        if (!DoesGovernorateExist) return false
+        else return true
     }
 
     async getIDsofVMsForGovernorate(governorate) {
