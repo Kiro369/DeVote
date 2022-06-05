@@ -374,7 +374,7 @@ sounds_path = {"Right": "Right.wav", "Left": "Left.wav", "Up": "Up.wav", "Down":
                }
 sounds = {}
 for f in sounds_path.keys():
-    sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/../sounds/"+sounds_path[f])
+    sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/data/voice_cmd/face_rec_cmd/"+sounds_path[f])
 
 
 def tts(command):
