@@ -85,6 +85,12 @@ namespace DeVote.Structures
                 var block = Block.DeserializeBlock(SerializedBlock);
                 this.Blocks.AddLast(block);
             }
+
+            if (Blocks.Count == 0)
+            {
+                AddBlock(GenesisBlock);
+            }
+
         }
 
         // Save Blockchain as byte array representation of Protobuf Encoding.

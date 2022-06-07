@@ -193,6 +193,8 @@ namespace DeVote
             // Get the addresses of all nodes, and add out IP to the seeder
             seederClient.StartClient(server.Port);
 
+            Blockchain.Current.LoadBlockchain();
+
             // Check if there is anyone on network, if there is none, we create our own AES Key
             if (seederClient.EndPoints.Count == 0)
             {
