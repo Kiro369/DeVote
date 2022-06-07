@@ -48,7 +48,7 @@ namespace DeVote.Network
                 else if (currentMinute == mineMinute - 1)
                 {
                     // Generate Radom number and broadcast it 
-                    var rn = FastRandom.Current.NextInt64();
+                    var rn = Constants.FastRandom.NextInt64();
                     var consensusPacket = new Messages.LRNConsensus();
                     var generatedPacket = consensusPacket.Create(rn);
                     NetworkManager.Broadcast(generatedPacket);

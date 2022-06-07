@@ -24,6 +24,8 @@ namespace DeVote.Structures
             nTx = transactions.Count;
         }
 
+        public Block() : this(new List<Transaction>()) { }
+
         public void AddTransaction(Transaction transaction)
         {
             Transactions.Add(transaction);

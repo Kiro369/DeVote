@@ -19,6 +19,8 @@ namespace DeVote.Structures
         public Blockchain()
         {
             Blocks = new LinkedList<Block>();
+            Block = new Block();
+
             // Create a new leveldb
             LevelDB = new DB(new Options { CreateIfMissing = true, CompressionLevel = CompressionLevel.NoCompression }, Constants.BlockchainPath);
             //SaveBlock(GenesisBlock);

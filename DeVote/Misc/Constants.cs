@@ -1,5 +1,6 @@
 ﻿using DeviceId;
 using DeVote.Cryptography;
+using DeVote.Extensions;
 using System.IO;
 using System.Text;
 
@@ -27,6 +28,8 @@ namespace DeVote
             MachineID = Argon2.ComputeHash(new DeviceIdBuilder().AddMacAddress().AddMachineName().AddOsVersion().ToString()), // Unique ID for each machine
             Candidate1ID = Argon2.ComputeHash("CC"),
             Candidate2ID = Argon2.ComputeHash("Mousa");
+
+        public static readonly FastRandom FastRandom = new();
 
         /// <summary>
         /// BlockTime is the time between every block, time is represented in minutes. Note: A block is added whenever time_now.minute % BlockTime == 0
