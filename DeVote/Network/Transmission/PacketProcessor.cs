@@ -201,8 +201,7 @@ namespace DeVote.Network.Transmission
         {
             fixed (byte* ptr = Buffer)
                 return
-                    new string((sbyte*)ptr, PositionAndAdvance(length), length, Encoding.GetEncoding(1252)).TrimEnd(
-                        '\0');
+                    new string((sbyte*)ptr, PositionAndAdvance(length), length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
