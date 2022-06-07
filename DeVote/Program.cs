@@ -283,7 +283,7 @@ namespace DeVote
                 Console.WriteLine("Write a cmd");
                 var input = Console.ReadLine().Split(' ');
                 var cmd = input[0];
-                var data = input[1];
+                var data = input.Length > 1 ? input[1] : string.Empty;
                 switch (cmd)
                 {
                     case "chat":
