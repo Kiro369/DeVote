@@ -66,8 +66,12 @@ namespace DeVote.Network
         /// <param name="encrypt">encrypt the packet or not</param>
         public static void SendToFullNode(byte[] packet, bool encrypt = true)
         {
-            var fullNode = Nodes.Values.First(node => node.FullNode);
-            fullNode.Send(packet, encrypt);
+            var fullNodes = Nodes.Values.Where(node => node.FullNode);
+            if (fullNodes.Count() == 0)
+            {
+                WaitFor(() => (fullNodes = Nodes.Values.Where(node => node.FullNode)).Any());
+            }
+            fullNodes.First().Send(packet, encrypt);
         }
 
         /// <summary>
@@ -94,6 +98,7 @@ namespace DeVote.Network
             lock (lockable)
             {
                 Nodes[endPoint] = node;
+                node.Send(new Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
             }
         }
         /// <summary>

@@ -157,6 +157,14 @@ namespace DeVote.PyRecognition
             }
         }
 
+        public dynamic VerifyPerson(int camPath, string frontIDPath, int numberOfFrames)
+        {
+            using (Py.GIL())
+            {
+                return faceVerificationModule.verify_personality(camPath, frontIDPath, numberOfFrames);
+            }
+        }
+
         public bool IsIdSideABackAPI(string idPath)
         {
             bool isSideABack = false;
