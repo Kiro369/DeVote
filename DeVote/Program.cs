@@ -295,6 +295,7 @@ namespace DeVote
                         break;
                     case "shutdown":
                         server.Stop();
+                        Blockchain.Current.SaveBlockchain();
                         Environment.Exit(0);
                         break;
                 }

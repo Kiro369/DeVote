@@ -61,10 +61,14 @@ namespace DeVote.Structures
         {
             if (!Directory.Exists("Blocks"))
                 Directory.CreateDirectory("Blocks");
+
+            var blkFile = $"./Blocks/{blk.Height}.blk";
+            if (File.Exists(blkFile))
+                return;
             using var stream = new MemoryStream();
             Serializer.Serialize(stream, blk);
             var srlzed = stream.ToArray();
-            File.WriteAllBytes($"./Blocks/{blk.Height}.blk", srlzed);
+            File.WriteAllBytes(blkFile, srlzed);
         }
 
         public Block GetBlock(int height)
@@ -88,7 +92,9 @@ namespace DeVote.Structures
 
             if (Blocks.Count == 0)
             {
-                Blocks.AddFirst(GenesisBlock);
+                var genesis = GenesisBlock;
+                Blocks.AddFirst(genesis);
+                SaveBlk(genesis);
             }
 
         }
@@ -101,6 +107,7 @@ namespace DeVote.Structures
                 byte[] SerializedBlock = Block.SerializeBlock(block);
                 byte[] Height = BitConverter.GetBytes(block.Height);
                 this.LevelDB.Put(Height, SerializedBlock);
+                SaveBlk(block);
             }
         }
 

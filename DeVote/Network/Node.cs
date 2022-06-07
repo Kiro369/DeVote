@@ -61,6 +61,7 @@ namespace DeVote.Network
                         {
                             NetworkManager.RemoveNode(EndPoint);
                             Console.WriteLine(EndPoint + " forcibly disconnected");
+                            return;
                         }
                     }
                     else throw e.InnerException;
