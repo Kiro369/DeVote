@@ -98,7 +98,8 @@ namespace DeVote.Network
             lock (lockable)
             {
                 Nodes[endPoint] = node;
-                node.Send(new Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
+                if (AES.Key != null)
+                    node.Send(new Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
             }
         }
         /// <summary>
