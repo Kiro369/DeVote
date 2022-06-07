@@ -67,10 +67,6 @@ namespace DeVote.Network
                                 // Send the final response containing: Encrypted serialized AES Key, ECDH IV, and at the beginning of course the header
                                 node.Send(Constants.ECDHOperations[2].Concat(encryptedAESKey.Concat(IV)).ToArray(), false);
                             }
-                            else if (packet.All(b => b == 0)) // Request to close LevelDB connetion
-                            { 
-
-                            }
                             else if (Cryptography.AES.Key != null) // If it's not an ECDH packet and we have our AES Key, then we handle it 
                             {
                                 packet = Cryptography.AES.Decrypt(packet); // Decrypt the packet using our AES Key
