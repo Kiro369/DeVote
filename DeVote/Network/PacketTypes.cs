@@ -8,8 +8,8 @@
         Confirmation = 1001,
         LRNConsensus = 1002,
         AddBlock = 1003,
-        LatestHeight = 1003,
-        GetBlock = 1004,
-        TransactionData = 1005
+        LatestHeight = 1004,
+        GetBlock = 1005,
+        TransactionData = 1006
     }
 }
