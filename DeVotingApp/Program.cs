@@ -14,7 +14,7 @@
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Main());
+            Application.Run(new FaceRecognition(new IDInfo() { Address = "عين شمس", FrontIDPath = @"C:\Users\Kiro\source\repos\DeVote\Recognition\front.jpg", ID = "30001130100113", LastName = "تادرس ذكري تادرس", Name = "كيرلس" }));
         }
     }
 } 

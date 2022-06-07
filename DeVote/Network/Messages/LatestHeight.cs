@@ -22,6 +22,7 @@ namespace DeVote.Network.Messages
             {
                 case PacketType.Request:
                     BlockHeight = Blockchain.Current.Blocks.Last.Value.Height;
+                    Type = PacketType.Response;
                     client.Send(Create());
                     break;
                 case PacketType.Response:
