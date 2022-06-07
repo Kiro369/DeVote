@@ -22,9 +22,8 @@ namespace DeVote.Structures
                 MachineID = Constants.MachineID;
             LevelDB.Put(Argon2.ComputeHash(ID), MachineID);
         }
-        public bool Contains(string ID)
+        public bool Contains(string hashedID)
         {
-            var hashedID = Argon2.ComputeHash(ID);
             var machineVotedOn = LevelDB.Get(hashedID);
             return !string.IsNullOrEmpty(machineVotedOn);
         }

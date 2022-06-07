@@ -11,6 +11,8 @@ namespace DeVote.Network
 {
     public class LRNConsensus
     {
+        public static LRNConsensus Current = new();
+
         /// <summary>
         /// The choosen Node, that will add the next Block!
         /// </summary>

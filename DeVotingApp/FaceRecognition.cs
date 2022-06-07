@@ -116,8 +116,13 @@ namespace DeVotingApp
         {
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
+            //new Thread(new ThreadStart(Reco)).Start();
+            
         }
-
+        //void Reco()
+        //{
+        //    var res = DeVote.PyRecognition.Recognition.Current.VerifyPerson("http://192.168.1.2:8080/video", Info.FrontIDPath, 10);
+        //}
         bool CanVerify = true;
         System.Diagnostics.Stopwatch sp = new();
         List<string> Paths = new List<string>();

@@ -49,7 +49,10 @@ namespace DeVote.Network.Messages
                             TransactionData.Elector = client.MachineID;
                             Blockchain.Current.Block.AddTransaction(TransactionData);
 
-                            // TODO: Send confirmation
+                            if (Settings.Current.FullNode)
+                            {
+                                TransactionsDLT.Current.AddRecord(TxRecord);
+                            }
                         }
                         else
                         {

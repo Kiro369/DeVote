@@ -98,9 +98,8 @@ namespace DeVote.PyRecognition
 
         public IDInfo ScanCard(string path, int execution_time)
         {
-            IDInfo Info;
-            Py.GILState gil;
-            using (gil = Py.GIL())
+            IDInfo Info = null;
+            using (Py.GIL())
             {
                 var z = ocrModule.scan_card(path, execution_time);
                 var y = z[0].ToString().Equals("True");
@@ -143,8 +142,18 @@ namespace DeVote.PyRecognition
         {
             using (Py.GIL())
             {
-                bool isVerified = faceVerificationModule.verify_id_frame(idPath, voterImage);
+                var res = faceVerificationModule.verify_id_frame(idPath, voterImage);
+                var isVerified = res.IsTrue();
+                //bool.TryParse(xyz, out bool isVerified);
                 return isVerified;
+            }
+        }
+
+        public dynamic VerifyPerson(string camPath, string frontIDPath, int numberOfFrames)
+        {
+            using (Py.GIL())
+            {
+                return faceVerificationModule.verify_personality(camPath, frontIDPath, numberOfFrames);
             }
         }
 

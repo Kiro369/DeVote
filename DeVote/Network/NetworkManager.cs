@@ -176,6 +176,10 @@ namespace DeVote.Network
                 VotedDLT.Current.Add(txData.Elector, Constants.MachineID);
                 txData.Elector = Constants.MachineID;
                 Blockchain.Current.Block.AddTransaction(txData);
+                if (Settings.Current.FullNode)
+                {
+                    TransactionsDLT.Current.AddRecord(transaction.TxRecord);
+                }
                 Broadcast(packet);
                 return hash;
             }
@@ -191,8 +195,6 @@ namespace DeVote.Network
 
         public static void Sync()
         {
-
-
             var heightRequest = new Messages.LatestHeight() { Type = PacketType.Request }.Create();
             Broadcast(heightRequest);
 
@@ -232,7 +234,16 @@ namespace DeVote.Network
                         Environment.Exit(1);
                         break;
                     }
+
+                    if (Settings.Current.FullNode)
+                    {
+                        TransactionsDLT.Current.AddRecord(txRecord);
+                    }
+
                 }
+
+                Blockchain.Current.AddBlock(neededBlock);
+
             }
         }
     }

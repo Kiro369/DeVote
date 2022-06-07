@@ -14,7 +14,7 @@
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new VotingForm(new IDInfo() { ID = "30001130100113" }));
+            Application.Run(new Main());
         }
     }
-}
+} 

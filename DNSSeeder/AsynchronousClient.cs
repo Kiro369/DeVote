@@ -30,7 +30,7 @@ namespace DNSSeeder
         /// </summary>
         /// <param name="host">DNS Seeder host that the client will connect to</param>
         /// <param name="port">DNS Seeder port</param>
-        public AsynchronousClient(string host = "dnsseeder.ddns.net", int port = 6942)
+        public AsynchronousClient(string host = "seeder.ddns.net", int port = 6942)
         {
             EndPoints = new List<string>();
             SeederHost = host;
