@@ -43,7 +43,7 @@ namespace DeVote.Network.Messages
         }
         public byte[] Create(long consensusRN, bool fullNode = false)
         {
-            Resize(12 + Constants.MachineID.Length);
+            Resize(14 + Constants.MachineID.Length);
             Seek(4);
             WriteBoolean(fullNode);
             WriteLong(ConsensusRN);
