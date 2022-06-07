@@ -51,6 +51,22 @@ namespace DeVote.Network
                     }
                 }
             }
+            catch (System.IO.IOException e)
+            {
+                if (e.InnerException != null)
+                {
+                    if (e.InnerException is SocketException)
+                    {
+                        if ((e.InnerException as SocketException).ErrorCode == 10054)
+                        {
+                            NetworkManager.RemoveNode(EndPoint);
+                            Console.WriteLine(EndPoint + " forcibly disconnected");
+                        }
+                    }
+                    else throw e.InnerException;
+                }
+                Console.WriteLine(e.ToString());
+            }
             catch (SocketException e)
             {
                 if (e.ErrorCode == 10054)

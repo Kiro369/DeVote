@@ -93,6 +93,7 @@ namespace DeVote.Network.Communication
                         {
                             NetworkManager.RemoveNode(node.EndPoint);
                             Console.WriteLine(node.EndPoint + " forcibly disconnected");
+                            return;
                         }
                     }
                     else throw e.InnerException;

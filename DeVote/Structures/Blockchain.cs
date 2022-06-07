@@ -88,7 +88,7 @@ namespace DeVote.Structures
 
             if (Blocks.Count == 0)
             {
-                AddBlock(GenesisBlock);
+                Blocks.AddFirst(GenesisBlock);
             }
 
         }
