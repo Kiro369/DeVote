@@ -76,7 +76,7 @@ namespace DeVote.Network.Transmission
         public virtual void WriteHeader(int length)
         {
             fixed (byte* ptr = Buffer)
-                *(short*)(ptr) = (short)length;
+                *(int*)(ptr) = length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
