@@ -27,10 +27,10 @@ def id_read(img, gray=False, *, data, face):
     '''
     image = img if gray else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, (1410, 900))
-    thresh = 91
-    bi_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
+    #thresh = 91
+    #bi_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
     #bi_img = image
-    # bi_img = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 201, 70)
+    bi_img = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 81, 21)
     data_coords = {"Front": {"first_name" : [(900, 220), (1380, 300)],
                              "full_name"  : [(480, 310), (1380, 400)],
                              "address"    : [(480, 420), (1380, 570)],
