@@ -14,7 +14,7 @@ class MapChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: kIsWeb? MediaQuery.of(context).size.height/1.8:MediaQuery.of(context).size.height/2.5,
       child: SfMaps(
         layers: <MapShapeLayer>[
@@ -45,8 +45,8 @@ class MapChart extends StatelessWidget {
                       SizedBox(
                           width: kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.1,
                           child: ListTile(
-                            trailing: Icon(Icons.check_circle,color:  data[index].votes[0].result>data[index].votes[1].result?Color(0xff26375f):Colors.white,size: 16,),
-                            title:  Text(
+                            trailing: Icon(Icons.check_circle,color:  data[index].votes[0].result>data[index].votes[1].result?const Color(0xff26375f):Colors.white,size: 16,),
+                            title:const Text(
                               'السيسي ',textAlign: TextAlign.right,
                               style:  TextStyle(color: Colors.black,fontSize: 12),
                             ),
@@ -54,7 +54,7 @@ class MapChart extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 ' ${data[index].votes[0].result} صوت ',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
-                                style:  TextStyle(color: Colors.black,fontSize: 9,),
+                                style:  const TextStyle(color: Colors.black,fontSize: 9,),
                               ),
                             ),
                           ),
@@ -63,8 +63,8 @@ class MapChart extends StatelessWidget {
                       SizedBox(
                         width:kIsWeb&&isLargeScreen(context)? MediaQuery.of(context).size.width/4.4:MediaQuery.of(context).size.width/2.2,
                         child: ListTile(
-                          trailing: Icon(Icons.check_circle,color: data[index].votes[1].result>data[index].votes[0].result?Color(0xffd82148):Colors.white,size: 16,),
-                          title:  Text(
+                          trailing: Icon(Icons.check_circle,color: data[index].votes[1].result>data[index].votes[0].result?const Color(0xffd82148):Colors.white,size: 16,),
+                          title: const Text(
                             'موسي ',textAlign: TextAlign.right,
                             style:  TextStyle(color: Colors.black,fontSize: 12),
                           ),
@@ -72,7 +72,7 @@ class MapChart extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
                               ' ${data[index].votes[1].result} صوت ',textAlign: TextAlign.left,textDirection: TextDirection.rtl,
-                              style:  TextStyle(color: Colors.black,fontSize: 9,),
+                              style:  const TextStyle(color: Colors.black,fontSize: 9,),
                             ),
                           ),
                         ),

@@ -4,7 +4,7 @@ import '/widgets/BlockList.dart';
 import '/widgets/TransactionsList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../models/Call_api.dart';
+import '../models/call_api.dart';
 import '../models/block.dart';
 import '../models/transaction.dart';
 import 'TransactionDetails.dart';

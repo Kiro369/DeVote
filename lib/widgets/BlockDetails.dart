@@ -2,9 +2,8 @@ import '/models/Call_api.dart';
 import '/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'TransactionsList.dart';
-import 'blockchain.dart';
+
 
 class BlockDetails extends StatefulWidget {
   final String miner;
@@ -136,6 +135,7 @@ class _BlockDetailsState extends State<BlockDetails> {
                     ),
                   ),
 
+
                   transactionList==null?ListTile(
                     title: const Text(
                       'Transactions:',
@@ -206,11 +206,11 @@ class _BlockDetailsState extends State<BlockDetails> {
               ),
             ),
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width/3.5,
             child: Column(
               children: [
-                Container(
+                SizedBox(
                     height: 300,
                     width: 300,
                     child: Image.asset('assets/a4.png',

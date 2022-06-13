@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../models/Call_api.dart';
+import '../models/call_api.dart';
 import '/models/people.dart';
 import '/widgets/MapChart.dart';
 import '/widgets/PieChart.dart';
@@ -22,6 +22,7 @@ class _ResultState extends State<Result> {
   GlobalKey<RefreshIndicatorState>();
   late Future<List<ResultsChart>> pie;
   late Future<List<Model>> map;
+  //create lists for initState (MapResult,PieResult)
   List<ResultsChart> motrsh7en = [
     ResultsChart(
       '65%',
@@ -246,6 +247,7 @@ class _ResultState extends State<Result> {
             : const Text(''),
       ),
       body: RefreshIndicator(
+        //widget to refresh page
         key: _refreshIndicatorKey,
         color: const Color(0xff26375f),
         backgroundColor: Colors.white,
@@ -269,6 +271,7 @@ class _ResultState extends State<Result> {
                 scrollbarOrientation: ScrollbarOrientation.right,
                 controller: _letters,
                 child: ScrollConfiguration(
+                  //widget to merge scrolling in website
                   behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                   child: Row(
                     children: [

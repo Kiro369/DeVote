@@ -32,7 +32,7 @@ class _PieChartState extends State<PieChart> {
             : MediaQuery.of(context).size.width / 2,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
         ),
         child: InfoPage(index: index, motrsh7e: [
           People(
@@ -64,20 +64,20 @@ class _PieChartState extends State<PieChart> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height / 4.5,
           width: kIsWeb && isLargeScreen(context)
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.width / 2,
           //Initialize the chart widget
-          child: widget.motrsh7[0].result==1?Text(''):SfCircularChart(
+          child: widget.motrsh7[0].result==1?const Text(''):SfCircularChart(
             tooltipBehavior: TooltipBehavior(
               header: 'الانتخابات الرئاسية 2018',
                 format: '  point.x : point.y صوت ',
                 enable: true,
                 tooltipPosition: TooltipPosition.pointer),
             backgroundColor: Colors.white,
-            palette: [const Color(0xff26375f), const Color(0xffd82148)],
+            palette:const [ Color(0xff26375f), Color(0xffd82148)],
             borderColor: Colors.white,
             onDataLabelRender: (DataLabelRenderArgs args) {
               double value = double.parse(args.text)/(widget.motrsh7[0].result+widget.motrsh7[1].result)*100;
@@ -92,14 +92,14 @@ class _PieChartState extends State<PieChart> {
                   yValueMapper: (ResultsChart sales, _) => sales.result,
                    //dataLabelMapper: (people sales, _) =>sales.per,
                   name: 'الانتخابات الرئاسية',
-                  dataLabelSettings: DataLabelSettings(
+                  dataLabelSettings: const DataLabelSettings(
                     isVisible: true,
                     labelPosition: ChartDataLabelPosition.inside,
                   ))
             ],
           ),
         ),
-        Container(
+        SizedBox(
           width: kIsWeb && isLargeScreen(context)
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.width / 2,
@@ -115,7 +115,7 @@ class _PieChartState extends State<PieChart> {
                                 elevation: 1,
                                 backgroundColor: Colors.transparent,
                                 child:
-                                    _buildChild(context, 0, Color(0xff26375f)),
+                                    _buildChild(context, 0, const Color(0xff26375f)),
                               );
                             });
                       },
@@ -124,9 +124,9 @@ class _PieChartState extends State<PieChart> {
                           widget.motrsh7[0].nickname,
                           textAlign: TextAlign.right,
                         ),
-                        trailing: Icon(
+                        trailing: const Icon(
                           Icons.circle,
-                          color: const Color(0xff26375f),
+                          color:  Color(0xff26375f),
                         ),
                       ),
                     )
@@ -135,9 +135,9 @@ class _PieChartState extends State<PieChart> {
                         widget.motrsh7[0].nickname,
                         textAlign: TextAlign.right,
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.circle,
-                        color: const Color(0xff26375f),
+                        color:  Color(0xff26375f),
                       ),
                     ),
               kIsWeb
@@ -150,7 +150,7 @@ class _PieChartState extends State<PieChart> {
                                 elevation: 1,
                                 backgroundColor: Colors.transparent,
                                 child:
-                                    _buildChild(context, 1, Color(0xffd82148)),
+                                    _buildChild(context, 1, const Color(0xffd82148)),
                               );
                             });
                       },
@@ -159,9 +159,9 @@ class _PieChartState extends State<PieChart> {
                           widget.motrsh7[1].nickname,
                           textAlign: TextAlign.right,
                         ),
-                        trailing: Icon(
+                        trailing:const Icon(
                           Icons.circle,
-                          color: const Color(0xffd82148),
+                          color:  Color(0xffd82148),
                         ),
                       ),
                     )
@@ -170,9 +170,9 @@ class _PieChartState extends State<PieChart> {
                         widget.motrsh7[1].nickname,
                         textAlign: TextAlign.right,
                       ),
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.circle,
-                        color: const Color(0xffd82148),
+                        color:  Color(0xffd82148),
                       ),
                     ),
             ],

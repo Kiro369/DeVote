@@ -1,6 +1,6 @@
 import 'package:devote/widgets/shimmerLoading.dart';
 import 'package:flutter/material.dart';
-import '../models/Call_api.dart';
+import '../models/call_api.dart';
 import '../models/block.dart';
 import 'BlockDetails.dart';
 
@@ -37,9 +37,7 @@ class _BlockListState extends State<BlockList> {
     all=block.pagination();
     await getlist();
     setState(() {
-
       _foundsearch = blockList;
-      print(prev);
     });
 
   }
@@ -124,11 +122,11 @@ class _BlockListState extends State<BlockList> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return SingleChildScrollView(
-                              physics: ScrollPhysics(),
+                              physics: const ScrollPhysics(),
                               child: Column(
                                 children: [
                                   ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     //key: UniqueKey(),
                                     itemCount: _foundsearch.length,
@@ -184,16 +182,16 @@ class _BlockListState extends State<BlockList> {
                                                 style: const TextStyle(
                                                     color: Colors.blue,
                                                     fontSize: 13),
-                                                children: <TextSpan>[
-                                                  TextSpan(
+                                                children: const <TextSpan>[
+                                                   TextSpan(
                                                       text: ' txns',
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           color: Colors.blue,
                                                           fontSize: 13)),
                                                 ],
                                               ),
                                             ),
-                                            leading: Container(
+                                            leading: SizedBox(
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width /
@@ -247,6 +245,7 @@ class _BlockListState extends State<BlockList> {
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
+                                        // ignore: deprecated_member_use
                                         child: RaisedButton.icon(
                                             onPressed: () => snapshot.data!.pagination.prev==null?null:showmore(snapshot.data!.pagination.prev),
                                             shape: const RoundedRectangleBorder(
@@ -297,7 +296,7 @@ class _BlockListState extends State<BlockList> {
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
                           } // spinner
-                          return Center(child:  shimmerLo(),);
+                          return const Center(child:  const shimmerLo(),);
                         },
                       ),
                     )

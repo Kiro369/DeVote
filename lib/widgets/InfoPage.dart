@@ -6,7 +6,7 @@ class InfoPage extends StatelessWidget {
   final List<People> motrsh7e;
   final int index;
 
-  const InfoPage({required this.motrsh7e, required this.index});
+   InfoPage({required this.motrsh7e, required this.index});
   static bool isLargeScreen(BuildContext context) {
     return MediaQuery.of(context).size.width > 1200;
   }
@@ -25,7 +25,7 @@ class InfoPage extends StatelessWidget {
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                      child: SizedBox(
                         width: isSmallScreen(context)?MediaQuery.of(context).size.width / 3.5:MediaQuery.of(context).size.width / 9,
                         height:isSmallScreen(context)?MediaQuery.of(context).size.width / 4: MediaQuery.of(context).size.width / 9,
                         child: CircleAvatar(
@@ -39,7 +39,7 @@ class InfoPage extends StatelessWidget {
                     title: Text(
                       motrsh7e[index].name.toString(),
                       textAlign: TextAlign.right,
-                      style: TextStyle(
+                      style: const TextStyle(
 
                         color: kIsWeb?Colors.white:Colors.black,
                       ),
@@ -56,7 +56,7 @@ class InfoPage extends StatelessWidget {
                     title: Text(
                       motrsh7e[index].nickname.toString(),
                       textAlign: TextAlign.right,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: kIsWeb?Colors.white:Colors.black,
                       ),
                     ),
@@ -72,7 +72,7 @@ class InfoPage extends StatelessWidget {
               )
             : Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width / 2.5,
                     height: MediaQuery.of(context).size.width / 3,
                     child: CircleAvatar(
@@ -82,7 +82,7 @@ class InfoPage extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Column(
                         children: [
@@ -91,7 +91,7 @@ class InfoPage extends StatelessWidget {
                               motrsh7e[index].name.toString(),
                               textAlign: TextAlign.right,
                             ),
-                            subtitle: Text(
+                            subtitle: const Text(
                               'الاسم',
                               textAlign: TextAlign.right,
                             ),
@@ -101,7 +101,7 @@ class InfoPage extends StatelessWidget {
                               motrsh7e[index].nickname.toString(),
                               textAlign: TextAlign.right,
                             ),
-                            subtitle: Text(
+                            subtitle: const Text(
                               'اسم الشهرة',
                               textAlign: TextAlign.right,
                             ),
@@ -116,7 +116,7 @@ class InfoPage extends StatelessWidget {
           title: Text(
             motrsh7e[index].codestr.toString(),
             textAlign: TextAlign.right,
-            style: TextStyle(
+            style: const TextStyle(
               color: kIsWeb?Colors.white:Colors.black,
             ),
           ),
@@ -129,7 +129,7 @@ class InfoPage extends StatelessWidget {
           ),
           trailing: Icon(
             motrsh7e[index].code?.icon,
-            color: kIsWeb?Colors.white: Color(0xff26375f),
+            color: kIsWeb?Colors.white: const Color(0xff26375f),
             size: 30,
           ),
         ),
@@ -140,9 +140,8 @@ class InfoPage extends StatelessWidget {
               motrsh7e[index].info.toString(),
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: TextStyle(
+              style: const TextStyle(
                 color: kIsWeb?Colors.white:Colors.black,
-
               ),
             ),
             subtitle: Text(
