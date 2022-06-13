@@ -9,7 +9,7 @@ namespace DeVote.Network.Communication
     public class Client
     {
         // Size of receive buffer.  
-        public const int BufferSize = 1024;
+        public const int BufferSize = 1048576;
 
         // Receive buffer.  
         public byte[] Buffer = new byte[BufferSize];

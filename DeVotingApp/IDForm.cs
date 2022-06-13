@@ -111,6 +111,7 @@ namespace DeVotingApp
             }
             catch (Exception e) {
                 MessageBox.Show(e.Message);
+                Close();
             }
         }
 
