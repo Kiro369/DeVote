@@ -302,7 +302,7 @@ namespace DeVote
                         Environment.Exit(0);
                         break;
                     case "largepacket":
-                        var pkt = new byte[1048576];
+                        var pkt = new byte[1038476];
                         Constants.FastRandom.NextBytes(pkt);
                         NetworkManager.Broadcast(pkt);
                         break;

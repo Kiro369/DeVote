@@ -45,7 +45,7 @@ namespace DeVote.Network.Communication
         {
             try
             {
-                node.Stream.BeginRead(node.Buffer, node.Index, Client.BufferSize, ReadCallback, node);
+                node.Stream.BeginRead(node.Buffer, node.Index, Client.BufferSize - node.Index, ReadCallback, node);
             }
             catch (SocketException e)
             {
