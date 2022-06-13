@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeVote.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -44,7 +45,7 @@ namespace DeVote.Network.Communication
         {
             try
             {
-                node.Stream.BeginRead(node.Buffer, 0, Client.BufferSize, ReadCallback, node);
+                node.Stream.BeginRead(node.Buffer, node.Index, Client.BufferSize, ReadCallback, node);
             }
             catch (SocketException e)
             {
@@ -67,17 +68,29 @@ namespace DeVote.Network.Communication
             // from the asynchronous state object.  
             Node node = (Node)ar.AsyncState;
 
+            // Temp buffer
+            byte[] buffer;
+
             try
             {
                 int bytesRead = node.Stream.EndRead(ar);
 
                 if (bytesRead > 0)
                 {
-                    // Add the packet to the handler to be handled
-                    PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(node, node.Buffer.Take(bytesRead).ToArray()));
+                    node.Index += bytesRead;
 
-                    // Clear buffer 
-                    Array.Clear(node.Buffer, 0, node.Buffer.Length);
+                    // Check for footer, to know wether we recieved the full package or not
+                    if ((buffer = node.Buffer.Take(node.Index).ToArray()).EndsWith(Constants.EOTFlag))
+                    {
+                        // Add the packet to the handler to be handled
+                        PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(node, buffer.SkipLast(Constants.EOTFlag.Length).ToArray()));
+
+                        // Clear buffer 
+                        Array.Clear(node.Buffer, 0, node.Buffer.Length);
+
+                        // Clear index
+                        node.Index = 0;
+                    }
 
                     // Keep recieving.  
                     Read(node);

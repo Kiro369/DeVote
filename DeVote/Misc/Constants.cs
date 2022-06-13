@@ -18,6 +18,8 @@ namespace DeVote
             Argon2.Hash("DeVoteECDiffieHellmanFinalResponse")
         };
 
+        public static byte[] EOTFlag = Argon2.Hash("DeVoteEndOfTransmission");
+
         /// <summary>
         /// Argon2 hash salt, each application should have its own Salt
         /// </summary>

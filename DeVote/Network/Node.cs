@@ -1,4 +1,5 @@
 ﻿using DeVote.Cryptography;
+using DeVote.Extensions;
 using DeVote.Network.Communication;
 using System;
 using System.Collections.Generic;
@@ -31,20 +32,33 @@ namespace DeVote.Network
         async Task Read()
         {
             await Task.Yield();
+
+            // Temp buffer
+            byte[] buffer;
+
             try
             {
                 while (true)
                 {
                     if (Stream.CanRead)
                     {
-                        int bytesRead = Stream.Read(Buffer, 0, BufferSize);
+                        int bytesRead = Stream.Read(Buffer, Index, BufferSize);
                         if (bytesRead > 0)
                         {
-                            // Add the packet to the handler to be handled
-                            PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(this, Buffer.Take(bytesRead).ToArray()));
+                            Index += bytesRead;
 
-                            // Clear buffer 
-                            Array.Clear(Buffer, 0, Buffer.Length);
+                            // Check for footer, to know wether we recieved the full package or not
+                            if ((buffer = Buffer.Take(Index).ToArray()).EndsWith(Constants.EOTFlag))
+                            {
+                                // Add the packet to the handler to be handled
+                                PacketsHandler.Packets.Enqueue(new KeyValuePair<Node, byte[]>(this, buffer.SkipLast(Constants.EOTFlag.Length).ToArray()));
+
+                                // Clear buffer 
+                                Array.Clear(Buffer, 0, Buffer.Length);
+
+                                // Clear index
+                                Index = 0;
+                            }
 
                             // Keep recieving.  
                         }
@@ -100,7 +114,7 @@ namespace DeVote.Network
                     byteData = AES.Encrypt(byteData);
 
                 // Begin sending the data to the remote device.  
-                Stream.WriteAsync(byteData);
+                Stream.WriteAsync(byteData.Concat(Constants.EOTFlag).ToArray());
             }
             catch (Exception e)
             {

@@ -14,6 +14,9 @@ namespace DeVote.Network.Communication
         // Receive buffer.  
         public byte[] Buffer = new byte[BufferSize];
 
+        // Index for the Buffer, for reading operations
+        public int Index;
+
         NetworkStream _n = null;
 
         TcpClient _client;

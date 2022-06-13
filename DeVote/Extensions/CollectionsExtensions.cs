@@ -229,5 +229,27 @@ namespace DeVote.Extensions
             }
             return true;
         }
+
+        //
+        // Summary:
+        //     Determines whether this string instance ends with the specified array.
+        //
+        // Parameters:
+        //   value:
+        //     The character to compare.
+        //
+        // Returns:
+        //     true if value matches the beginning of this string; otherwise, false.
+        public static bool EndsWith<T>(this T[] source, T[] value)
+        {
+            if (source.Length < value.Length)
+                return false;
+            for (var i = 0; i < value.Length; i++)
+            {
+                if (!source[source.Length - value.Length + i].Equals(value[i]))
+                    return false;
+            }
+            return true;
+        }
     }
 }
