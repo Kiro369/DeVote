@@ -10,7 +10,7 @@ import time
 import requests
 import json
 import simpleaudio
-
+from collections import Counter
 
 dir_path = os.path.dirname(os.path.dirname(__file__))
 reader = easyocr.Reader(["ar"])
@@ -309,11 +309,11 @@ for f in sounds_path.keys():
     sounds[f] = simpleaudio.WaveObject.from_wave_file(dir_path+"/data/voice_cmd/card_cmd/"+sounds_path[f])
 
 
-def scan(frame, face):
+def scan(frame, face, ter):
     data = ocr_id(frame, face)
     if check_acc(data, face):
         if face == "Front":
-            front_path = dir_path + "/front.jpg"
+            front_path = dir_path + "/front{}.jpg".format(ter)
             cv2.imwrite(front_path, frame)
             data[face]["front_path"] = front_path
         return data[face]
@@ -323,7 +323,7 @@ def scan(frame, face):
 
 def check_acc(data, face):
     if face == "Front":
-        return len(data[face]["ID"]) == 14
+        return len(data[face]["first_name"]) > 1 and len(data[face]["ID"]) == 14
     else:
         return len(data[face]["expire_date"]) == 4
 
@@ -338,8 +338,9 @@ def pass_frames(cam_ref, number_to_pass=20):
 
 
 def scan_card(path, execution_time=60):
-    face = {"Front": None, "Back": None}
-    data = {}
+    face = {"Front": None}  # , "Back": None}
+    ter, ids = 0, []
+    data = {"Front": []}
     video = cv2.VideoCapture(path)
     if not video.isOpened():
         return False, {}
@@ -359,16 +360,19 @@ def scan_card(path, execution_time=60):
                     if face[face_key] is None:# and front_or_back == face_key:
                         temp = scan(frame, face_key)
                         if temp is not None:
-                            data[face_key] = temp
-                            face[face_key] = True
-
-                            break
+                            data[face_key].append(temp)
+                            ids.append(temp["ID"])
+                            ter = ter + 1
+                            if ter == 5:
+                                face[face_key] = True
+                                data[face_key] = get_id_data(data[face_key], ids)
+                                break
 
             pass_frames(video, 5)
             end = time.time()
             if (end-start) > elapsed_time:
                 terminate(video)
-                return False, data
+                return False, {}
     terminate(video)
     return all(list(face.values())), data
 
@@ -379,3 +383,10 @@ def terminate(cam_ref):
     voice_th = sounds["End"].play()
     voice_th.wait_done()
 
+
+def get_id_data(data, ids):
+    counts = Counter(ids)
+    max_id = max(counts.items(), key = lambda k : k[1])[0]
+    for val in data:
+        if val["ID"] == max_id:
+            return val
