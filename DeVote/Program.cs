@@ -301,6 +301,11 @@ namespace DeVote
                         Blockchain.Current.SaveBlockchain();
                         Environment.Exit(0);
                         break;
+                    case "largepacket":
+                        var pkt = new byte[1048576];
+                        Constants.FastRandom.NextBytes(pkt);
+                        NetworkManager.Broadcast(pkt);
+                        break;
                 }
             }
             #endregion
