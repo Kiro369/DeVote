@@ -187,6 +187,9 @@ namespace DeVote
             //Initialize Packet Handler
             PacketsHandler.Init();
 
+            //Initialize Recognition modules
+            _ = Recognition.Current;
+
             // Starting the seeder client to be able to connect to the network
             DNSSeeder.AsynchronousClient seederClient = new();
 

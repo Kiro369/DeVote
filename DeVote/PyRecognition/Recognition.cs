@@ -83,17 +83,12 @@ namespace DeVote.PyRecognition
         public string ExtractID(string idpath)
         {
             string ID = string.Empty;
-
             using (Py.GIL())
             {
-
-                dynamic info = ocrModule.ocr_id(idpath, "front");
-                ID = info.ID;
-
+                dynamic info = ocrModule.ocr_id(idpath, "Front");
+                ID = info["Front"]["ID"];
             }
-
             return ID;
-
         }
 
         public IDInfo ScanCard(string path, int execution_time)
