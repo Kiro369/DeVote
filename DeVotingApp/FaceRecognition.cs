@@ -115,14 +115,23 @@ namespace DeVotingApp
         {
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
-            //new Thread(new ThreadStart(Reco)).Start();
+
+            if (true)
+            {
+                new Thread(new ThreadStart(Reco)).Start();
+            }
+            else
+                RecognitionState = 1;
 
         }
         void Reco()
         {
-            var res = DeVote.PyRecognition.Recognition.Current.VerifyPerson(0 , Info.FrontIDPath, 10);
-            var x = res[0];
-            var y = res[1];
+            Paths = DeVote.PyRecognition.Recognition.Current.VerifyPerson(0 , Info.FrontIDPath, 10);
+            if (Paths.Count > 0)
+            {
+                RecognitionState = 2;
+            }
+            else RecognitionState = 3;
         }
         bool CanVerify = true;
         System.Diagnostics.Stopwatch sp = new();
@@ -132,12 +141,12 @@ namespace DeVotingApp
             if (CanVerify)
             {
                 CanVerify = false;
-                if (Tries >= 10)
+                if (Tries >= 10 || Verifications >= 6)
                 {
                     if (Verifications >= 6)
-                        RecognitionState = 1;
-                    else
                         RecognitionState = 2;
+                    else
+                        RecognitionState = 3;
                 }
                 else
                 {
@@ -166,13 +175,13 @@ namespace DeVotingApp
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (RecognitionState == 0)
+            if (RecognitionState == 1)
             {
                 Task.Factory.StartNew(() => Recognize());
                 titleLabel.Text = $"Decentralized Voting Application (DeVoting) | {Verifications} / {Tries} in {sp.Elapsed.TotalSeconds}";
 
             }
-            else if (RecognitionState == 1)
+            else if (RecognitionState == 2)
             {
                 Hide();
                 var form2 = new VotingForm(Info, Paths);
@@ -181,7 +190,7 @@ namespace DeVotingApp
                 form2.Activate();
                 timer1.Enabled = false;
             }
-            else
+            else if (RecognitionState == 3)
             {
                 MessageBox.Show("Recognition failed, you can't vote", "Recognition Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
