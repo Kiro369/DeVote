@@ -17,7 +17,7 @@ namespace DeVotingApp
     public partial class FaceRecognition : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:8080/video");
+        readonly OpenCvSharp.VideoCapture _capture = new(0);
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
         BitmapContainer ImageContainer;
@@ -120,7 +120,7 @@ namespace DeVotingApp
         }
         void Reco()
         {
-            var res = DeVote.PyRecognition.Recognition.Current.VerifyPerson("http://192.168.1.2:8080/video", Info.FrontIDPath, 10);
+            var res = DeVote.PyRecognition.Recognition.Current.VerifyPerson(0 , Info.FrontIDPath, 10);
         }
         bool CanVerify = true;
         System.Diagnostics.Stopwatch sp = new();
