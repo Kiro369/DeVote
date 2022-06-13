@@ -40,6 +40,7 @@ class InfoPage extends StatelessWidget {
                       motrsh7e[index].name.toString(),
                       textAlign: TextAlign.right,
                       style: TextStyle(
+
                         color: kIsWeb?Colors.white:Colors.black,
                       ),
                     ),
@@ -138,8 +139,10 @@ class InfoPage extends StatelessWidget {
             title: Text(
               motrsh7e[index].info.toString(),
               textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
               style: TextStyle(
                 color: kIsWeb?Colors.white:Colors.black,
+
               ),
             ),
             subtitle: Text(

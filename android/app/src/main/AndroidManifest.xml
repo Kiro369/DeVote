@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.samuel.devote">
-
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
    <application
         android:label="DeVote"
@@ -8,6 +12,7 @@
        <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyD9tRGer8ZwdDO7IaHRT91ZZ7-0CZxvaDQ"/>
        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

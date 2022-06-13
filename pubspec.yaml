@@ -37,13 +37,11 @@ dependencies:
   syncfusion_flutter_charts:
   animated_text_kit: ^4.2.1
   google_maps_flutter:
-  location: ^4.2.0
   syncfusion_flutter_maps: ^19.4.47-beta
   url_launcher: ^6.0.20
   http: ^0.13.4
   timeago: ^3.2.2
   linked_scroll_controller: ^0.2.0
-  timer_builder: ^2.0.0
   shimmer: ^2.0.0
 
 

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:timer_builder/timer_builder.dart';
-
 import '../models/Call_api.dart';
 import '/models/people.dart';
 import '/widgets/MapChart.dart';
@@ -20,9 +18,10 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
   late Future<List<ResultsChart>> pie;
   late Future<List<Model>> map;
-  late DateTime update;
   List<ResultsChart> motrsh7en = [
     ResultsChart(
       '65%',
@@ -40,18 +39,15 @@ class _ResultState extends State<Result> {
   late LinkedScrollControllerGroup _controllers;
   late ScrollController _letters;
   late ScrollController _numbers;
+  CallApi network = CallApi(
+      Uri.https('devote-explorer-backend.herokuapp.com', 'candidates'));
+  CallApi model = CallApi(
+      Uri.https('devote-explorer-backend.herokuapp.com', 'governorates'));
 
   @override
   void initState() {
-    update=DateTime.now().add(const Duration(seconds: 10));
-    CallApi network = CallApi(
-        Uri.https('devote-explorer-backend.herokuapp.com', 'candidates'));
     pie = network.getPieResult();
-    CallApi model = CallApi(
-        Uri.https('devote-explorer-backend.herokuapp.com', 'governorates'));
     map = model.getMapResults();
-    Timer.periodic(const Duration(seconds: 15), (Timer t) => mapResult());
-    Timer.periodic(const Duration(seconds: 5), (Timer t) => pieResult());
     data = [
       const Model('Al Iskandariyah (Alex.)', 0xffb4b4b4, 'الاسكندرية', []),
       const Model('Aswan', 0xffb4b4b4, 'اسوان', []),
@@ -124,11 +120,13 @@ class _ResultState extends State<Result> {
           } else if (snapshot.hasError) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Image.asset(
-                  "assets/gif1.gif",
-                  height: MediaQuery.of(context).size.height / 2.5,
-                  // width: 125.0,
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Image.asset(
+                    "assets/no_internet.gif",
+                    height: MediaQuery.of(context).size.height / 2.5,
+                    // width: 125.0,
+                  ),
                 ),
               ),
             );
@@ -166,7 +164,6 @@ class _ResultState extends State<Result> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        //  leading: ,
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 18),
@@ -248,104 +245,122 @@ class _ResultState extends State<Result> {
               )
             : const Text(''),
       ),
-      body: kIsWeb && isLargeScreen(context)
-          ? Scrollbar(
-              thumbVisibility: true,
-              scrollbarOrientation: ScrollbarOrientation.right,
-              controller: _letters,
-              child: ScrollConfiguration(
-                behavior:
-                    ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                child: Row(
-                  children: [
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.2,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: BlockChain(
-                            _letters,
-                          ),
-                        )),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: ListView(
-                        controller: _numbers,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Text(
-                              'النتيجة الاجمالية',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        color: const Color(0xff26375f),
+        backgroundColor: Colors.white,
+        strokeWidth: 2.0,
+        onRefresh: () async {
+          //request api to refresh results
+          CallApi network = CallApi(
+              Uri.https('devote-explorer-backend.herokuapp.com', 'candidates'));
+          CallApi model = CallApi(
+              Uri.https('devote-explorer-backend.herokuapp.com', 'governorates'));
+          setState(() {
+            pie = network.getPieResult();
+            map = model.getMapResults();
+            _getlist();
+          });
+          return Future<void>.delayed(const Duration(seconds: 2));
+        },
+        child: kIsWeb && isLargeScreen(context)
+            ? Scrollbar(
+                thumbVisibility: true,
+                scrollbarOrientation: ScrollbarOrientation.right,
+                controller: _letters,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: BlockChain(
+                              _letters,
                             ),
-                          ),
-                          TimerBuilder.scheduled([update], builder: (context){ return pieResult();}),
-                          const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Text(
-                              'النتيجة علي الخريطة',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                          )),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: ListView(
+                          controller: _numbers,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Text(
+                                'النتيجة الاجمالية',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          //MapChart(data: data, mapSource: _mapSource),
-                          mapResult(),
-                        ],
+                            pieResult(),
+                            const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Text(
+                                'النتيجة علي الخريطة',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            //MapChart(data: data, mapSource: _mapSource),
+                            mapResult(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              )
+            : ListView(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      'النتيجة الاجمالية',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  pieResult(),
+                  const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      'النتيجة علي الخريطة',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  mapResult(),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    // ignore: deprecated_member_use
+                    child: RaisedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => BlockChain())),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      label: const Text(
+                        'متابعة العملية الانتخابية بشكل مباشر',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      icon: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.how_to_vote_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                      textColor: Colors.white,
+                      splashColor: const Color(0xff26375f),
+                      color: const Color(0xffd82148),
+                    ),
+                  ),
+                ],
               ),
-            )
-          : ListView(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    'النتيجة الاجمالية',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TimerBuilder.scheduled([update], builder: (context){ return pieResult();}),
-                const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text(
-                    'النتيجة علي الخريطة',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TimerBuilder.scheduled([update], builder: (context){ return mapResult();}),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  // ignore: deprecated_member_use
-                  child: RaisedButton.icon(
-                    onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => BlockChain())),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    label: const Text(
-                      'متابعة العملية الانتخابية بشكل مباشر',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    icon: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.how_to_vote_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                    textColor: Colors.white,
-                    splashColor: const Color(0xff26375f),
-                    color: const Color(0xffd82148),
-                  ),
-                ),
-              ],
-            ),
+      ),
     );
   }
 }

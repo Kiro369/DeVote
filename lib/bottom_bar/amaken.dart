@@ -21,6 +21,7 @@ class _AmakenState extends State<Amaken> {
   var locations = [
     {
       'name': 'المعهد التكنولوجي العالي بالعاشر من رمضان',
+      'city':'محافظة الشرقية',
       'location': const LatLng(30.286596, 31.740078)
     },
   ];
@@ -28,6 +29,7 @@ class _AmakenState extends State<Amaken> {
   Set<Marker> getmarkers() {
     //markers to place on map
     for (var i = 0; i < locations.length; i++) {
+      final city = locations[i]['city'];
       final title = locations[i]['name'];
       final loc = locations[i]['location'];
       markers.add(Marker(
@@ -36,8 +38,8 @@ class _AmakenState extends State<Amaken> {
         position: loc as LatLng, //position of marker
         infoWindow: InfoWindow(
           //popup info
-          title: title.toString(),
-          // snippet: 'My Custom Subtitle',
+          title: city.toString(),
+           snippet: title.toString(),
         ),
 
         icon: BitmapDescriptor.defaultMarker, //Icon for Marker
@@ -46,12 +48,6 @@ class _AmakenState extends State<Amaken> {
     return markers;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    //location= LatLng(30.286596, 31.740078);
-    //getIcons();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +68,7 @@ class _AmakenState extends State<Amaken> {
         ],
         centerTitle: true,
         title: const Text(
-          'اماكن الانتخابات',
+          'مواقع الانتخابات',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xff26375f),
@@ -91,9 +87,9 @@ class _AmakenState extends State<Amaken> {
               child: AnimatedTextKit(
                 repeatForever: true,
                 animatedTexts: [
-                  RotateAnimatedText('موعد الانتخابات الرئاسية 26-27 يوليو'),
+                  RotateAnimatedText('موعد الانتخابات الرئاسية 18-19 يونيو'),
                   RotateAnimatedText(
-                      'تتواجد مكن الانتخابات في جميع انحاء الجمهورية'),
+                      'تتواجد ماكينات الانتخابات في جميع انحاء الجمهورية'),
                   RotateAnimatedText(
                       'يرجي الذهاب للانتخابات ببطاقة الرقم القومي'),
                 ],
@@ -111,8 +107,8 @@ class _AmakenState extends State<Amaken> {
             Center(
               child: GoogleMap(
                 markers: getmarkers(),
-                myLocationButtonEnabled: true,
-                myLocationEnabled: false,
+                //myLocationButtonEnabled: true,
+                myLocationEnabled: true,
                 initialCameraPosition: _initial,
                 onMapCreated: (GoogleMapController controller) =>
                     setState(() => _mapLoading = false),

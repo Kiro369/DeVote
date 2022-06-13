@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-class ShimmerLo extends StatefulWidget {
-  const ShimmerLo({Key? key}) : super(key: key);
+class shimmerLo extends StatefulWidget {
+  const shimmerLo({Key? key}) : super(key: key);
 
   @override
-  _ShimmerLoState createState() => _ShimmerLoState();
+  _shimmerLoState createState() => _shimmerLoState();
 }
 
-class _ShimmerLoState extends State<ShimmerLo> {
+class _shimmerLoState extends State<shimmerLo> {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -13,6 +13,7 @@ class Bottom_bar extends StatefulWidget {
 
 // ignore: camel_case_types
 class _Bottom_barState extends State<Bottom_bar> {
+  //list of pages and initial home page (current)
   List pages = [
     const Amaken(),
     const Motrsh7en(),
@@ -39,7 +40,7 @@ class _Bottom_barState extends State<Bottom_bar> {
         },
         items: const [
           BottomNavigationBarItem(
-              label: 'الاماكن', icon: Icon(Icons.location_on)),
+              label: 'المواقع', icon: Icon(Icons.location_on)),
           BottomNavigationBarItem(
               label: 'المرشحون', icon: Icon(Icons.people_alt_outlined)),
           BottomNavigationBarItem(

@@ -1,7 +1,4 @@
-
-
 import 'package:devote/widgets/shimmerLoading.dart';
-
 import '/widgets/BlockDetails.dart';
 import '/widgets/BlockList.dart';
 import '/widgets/TransactionsList.dart';
@@ -15,8 +12,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class BlockChain extends StatefulWidget {
     final ScrollController? scrollController;
-    static String id ='blockChain';
-   BlockChain( [this.scrollController]);
+    BlockChain( [this.scrollController]);
 
   @override
   _BlockChainState createState() => _BlockChainState();
@@ -33,7 +29,6 @@ class _BlockChainState extends State<BlockChain> {
   @override
   initState() {
     super.initState();
-
     CallApi network = CallApi(
         Uri.https('devote-explorer-backend.herokuapp.com', 'transactions'));
     CallApi block = CallApi(
@@ -82,7 +77,7 @@ class _BlockChainState extends State<BlockChain> {
                   ),
                   GestureDetector(
                     child: const Text(
-                      'BlockChain Explorer',
+                      'Blockchain Explorer',
                       style: TextStyle(fontSize: 12, color: Colors.white54),
                     ),
                   )
@@ -101,7 +96,7 @@ class _BlockChainState extends State<BlockChain> {
                 ),
                 GestureDetector(
                   child: const Text(
-                    'BlockChain Explorer',
+                    'Blockchain Explorer',
                     style: TextStyle(fontSize: 13, color: Colors.black45),
                   ),
                 )
@@ -259,7 +254,7 @@ class _BlockChainState extends State<BlockChain> {
                           } else if (snapshot.hasError) {
                             return Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(30.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Image.asset(
                                   'assets/no_internet.gif',
                                   height: MediaQuery.of(context).size.height / 2.5,
@@ -268,7 +263,7 @@ class _BlockChainState extends State<BlockChain> {
                               ),
                             );
                           } // spinner
-                          return  Center(child:  ShimmerLo(),);
+                          return  const Center(child: shimmerLo(),);
                         },
                       ),
                     ),
@@ -450,7 +445,7 @@ class _BlockChainState extends State<BlockChain> {
                           } else if (snapshot.hasError) {
                             return Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(30.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Image.asset(
                                   'assets/no_internet.gif',
                                   height: MediaQuery.of(context).size.height / 2.5,
@@ -459,7 +454,7 @@ class _BlockChainState extends State<BlockChain> {
                               ),
                             );
                           } // spinner
-                          return Center(child:  ShimmerLo(),);
+                          return const Center(child:  shimmerLo(),);
                         },
                       ),
                     ),

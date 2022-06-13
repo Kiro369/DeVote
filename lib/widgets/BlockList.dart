@@ -297,7 +297,7 @@ class _BlockListState extends State<BlockList> {
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
                           } // spinner
-                          return Center(child:  ShimmerLo(),);
+                          return Center(child:  shimmerLo(),);
                         },
                       ),
                     )

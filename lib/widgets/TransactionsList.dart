@@ -1,7 +1,6 @@
 import 'package:devote/widgets/shimmerLoading.dart';
 
 import '/models/transaction.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/Call_api.dart';
 import 'TransactionDetails.dart';
@@ -313,7 +312,7 @@ class _TransactionsListState extends State<TransactionsList> {
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
                           } // spinner
-                          return Center(child:  ShimmerLo(),);
+                          return Center(child:  shimmerLo(),);
                         },
                       ),
                     )
