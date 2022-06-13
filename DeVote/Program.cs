@@ -17,9 +17,9 @@ using DeVote.Misc;
 
 namespace DeVote
 {
-    class Program
+    public class Program
     {
-        static void Main()
+        public static void Main()
         {
             #region TransactionDLT/Record Test
             //var pkt = new List<byte>();

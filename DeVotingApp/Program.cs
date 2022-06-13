@@ -14,6 +14,7 @@
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Task.Factory.StartNew(DeVote.Program.Main);
             Application.Run(new Main());
         }
     }

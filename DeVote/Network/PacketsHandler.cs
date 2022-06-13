@@ -72,10 +72,10 @@ namespace DeVote.Network
                                 packet = Cryptography.AES.Decrypt(packet); // Decrypt the packet using our AES Key
 
                                 // Our Header containing the length at the first 2 bytes (0 and 1), and the ID at the next 2 bytes (2 and 3)
-                                var length = BitConverter.ToInt16(packet, 0);
-                                var id = BitConverter.ToInt16(packet, 2);
+                                var length = BitConverter.ToInt32(packet, 0);
+                                var id = BitConverter.ToInt16(packet, 4);
 
-                                if (packet.Length - 4 == length) // Verify that the length is accurate (we deduct header length)
+                                if (packet.Length - 6 == length) // Verify that the length is accurate (we deduct header length)
                                 {
                                     try
                                     {
@@ -90,7 +90,7 @@ namespace DeVote.Network
                                     }
                                 }
                                 else // Probably a corrupted packet
-                                    Log.Error($"Invalid packet length, expected: {length} actual: {packet.Length - 4}");
+                                    Log.Error($"Invalid packet length, expected: {length} actual: {packet.Length - 6}");
                             }
                             else // If we don't have the AES Key, and its not an ECDH packet, ignore it for now, add it to the end of queue again
                             {
