@@ -145,12 +145,20 @@ namespace DeVote.PyRecognition
             }
         }
 
-        public dynamic VerifyPerson(string camPath, string frontIDPath, int numberOfFrames)
+        public List<string> VerifyPerson(string camPath, string frontIDPath, int numberOfFrames)
         {
+            var paths = new List<string>();
             using (Py.GIL())
             {
-                return faceVerificationModule.verify_personality(camPath, frontIDPath, numberOfFrames);
+                var res = faceVerificationModule.verify_personality(camPath, frontIDPath, numberOfFrames);
+                if (res[0].IsTrue())
+                {
+                    var _paths = res[1];
+                    foreach (var path in _paths)
+                        paths.Add(path.ToString());
+                }
             }
+            return paths;
         }
 
         public List<string> VerifyPerson(int camPath, string frontIDPath, int numberOfFrames)
@@ -161,8 +169,9 @@ namespace DeVote.PyRecognition
                 var res = faceVerificationModule.verify_personality(camPath, frontIDPath, numberOfFrames);
                 if (res[0].IsTrue())
                 {
-                    var p = res[1];
-                    paths.AddRange(p);
+                    var _paths = res[1];
+                    foreach (var path in _paths)
+                        paths.Add(path.ToString());
                 }
             }
             return paths;
