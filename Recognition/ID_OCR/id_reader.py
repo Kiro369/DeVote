@@ -27,7 +27,7 @@ def id_read(img, gray=False, *, data, face):
     '''
     image = img if gray else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, (1410, 900))
-    #thresh = 89
+    thresh = 89
     bi_img = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
     #bi_img = image
     #bi_img = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 81, 21)
