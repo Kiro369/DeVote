@@ -8,7 +8,7 @@ namespace DeVotingApp
     public partial class IDForm : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.3:8080/video"); //new("http://192.168.1.2:4747/video");
+        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:8080/video"); //new("http://192.168.1.2:4747/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
         IDInfo Info = null;
@@ -107,11 +107,11 @@ namespace DeVotingApp
         {
             try
             {
-                Info = Recognition.Current.ScanCard("http://192.168.1.3:8080/video", 60);
+                Info = Recognition.Current.ScanCard("http://192.168.1.2:8080/video", 60);
             }
             catch (Exception e) {
                 MessageBox.Show(e.Message);
-                Close();
+                Info = new IDInfo();
             }
         }
 
@@ -119,12 +119,19 @@ namespace DeVotingApp
         {
             if (Info != null)
             {
-                Hide();
-                var form2 = new WaitForm(Info);
-                form2.Closed += (s, args) => Close();
-                form2.Show();
-                form2.Activate();
-                timer1.Enabled = false;
+                if (string.IsNullOrEmpty(Info.ID))
+                {
+                    Close();
+                }
+                else
+                {
+                    Hide();
+                    var form2 = new WaitForm(Info);
+                    form2.Closed += (s, args) => Close();
+                    form2.Show();
+                    form2.Activate();
+                    timer1.Enabled = false;
+                }
             }
         }
     }

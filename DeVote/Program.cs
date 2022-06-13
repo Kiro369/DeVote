@@ -290,6 +290,7 @@ namespace DeVote
                 switch (cmd)
                 {
                     case "chat":
+                        var x = Blockchain.Current.Block.Transactions;
                         var test = new Network.Messages.Test(null);
                         foreach (var node in NetworkManager.GetNodes())
                         {

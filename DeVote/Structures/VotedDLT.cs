@@ -14,7 +14,7 @@ namespace DeVote.Structures
         public DB LevelDB;
         private VotedDLT()
         {
-            LevelDB = new DB(new Options { CreateIfMissing = true }, Constants.VotedDLTPath);
+            LevelDB = new DB(new Options { CreateIfMissing = true }, Settings.Current.VotedDLTPath);
         }
         public void Add(string ID, string MachineID = "")
         {

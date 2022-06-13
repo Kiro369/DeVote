@@ -25,9 +25,7 @@ namespace DeVote
         /// </summary>
         public static byte[] Argon2Salt = Encoding.UTF8.GetBytes(Settings.Current.Argon2Salt);
 
-        public static readonly string BlockchainPath = Directory.GetCurrentDirectory() + "\\Blockchain", // Blockchain LevelDB database path
-            VotedDLTPath = Directory.GetCurrentDirectory() + "\\VotedDLT", // VotedDLT (the side DLT containing people voted) LevelDB database path
-            MachineID = Argon2.ComputeHash(new DeviceIdBuilder().AddMacAddress().AddMachineName().AddOsVersion().ToString()), // Unique ID for each machine
+        public static readonly string MachineID = Argon2.ComputeHash(new DeviceIdBuilder().AddMacAddress().AddMachineName().AddOsVersion().ToString()), // Unique ID for each machine
             Candidate1ID = Argon2.ComputeHash("CC"),
             Candidate2ID = Argon2.ComputeHash("Mousa");
 

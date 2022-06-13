@@ -22,7 +22,7 @@ namespace DeVote.Structures
             Block = new Block();
 
             // Create a new leveldb
-            LevelDB = new DB(new Options { CreateIfMissing = true, CompressionLevel = CompressionLevel.NoCompression }, Constants.BlockchainPath);
+            LevelDB = new DB(new Options { CreateIfMissing = true, CompressionLevel = CompressionLevel.NoCompression }, Settings.Current.BlockchainPath);
             //SaveBlock(GenesisBlock);
         }
 
