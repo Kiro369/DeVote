@@ -358,7 +358,7 @@ def scan_card(path, execution_time=60):
                 if is_card:
                     #front_or_back = is_front_back(frame)
                     if face[face_key] is None:# and front_or_back == face_key:
-                        temp = scan(frame, face_key)
+                        temp = scan(frame, face_key, ter)
                         if temp is not None:
                             data[face_key].append(temp)
                             ids.append(temp["ID"])
