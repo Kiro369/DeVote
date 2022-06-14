@@ -1,4 +1,4 @@
-﻿using DeVote.PyRecognition;
+using DeVote.PyRecognition;
 using MetroFramework.Forms;
 using OpenCvSharp.Extensions;
 using System.Drawing.Text;
