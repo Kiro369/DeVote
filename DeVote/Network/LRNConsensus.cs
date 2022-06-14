@@ -43,7 +43,6 @@ namespace DeVote.Network
                         var addBlock = new AddBlock() { Block = Blockchain.Current.Blocks.Last.Value };
                         NetworkManager.Broadcast(addBlock.Create());
                     }
-
                 }
                 else if (currentMinute == mineMinute - 1)
                 {
@@ -104,11 +103,18 @@ namespace DeVote.Network
         /// <returns></returns>
         private static DateTime GetInternetTime()
         {
-            var client = new TcpClient("time.nist.gov", 13);
-            using var streamReader = new StreamReader(client.GetStream());
-            var response = streamReader.ReadToEnd();
-            var utcDateTimeString = response.Substring(7, 17);
-            return DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+            try
+            {
+                var client = new TcpClient("time.nist.gov", 13);
+                using var streamReader = new StreamReader(client.GetStream());
+                var response = streamReader.ReadToEnd();
+                var utcDateTimeString = response.Substring(7, 17);
+                return DateTime.ParseExact(utcDateTimeString, "yy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+            }
+            catch // In case of no internet
+            {
+                return DateTime.Now;
+            }
         }
     }
 }

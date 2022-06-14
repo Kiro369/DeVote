@@ -103,6 +103,7 @@ namespace DeVotingApp
                     if (_image.Empty()) return;
                     ImageContainer = new BitmapContainer(BitmapConverter.ToBitmap(_image));
                     pictureBox1.Image = ImageContainer.ToBitmap();
+                    //pictureBox1.Image.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 }
                 catch (Exception ex)
                 {
@@ -116,7 +117,7 @@ namespace DeVotingApp
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
 
-            if (false)
+            if (true)
             {
                 new Thread(new ThreadStart(Reco)).Start();
             }
@@ -126,12 +127,19 @@ namespace DeVotingApp
         }
         void Reco()
         {
-            Paths = DeVote.PyRecognition.Recognition.Current.VerifyPerson(0 , Info.FrontIDPath, 10);
-            if (Paths.Count > 0)
+            try
             {
-                RecognitionState = 2;
+                Paths = DeVote.PyRecognition.Recognition.Current.VerifyPerson(0, Info.FrontIDPath, 10);
+                if (Paths.Count > 0)
+                {
+                    RecognitionState = 2;
+                }
+                else RecognitionState = 3;
             }
-            else RecognitionState = 3;
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
         bool CanVerify = true;
         System.Diagnostics.Stopwatch sp = new();
