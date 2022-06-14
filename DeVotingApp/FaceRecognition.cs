@@ -1,4 +1,4 @@
-﻿using MetroFramework.Forms;
+using MetroFramework.Forms;
 using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;

@@ -62,6 +62,7 @@ def compare_faces(cam_source, ID_face, frames_num=num_of_frames):
     while saved_encoding < frames_num:
         if cam_ref.isOpened():
             ret, frame = cam_ref.read()
+            frame = cv2.resize(frame, (600, 450))
             if ret:
                 dist, embedded, _ = compare_faces_frame(ID_face, frame)
                 if dist == 1:
@@ -92,6 +93,7 @@ def spoofing_movements(cam_ref, movement, recognition_data, elapsed_time=10):
     pass_frames(cam_ref, 10)
     while cam_ref.isOpened():
         ret, frame = cam_ref.read()
+        frame = cv2.resize(frame, (600, 450))
         if ret:
             #if multi_face_spoof(cam_ref, frame):
             #    return False
@@ -160,6 +162,7 @@ def closing_eye(cam_ref, recognition_data, elapsed_time=5):
     pass_frames(cam_ref, 10)
     while cam_ref.isOpened():
         ret, frame = cam_ref.read()
+        frame = cv2.resize(frame, (600, 450))
         if ret:
             #if multi_face_spoof(cam_ref, frame):
             #    return False

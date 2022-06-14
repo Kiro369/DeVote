@@ -13,10 +13,10 @@ namespace DeVote.Misc
         /// Compresses a byte[] image using ImageProcessor library.
         /// </summary>
         /// <param name="image">a byte[] image to be compressed.</param>
-        /// <param name="quality">percentage to alter the image quality, defaulting to 55.</param> 
-        /// <param name="outputFormat">output format defaulting to .webp</param> 
+        /// <param name="quality">percentage to alter the image quality, defaulting to 75.</param> 
+        /// <param name="outputFormat">output format defaulting to .jpg</param> 
         /// <returns>byte[] of compressed image.</returns> 
-        public static byte[] Compress(byte[] image, int quality = 55, string outputFormat = "webp")
+        public static byte[] Compress(byte[] image, int quality = 75, string outputFormat = "jpg")
         {
             using MemoryStream compressedImageStream = new();
             using ImageFactory imageFactory = new(preserveExifData: false);
@@ -43,10 +43,10 @@ namespace DeVote.Misc
         ///  Compress a list of byte[] images using ImageProcessor library.
         /// </summary>
         /// <param name="images">Images to compress presented in byte arrays</param>
-        /// <param name="quality">percentage to alter the image quality, defaulting to 55.</param> 
-        /// <param name="outputFormat">output format defaulting to .webp</param> 
+        /// <param name="quality">percentage to alter the image quality, defaulting to 75.</param> 
+        /// <param name="outputFormat">output format defaulting to .jpg</param> 
         /// <returns>List of byte[] of compressed image.</returns>s
-        public static byte[][] CompressImages(byte[][] images, int quality = 55, string outputFormat = "webp")
+        public static byte[][] CompressImages(byte[][] images, int quality = 75, string outputFormat = "jpg")
         {
             byte[][] compressedImages = new byte[images.Length][];
             for (var i = 0; i < images.Length; i++)
@@ -57,7 +57,7 @@ namespace DeVote.Misc
         }
 
         /// <summary>
-        /// Decompresses a list of byte[] images and saves the images as temp files.
+        /// Decompresses a list of byte[] images and saves the images as temp files defaulting to .jpg.
         /// </summary>
         /// <returns>Temp images paths</returns>
         public static IEnumerable<string> DecompressImages(byte[][] Images, string Hash, string format = "jpg")
