@@ -61,10 +61,10 @@ namespace DeVote.Structures
 
        public void SaveBlk(Block blk)
         {
-            if (!Directory.Exists("Blocks"))
-                Directory.CreateDirectory("Blocks");
+            if (!Directory.Exists(Settings.Current.BlocksPath))
+                Directory.CreateDirectory(Settings.Current.BlocksPath);
 
-            var blkFile = $"./Blocks/{blk.Height}.blk";
+            var blkFile = $"{Settings.Current.BlocksPath}\\{blk.Height}.blk";
             if (File.Exists(blkFile))
                 return;
             using var stream = new MemoryStream();

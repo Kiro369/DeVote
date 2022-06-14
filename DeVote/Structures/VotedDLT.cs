@@ -18,7 +18,7 @@ namespace DeVote.Structures
         }
         public void Add(string ID, string MachineID = "")
         {
-            if (MachineID == "")
+            if (string.IsNullOrEmpty(MachineID))
                 MachineID = Constants.MachineID;
             LevelDB.Put(Argon2.ComputeHash(ID), MachineID);
         }

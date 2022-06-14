@@ -20,12 +20,6 @@ namespace DeVote.Network.Messages
 
         public Transaction(byte[] incomingPacket) : base(incomingPacket) {}
 
-        // should only work with full node.
-        public void Save()
-        {
-            TxRecord.Hash = Encoding.UTF8.GetBytes(TransactionData.Hash);
-            TransactionsDLT.Current.AddRecord(TxRecord);
-        }
         public override void Handle(Node client)
         {
             if (VotedDLT.Current.Contains(TransactionData.Elector))

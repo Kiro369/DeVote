@@ -48,6 +48,8 @@ namespace DeVote.Network
                                 continue; 
                             else if (IsItECDHRequest(packet)) // Check if it's Elliptic Curve Diffie Hellman Key Exchange packet
                             {
+                                Log.Info("Exchanging AES key through ECDH with {0}", node.EndPoint);
+
                                 // Extract other party public key from the packet (we skip our header/identifier)
                                 var otherPartyPublicKey = packet.Skip(Constants.ECDHOperations[0].Length).ToArray();
 
@@ -81,7 +83,11 @@ namespace DeVote.Network
                                     {
                                         // Check if that packet can be handled
                                         if (_handlers.ContainsKey(id))
+                                        {
+                                            Log.Info($"Handling packet: {(PacketType)id}");
                                             _handlers[id].Invoke(node, packet); // Handle the packet
+                                            Log.Info($"Handled packet: {(PacketType)id}");
+                                        }
                                         else Log.Error($"Unhandled packet with ID: {id}"); // Notify that this packet is not handled
                                     }
                                     catch (Exception e)
