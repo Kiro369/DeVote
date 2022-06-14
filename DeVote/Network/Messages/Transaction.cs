@@ -34,7 +34,7 @@ namespace DeVote.Network.Messages
             }
             else
             {
-                (string frontIDPath, _) = TxRecord.DecompressID("webp");
+                (string frontIDPath, _) = TxRecord.DecompressID();
 
                 bool voterVerified = TxRecord.IsVoterVerified(frontIDPath);
                 if (voterVerified)

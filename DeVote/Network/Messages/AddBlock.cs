@@ -44,7 +44,7 @@ namespace DeVote.Network.Messages
                                 TransactionRecord txRecord = TransactionData.RecievedRecords[tx.Hash];
 
                                 // TxRecord already have compressed images
-                                (string frontIDPath, string backIDPath) = txRecord.DecompressID("jpg");
+                                (string frontIDPath, string backIDPath) = txRecord.DecompressID();
 
                                 if (!txRecord.IsVoterVerified(frontIDPath))
                                 {

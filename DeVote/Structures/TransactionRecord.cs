@@ -28,12 +28,12 @@ namespace DeVote.Structures
         /// <summary>
         /// Verify the face of the voter from captured images against face from ID.
         /// </summary>
-        /// <param name="frontIDPath"></param> the frontside of ID to be matched against. 
+        /// <param name="frontIDPath">the frontside of ID to be matched against.</param> 
         /// <returns></returns>
         public bool IsVoterVerified(string frontIDPath)
         {
             var verified = 0;
-            foreach (var imagePath in Misc.ImageProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash),"jpg"))
+            foreach (var imagePath in Misc.ImageProcessor.DecompressImages(Images, Encoding.UTF8.GetString(Hash)))
             {
                 if (Recognition.Current.VerifyVoter(frontIDPath, imagePath))
                     verified++;
@@ -42,11 +42,11 @@ namespace DeVote.Structures
         }
 
         /// <summary>
-        /// Decompresses the front and back of transaction record in the desired format
+        /// Decompresses the front and back of transaction record in the desired format defaulting to .jpg.
         /// </summary>
         /// <param name="outputformat"></param>
         /// <returns>tuple of paths where front and back is saved</returns>
-        public (string,string) DecompressID(string outputformat)
+        public (string,string) DecompressID(string outputformat = "jpg")
         {
             Misc.ImageProcessor.DecompressID(Front, Back, Hash, outputformat, out string frontIDPath, out string backIDPath);
             return (frontIDPath, backIDPath);
