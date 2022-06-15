@@ -56,6 +56,9 @@ namespace DeVote.Cryptography
         /// <returns>Merkle root</returns>
         public static string ComputeMerkleRoot(List<Transaction> transactions)
         {
+            if (transactions.Count == 0)
+                return ComputeHash("DeVoteEmptyMerkleRoot");
+
             string[] hashList = transactions.Select(transaction => transaction.Hash).ToArray();
             while (true)
             {
