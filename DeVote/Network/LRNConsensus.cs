@@ -21,7 +21,7 @@ namespace DeVote.Network
         /// <summary>
         /// The Generated random number of this machine
         /// </summary>
-        private long RN { get; set; }
+        private long RN { get; set; } = long.MaxValue;
 
         /// <summary>
         /// Starts the consensus algorithm
@@ -41,6 +41,7 @@ namespace DeVote.Network
 
                     // Reset the RN of all Nodes
                     NetworkManager.ResetRNConsensus();
+                    RN = long.MaxValue;
 
                     if (Choosen.Equals(Constants.MachineID))
                     {
@@ -52,9 +53,13 @@ namespace DeVote.Network
                 else if (currentMinute == mineMinute - 1)
                 {
                     // Generate Radom number and broadcast it 
-                    RN = Constants.FastRandom.NextInt64();
-                    var consensusPacket = new Messages.LRNConsensus();
-                    var generatedPacket = consensusPacket.Create(RN);
+                    RN = Constants.FastRandom.NextUInt32();
+                    var consensusPacket = new Messages.LRNConsensus() {
+                        ConsensusRN = RN,
+                        FullNode = Settings.Current.FullNode,
+                        MachineID = Constants.MachineID,
+                    };
+                    var generatedPacket = consensusPacket.Create();
                     NetworkManager.Broadcast(generatedPacket);
                 }
 

@@ -10,9 +10,9 @@ namespace DeVote.Network.Messages
     [Handling.NodePacketHandler(PacketTypes.LRNConsensus)]
     class LRNConsensus : Packet
     {
-        long ConsensusRN = long.MaxValue;
-        string MachineID = string.Empty;
-        bool FullNode = false;
+        public long ConsensusRN = long.MaxValue;
+        public string MachineID = string.Empty;
+        public bool FullNode = false;
 
         public LRNConsensus(byte[] incomingPacket) : base(incomingPacket) { }
         public LRNConsensus() : base(null) { }
@@ -41,13 +41,13 @@ namespace DeVote.Network.Messages
                 return false;
             }
         }
-        public byte[] Create(long consensusRN, bool fullNode = false)
+        public byte[] Create()
         {
-            Resize(16 + Constants.MachineID.Length);
+            Resize(16 + MachineID.Length);
             Seek(6);
-            WriteBoolean(fullNode);
+            WriteBoolean(FullNode);
             WriteLong(ConsensusRN);
-            WriteStringWithLength(Constants.MachineID);
+            WriteStringWithLength(MachineID);
             Finalize<LRNConsensus>();
             return Buffer;
         }

@@ -132,7 +132,7 @@ namespace DeVote
                 Log.Info("Finished Syncing!");
 
                 // Tell the network our MachineID and if we're wether a FullNode or Not
-                NetworkManager.Broadcast(new Network.Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
+                NetworkManager.Broadcast(new Network.Messages.LRNConsensus() { ConsensusRN = long.MaxValue, FullNode = Settings.Current.FullNode, MachineID = Constants.MachineID }.Create());
             }
 
             // Console Title adj, helps with debugging, shows connected entpoints
