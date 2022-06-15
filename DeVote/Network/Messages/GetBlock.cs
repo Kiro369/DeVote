@@ -36,9 +36,6 @@ namespace DeVote.Network.Messages
                 case PacketType.Response:
                     if (Block != null && Block.Height > 0)
                     {
-                        if (Block.Transactions == null)
-                            Block.Transactions = new List<Structures.Transaction>();
-
                         if (RecievedBlocks.ContainsKey(BlockHeight))
                             RecievedBlocks[BlockHeight] = Block;
                         else RecievedBlocks.Add(BlockHeight, Block);
@@ -52,6 +49,8 @@ namespace DeVote.Network.Messages
             try
             {
                 Deserialize<GetBlock>().CopyProperties(this);
+                if (Block.Transactions == null)
+                    Block.Transactions = new();
                 return true;
             }
             catch

@@ -25,7 +25,7 @@ namespace DeVote.Network.Messages
                     var merkle = Argon2.ComputeMerkleRoot(Block.Transactions);
                     if (merkle.Equals(Block.MerkleRoot))
                     {
-                        string blockHeader = Blockchain.Current.Blocks.Last.Value.PrevHash + Block.Timestamp.ToString() + merkle;
+                        string blockHeader = Blockchain.Current.Blocks.Last.Value.Hash + Block.Timestamp.ToString() + merkle;
                         var hash = Argon2.ComputeHash(blockHeader);
                         if (hash.Equals(Block.Hash))
                         {
@@ -65,6 +65,8 @@ namespace DeVote.Network.Messages
             try
             {
                 Deserialize<AddBlock>().CopyProperties(this);
+                if (Block.Transactions == null)
+                    Block.Transactions = new();
                 return true;
             }
             catch
