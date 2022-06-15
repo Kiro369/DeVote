@@ -56,6 +56,7 @@ namespace DeVote.Structures
             Console.WriteLine($"blockHeader {blockHeader}");
             block.Hash = Argon2.ComputeHash(blockHeader);
             Blocks.AddLast(block);
+            SaveBlock(block);
             SaveBlk(block);
         }
 
@@ -106,11 +107,16 @@ namespace DeVote.Structures
         {
             foreach (Block block in this.Blocks)
             {
-                byte[] SerializedBlock = Block.SerializeBlock(block);
-                byte[] Height = BitConverter.GetBytes(block.Height);
-                this.LevelDB.Put(Height, SerializedBlock);
-                SaveBlk(block);
+                SaveBlock(block);
             }
+        }
+
+        public void SaveBlock(Block block)
+        {
+            byte[] SerializedBlock = Block.SerializeBlock(block);
+            byte[] Height = BitConverter.GetBytes(block.Height);
+            LevelDB.Put(Height, SerializedBlock);
+            SaveBlk(block);
         }
 
         public byte[] SerializeBlockchain()
