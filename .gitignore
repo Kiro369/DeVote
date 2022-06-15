@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /LevelDB/Blockchain
 /LevelDB/TransactionsDLT
+/Blocks

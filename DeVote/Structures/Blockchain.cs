@@ -39,7 +39,7 @@ namespace DeVote.Structures
                     PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
                 };
                 genesisBlock.MerkleRoot = Argon2.ComputeMerkleRoot(genesisBlock.Transactions);
-                string blockHeader = genesisBlock.PrevHash + genesisBlock.Timestamp.ToString() + genesisBlock.MerkleRoot;
+                string blockHeader = genesisBlock.PrevHash + "Kiro" + genesisBlock.MerkleRoot;
                 genesisBlock.Hash = Argon2.ComputeHash(blockHeader);
                 return genesisBlock;
             }
