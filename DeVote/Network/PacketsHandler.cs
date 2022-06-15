@@ -84,7 +84,7 @@ namespace DeVote.Network
                                         // Check if that packet can be handled
                                         if (_handlers.ContainsKey(id))
                                         {
-                                            Log.Info($"Handling packet: {(PacketTypes)id}");
+                                            Log.Info($"Handling packet: {(PacketTypes)id} from {node.EndPoint}");
                                             _handlers[id].Invoke(node, packet); // Handle the packet
                                             Log.Info($"Handled packet: {(PacketTypes)id}");
                                         }
