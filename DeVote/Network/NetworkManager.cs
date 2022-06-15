@@ -99,7 +99,7 @@ namespace DeVote.Network
             {
                 Nodes[endPoint] = node;
                 if (AES.Key != null)
-                    node.Send(new Messages.LRNConsensus().Create(long.MaxValue, Settings.Current.FullNode));
+                    node.Send(new Messages.LRNConsensus() { FullNode = Settings.Current.FullNode, ConsensusRN = long.MaxValue, MachineID = Constants.MachineID}.Create());
             }
         }
         /// <summary>
