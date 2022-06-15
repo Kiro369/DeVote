@@ -19,6 +19,11 @@ namespace DeVote.Network
         public string Choosen { get; private set; }
 
         /// <summary>
+        /// The Generated random number of this machine
+        /// </summary>
+        private long RN { get; set; }
+
+        /// <summary>
         /// Starts the consensus algorithm
         /// </summary>
         public async Task Start()
@@ -47,9 +52,9 @@ namespace DeVote.Network
                 else if (currentMinute == mineMinute - 1)
                 {
                     // Generate Radom number and broadcast it 
-                    var rn = Constants.FastRandom.NextInt64();
+                    RN = Constants.FastRandom.NextInt64();
                     var consensusPacket = new Messages.LRNConsensus();
-                    var generatedPacket = consensusPacket.Create(rn);
+                    var generatedPacket = consensusPacket.Create(RN);
                     NetworkManager.Broadcast(generatedPacket);
                 }
 
@@ -62,15 +67,15 @@ namespace DeVote.Network
         /// Performs the consensus to pick who will mine the next block!
         /// </summary>
         /// <returns>The choosen one</returns>
-        public static string Perform()
+        public string Perform()
         {
-            var s = string.Empty;
-            var min = long.MaxValue;
+            var s = Constants.MachineID;
+            var min = RN;
             foreach (var item in NetworkManager.GetNodes())
             {
                 if (item.ConsensusRN < min)
                 {
-                    s = item.EndPoint;
+                    s = item.MachineID;
                     min = item.ConsensusRN;
                 }
             }
