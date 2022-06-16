@@ -15,7 +15,7 @@ namespace DeVote.Structures
         [ProtoMember(4)] public string Elected { get; set; }
         public Transaction(string elector, string elected)
         {
-            Date = DateTimeOffset.UtcNow.Date.Ticks;
+            Date = ((DateTimeOffset)DateTimeOffset.UtcNow.Date).ToUnixTimeMilliseconds();
             Elector = elector;
             Elected = elected;
             var stopwatch = Stopwatch.StartNew();

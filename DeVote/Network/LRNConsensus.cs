@@ -45,6 +45,11 @@ namespace DeVote.Network
 
                     if (Choosen.Equals(Constants.MachineID))
                     {
+                        Block latestBlock = Blockchain.Current.Blocks.Last.Value;
+                        Blockchain.Current.Block.Height = latestBlock.Height + 1;
+                        Blockchain.Current.Block.PrevHash = latestBlock.Hash;
+                        Blockchain.Current.Block.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                        Blockchain.Current.Block.Miner = Choosen;
                         Blockchain.Current.AddBlock(Blockchain.Current.Block);
                         var addBlock = new AddBlock() { Block = Blockchain.Current.Blocks.Last.Value };
                         NetworkManager.Broadcast(addBlock.Create());

@@ -49,7 +49,7 @@ namespace DeVote.Network.Messages
             try
             {
                 Deserialize<GetBlock>().CopyProperties(this);
-                if (Block.Transactions == null)
+                if (Block != null && Block.Transactions == null)
                     Block.Transactions = new();
                 return true;
             }

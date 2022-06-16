@@ -47,9 +47,6 @@ namespace DeVote.Structures
 
         public void AddBlock(Block block)
         {
-            Block latestBlock = Blocks.Last.Value;
-            block.Height = latestBlock.Height + 1;
-            block.PrevHash = latestBlock.Hash;
             block.nTx = block.Transactions.Count;
             block.MerkleRoot = Argon2.ComputeMerkleRoot(block.Transactions);
             string blockHeader = block.PrevHash + block.Timestamp.ToString() + block.MerkleRoot;
