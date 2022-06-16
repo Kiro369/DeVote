@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Amaken extends StatefulWidget {
@@ -11,17 +12,14 @@ class Amaken extends StatefulWidget {
 
 class _AmakenState extends State<Amaken> {
   bool _mapLoading = true;
-  static const CameraPosition _initial =  CameraPosition(
-  target: LatLng(30.286596, 31.740078),
-  zoom: 14,
-  );
+
 
   final Set<Marker> markers = {}; //markers for google map
   static const LatLng showLocation = LatLng(30.033333, 31.233334);
   var locations = [
     {
       'name': 'المعهد التكنولوجي العالي بالعاشر من رمضان',
-      'city':'محافظة الشرقية',
+      'city': 'محافظة الشرقية',
       'location': const LatLng(30.286596, 31.740078)
     },
   ];
@@ -39,13 +37,34 @@ class _AmakenState extends State<Amaken> {
         infoWindow: InfoWindow(
           //popup info
           title: city.toString(),
-           snippet: title.toString(),
+          snippet: title.toString(),
         ),
 
         icon: BitmapDescriptor.defaultMarker, //Icon for Marker
       ));
     }
     return markers;
+  }
+  GoogleMapController? mapController;
+   LatLng currentPostion = const LatLng(30.286596, 31.740078);
+  late LocationPermission permission;
+
+  void _getUserLocation() async {
+    permission = await Geolocator.requestPermission();
+    var position = await GeolocatorPlatform.instance.getCurrentPosition(
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.high));
+
+    setState(() {
+      currentPostion = LatLng(position.latitude, position.longitude);
+    });
+    mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+            CameraPosition(target: currentPostion, zoom: 14)
+          //17 is new zoom level
+        )
+    );
+
   }
 
 
@@ -107,11 +126,19 @@ class _AmakenState extends State<Amaken> {
             Center(
               child: GoogleMap(
                 markers: getmarkers(),
-                //myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                initialCameraPosition: _initial,
-                onMapCreated: (GoogleMapController controller) =>
-                    setState(() => _mapLoading = false),
+                // myLocationButtonEnabled: true,
+                //myLocationEnabled: true,
+
+                initialCameraPosition:  CameraPosition(
+                  target: currentPostion,
+                  zoom: 14,
+                ),
+                onMapCreated: (controller) { //method called when map is created
+                setState(() {
+                mapController = controller;
+                _mapLoading = false;
+                });
+              },
               ),
             ),
             (_mapLoading)
@@ -123,9 +150,20 @@ class _AmakenState extends State<Amaken> {
                       child: CircularProgressIndicator(),
                     ),
                   )
-                : Container(),
+                : Container(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FloatingActionButton(
+                      onPressed: _getUserLocation,
+                      child: const Icon(Icons.my_location,color:Color(0xff26375f)),
+                      backgroundColor: Colors.white,
+                      elevation: 0.5,
+                    )),
+                  ),
           ],
         ),
+
       ),
     );
   }

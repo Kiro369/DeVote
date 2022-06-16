@@ -43,6 +43,7 @@ dependencies:
   timeago: ^3.2.2
   linked_scroll_controller: ^0.2.0
   shimmer: ^2.0.0
+  geolocator: ^8.2.1
 
 
 dev_dependencies:

@@ -27,12 +27,12 @@ class _ResultState extends State<Result> {
     ResultsChart(
       '65%',
       'عبد الفتاح السيسي',
-      1,
+      0,
     ),
     ResultsChart(
       '35%',
       ' موسي مصطفي موسي',
-      1,
+      0,
     )
   ];
   late List<Model> data;
@@ -211,7 +211,7 @@ class _ResultState extends State<Result> {
                                       const Padding(
                                         padding: EdgeInsets.all(15.0),
                                         child: Text(
-                                          'يمكنك معرفة امكان مكن الانتخابات الالكترونية من خلال تطبيقنا الخاص DeVote علي GooglePlay او AppStore',
+                                          'يمكنك معرفة امكان ماكينات الانتخابات الالكترونية من خلال تطبيقنا الخاص DeVote علي Google Play او App Store',
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Color(0xfff3f3f5),

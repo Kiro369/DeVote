@@ -56,7 +56,7 @@ class _PieChartState extends State<PieChart> {
               const Icon(
                 Icons.airplanemode_on_sharp,
               ),
-              'ولد في إبريل 1952، متزوج ولديه ثلاثة أبناء\n وهو رجل أعمال ويرأس مجلس إدارة إحدى الشركات الكبرى في مصر.\n يرأس موسى حزب الغد وإتحاد القبائل العربية والتحالف السياسى المصرى الذي يضم 18 حزبًا سياسيًا.'),
+              'ولد في إبريل 1952، متزوج ولديه ثلاثة أبناء وهو رجل أعمال ويرأس مجلس إدارة إحدى الشركات الكبرى في مصر.\n يرأس موسى حزب الغد وإتحاد القبائل العربية والتحالف السياسى المصرى الذي يضم 18 حزبًا سياسيًا.'),
         ]),
       );
 
@@ -68,9 +68,10 @@ class _PieChartState extends State<PieChart> {
           height: MediaQuery.of(context).size.height / 4.5,
           width: kIsWeb && isLargeScreen(context)
               ? MediaQuery.of(context).size.width / 4
-              : MediaQuery.of(context).size.width / 2,
+              : MediaQuery.of(context).size.width / 2.2,
           //Initialize the chart widget
-          child: widget.motrsh7[0].result==1?const Text(''):SfCircularChart(
+          child: widget.motrsh7[0].result==0&&widget.motrsh7[1].result==0?Center(
+              child: const Text('لم تبدأ \nعملية التصويت بعد',textAlign: TextAlign.center,)):SfCircularChart(
             tooltipBehavior: TooltipBehavior(
               header: 'الانتخابات الرئاسية 2018',
                 format: '  point.x : point.y صوت ',
@@ -80,8 +81,9 @@ class _PieChartState extends State<PieChart> {
             palette:const [ Color(0xff26375f), Color(0xffd82148)],
             borderColor: Colors.white,
             onDataLabelRender: (DataLabelRenderArgs args) {
-              double value = double.parse(args.text)/(widget.motrsh7[0].result+widget.motrsh7[1].result)*100;
-              args.text = value.toStringAsFixed(0)+'%';
+              double val=double.parse(args.text);
+                double value =val /(widget.motrsh7[0].result+widget.motrsh7[1].result)*100;
+                args.text = value.toStringAsFixed(0)+'%';
             },
             series: <CircularSeries<ResultsChart, String>>[
               PieSeries<ResultsChart, String>(
@@ -102,7 +104,7 @@ class _PieChartState extends State<PieChart> {
         SizedBox(
           width: kIsWeb && isLargeScreen(context)
               ? MediaQuery.of(context).size.width / 4
-              : MediaQuery.of(context).size.width / 2,
+              : MediaQuery.of(context).size.width / 1.85,
           child: Column(
             children: [
               kIsWeb

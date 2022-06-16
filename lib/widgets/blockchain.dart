@@ -131,9 +131,10 @@ class _BlockChainState extends State<BlockChain> {
                           if (snapshot.hasData) {
                             return ScrollConfiguration(
                               behavior: ScrollConfiguration.of(context).copyWith(scrollbars: true),
-                              child: ListView.builder(
+                              child: snapshot.data!.blocks.isEmpty?Center(child: Text('No blocks available !')):
+                              ListView.builder(
                                   controller: ScrollController(),
-                                itemCount: 8,
+                                itemCount: snapshot.data!.blocks.length>8? 8:snapshot.data!.blocks.length,
                                 itemBuilder: (context, index) => InkWell(
                                   onTap: () =>  Navigator.of(context)
                                           .push( MaterialPageRoute(
@@ -250,16 +251,18 @@ class _BlockChainState extends State<BlockChain> {
                                   ),
                                 ),
                               ),
+
                             );
                           } else if (snapshot.hasError) {
                             return Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(15.0),
-                                child: Image.asset(
-                                  'assets/no_internet.gif',
-                                  height: MediaQuery.of(context).size.height / 2.5,
+                                child: Center(child: Text(snapshot.error.toString())),
+                                //Image.asset(
+                                  //'assets/no_internet.gif',
+                               //   height: MediaQuery.of(context).size.height / 2.5,
                                   // width: 125.0,
-                                ),
+                                //),
                               ),
                             );
                           } // spinner
@@ -279,7 +282,7 @@ class _BlockChainState extends State<BlockChain> {
                                 TextStyle(color: Colors.black, fontSize: 14),
                           ),
                           // ignore: unnecessary_null_comparison
-                          onPressed: () =>blockList==null?null: Navigator.of(context).push(
+                          onPressed: () =>blockList==null||blockList.isEmpty?null: Navigator.of(context).push(
                                MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                        BlockList(blockList))),
@@ -322,9 +325,11 @@ class _BlockChainState extends State<BlockChain> {
                           if (snapshot.hasData) {
                             return ScrollConfiguration(
                               behavior: ScrollConfiguration.of(context).copyWith(scrollbars: true),
-                              child: ListView.builder(
+                              child: snapshot.data!.transaction.isEmpty ?
+                              Center(child: Text('No transactions available !')):
+                              ListView.builder(
                                 controller: ScrollController(),
-                                itemCount: 8,
+                                itemCount: snapshot.data!.transaction.length>8? 8:snapshot.data!.transaction.length,
                                 itemBuilder: (context, index) => InkWell(
                                   onTap: () =>  Navigator.of(context)
                                           .push( MaterialPageRoute(
@@ -467,7 +472,7 @@ class _BlockChainState extends State<BlockChain> {
                           style: TextStyle(color: Colors.black, fontSize: 14),
                         ),
                         // ignore: unnecessary_null_comparison
-                        onPressed: () => transactionList==null?null:Navigator.of(context).push(
+                        onPressed: () => transactionList==null||transactionList.isEmpty?null:Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                      TransactionsList(transactionList))),
