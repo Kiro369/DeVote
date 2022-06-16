@@ -63,6 +63,7 @@ class DBWrapper {
                 const blkFilePath = path.resolve(this.blkPath, `${index}.blk`)
                 const blkContent = Buffer.from(fs.readFileSync(blkFilePath))
                 let deserializedBlock = this.deserializer.deserializeBlock(blkContent)
+                console.log("deserializedBlock", deserializedBlock)
                 await this.mySQLite.insertBlock(deserializedBlock.toJSON())
             }
             this.logSyncTime()

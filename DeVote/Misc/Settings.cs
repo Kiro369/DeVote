@@ -19,7 +19,7 @@ namespace DeVote
         public double Longitude { get; set; }
         public string Address { get; set; }
         public string Governorate { get; set; }
-        public int BlockchainExplorerPort { get; set; }
+        public string BlockchainExplorerEndPoint { get; set; }
         public bool FullNode { get; set; }
 
         public static readonly Settings Current;

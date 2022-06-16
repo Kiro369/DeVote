@@ -28,6 +28,10 @@ namespace DeVote
         public static void Main()
         {
             #region Main
+
+            // NetworkManager.SendLocation();
+            // NetworkManager.SendCandidates();
+
             // Start the server first, so anyone can connect after we get added to the seeder
             var server = new Server(4269);
             Log.Info("Starting the server...");

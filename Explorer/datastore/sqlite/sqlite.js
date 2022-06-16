@@ -47,14 +47,20 @@ class SQLite {
     }
 
     async insertBlock(block) {
-        const { Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx } = block;
+        let { Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx } = block;
+        if (nTx == null) nTx = 0;
+        if (Miner == null) Miner = "";
         console.log(`Inserting Block : Hash ${Hash} -  Height ${Height}`)
         await this.db.run(
             "INSERT INTO Blocks VALUES (?,?,?,?,?,?,?)",
             Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx
         );
 
-        const { Transactions } = block;
+        let { Transactions } = block;
+        if (Transactions == null) {
+            console.log("transactions", Transactions)
+            return
+        }
         await this.insertTxs(Transactions, Height)
     };
 

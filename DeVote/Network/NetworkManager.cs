@@ -129,7 +129,7 @@ namespace DeVote.Network
 
         public static void SendLocation(bool isTest = false)
         {
-            string endpoint = $"http://localhost:{Settings.Current.BlockchainExplorerPort}/vms";
+            string endpoint = $"{Settings.Current.BlockchainExplorerEndPoint}/vms";
 
             var values = new Dictionary<string, string> { };
             values["id"] = Constants.MachineID;
@@ -154,11 +154,38 @@ namespace DeVote.Network
 
             else
             {
-                Console.WriteLine("Sending machine's location failed");
-                Console.WriteLine(response.StatusCode.ToString());
+                Console.WriteLine("Sending machine's location failed or it's already added");
+                //Console.WriteLine(response.StatusCode.ToString());
                 //string responseString = response.Content.ReadAsStringAsync().Result;
                 //JObject responseObj = JObject.Parse(responseString);
                 //Console.WriteLine(responseObj.SelectToken("errors[0].detail"));
+            }
+        }
+
+        public static void SendCandidates(bool isTest = false)
+        {
+            var list = new List<Dictionary<string, string>>();
+            var Candidate1 = new Dictionary<string, string> { };
+            Candidate1["id"] = Constants.Candidate1ID;
+            Candidate1["name"] = "عبد الفتاح السيسي";
+            Candidate1["color"] = "0xff26375f";
+
+            var Candidate2 = new Dictionary<string, string> { };
+            Candidate2["id"] = Constants.Candidate2ID;
+            Candidate2["name"] = "موسى مصطفى موسى";
+            Candidate2["color"] = "0xffd82148";
+
+            list.Add(Candidate1);
+            list.Add(Candidate2);
+
+            string endpoint = $"{Settings.Current.BlockchainExplorerEndPoint}/candidates";
+            foreach (var pair in list)
+            {
+                using var client = new HttpClient();
+                var requestBody = new StringContent(JsonConvert.SerializeObject(pair).ToString(), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(endpoint, requestBody).Result;
+                if (response.IsSuccessStatusCode) Console.WriteLine("Candidate is sent and added successfully");
+                else Console.WriteLine("Sending Candidate failed or it's already added");
             }
         }
 
