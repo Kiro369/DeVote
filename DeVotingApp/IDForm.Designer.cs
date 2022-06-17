@@ -67,11 +67,12 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.BackgroundImage = global::DeVotingApp.Properties.Resources.card;
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox2.Image = global::DeVotingApp.Properties.Resources.plzscan;
             this.pictureBox2.Location = new System.Drawing.Point(495, 117);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(194, 196);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
             // 

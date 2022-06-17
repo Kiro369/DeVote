@@ -47,8 +47,10 @@ namespace DeVotingApp
             pictureBox1.Location = new Point(Width / 3 - pictureBox1.Width / 2, (int)(Height / 6.75));
 
             //pictureBox2.Size = new Size(Width / 4, Height / 10 * 3);
-            pictureBox2.Size = new Size(200, 200);
-            pictureBox2.Location = new Point(Width / 2 - pictureBox1.Width / 2 - pictureBox2.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+            pictureBox2.Size = new Size(400, 400);
+            pictureBox2.Location = new Point(pictureBox1.Location.X + pictureBox1.Width / 2 - pictureBox2.Width / 2, pictureBox1.Location.Y + pictureBox1.Height);
+
+            address.Text = string.Join(Environment.NewLine + "- ", address.Text.Split('-').Select(t => t.Trim()));
 
             var labels = new Label[] { label1, firstName, label2, lastName, label3, address, label4, national_id };
 
@@ -61,6 +63,8 @@ namespace DeVotingApp
                 label.Font = new Font(KMRFont.Families[0], 30);
                 lastY = lastY + Height / 15;
                 label.Location = new Point(Width / 10 * 8 + 15 - label.Width, lastY);
+                if (label.Name == address.Name)
+                    lastY += label.Height - Height / 30;
             }
         }
         protected override void OnPaint(PaintEventArgs e)

@@ -93,6 +93,26 @@ namespace DeVotingApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap cc_modified {
+            get {
+                object obj = ResourceManager.GetObject("cc-modified", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download_modified {
+            get {
+                object obj = ResourceManager.GetObject("download-modified", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap face_scan {
             get {
                 object obj = ResourceManager.GetObject("face_scan", resourceCulture);
@@ -126,6 +146,16 @@ namespace DeVotingApp.Properties {
         internal static System.Drawing.Bitmap moussa {
             get {
                 object obj = ResourceManager.GetObject("moussa", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap plzscan {
+            get {
+                object obj = ResourceManager.GetObject("plzscan", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

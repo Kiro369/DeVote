@@ -15,7 +15,7 @@
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Task.Factory.StartNew(DeVote.Program.Main);
-            Application.Run(new FaceRecognition(new IDInfo() { Address = "عين شمس", FrontIDPath = @"C:\Users\Kiro\source\repos\DeVote\Recognition\front.jpg", ID = "30001130100113", LastName = "تادرس ذكري تادرس", Name = "كيرلس" }));
+            Application.Run(new Main());
         }
     }
 } 

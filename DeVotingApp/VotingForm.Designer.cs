@@ -48,7 +48,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::DeVotingApp.Properties.Resources.cc;
+            this.pictureBox1.Image = global::DeVotingApp.Properties.Resources.cc_modified;
             this.pictureBox1.Location = new System.Drawing.Point(82, 110);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(262, 227);
@@ -58,7 +58,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::DeVotingApp.Properties.Resources.moussa;
+            this.pictureBox2.Image = global::DeVotingApp.Properties.Resources.download_modified;
             this.pictureBox2.Location = new System.Drawing.Point(446, 110);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(262, 227);
