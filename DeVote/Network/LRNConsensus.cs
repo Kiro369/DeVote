@@ -50,9 +50,12 @@ namespace DeVote.Network
                         Blockchain.Current.Block.PrevHash = latestBlock.Hash;
                         Blockchain.Current.Block.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         Blockchain.Current.Block.Miner = Choosen;
-                        Blockchain.Current.AddBlock(Blockchain.Current.Block);
+                        Blockchain.Current.AddBlock(Blockchain.Current.Block.DeepClone());
                         var addBlock = new AddBlock() { Block = Blockchain.Current.Blocks.Last.Value };
                         NetworkManager.Broadcast(addBlock.Create());
+
+                        // Reset
+                        Blockchain.Current.Block = new Block();
                     }
                 }
                 else if (currentMinute == mineMinute - 1)

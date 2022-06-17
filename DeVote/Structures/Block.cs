@@ -82,5 +82,9 @@ namespace DeVote.Structures
         {
                 return Serializer.GetProto<Block>();
         }
+        public Block DeepClone()
+        {
+            return DeserializeBlock(SerializeBlock(this));
+        }
     }
 }

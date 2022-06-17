@@ -34,6 +34,6 @@ namespace DeVote
         /// <summary>
         /// BlockTime is the time between every block, time is represented in minutes. Note: A block is added whenever time_now.minute % BlockTime == 0
         /// </summary>
-        public const short BlockTime = 5;
+        public const short BlockTime = 2;
     }
 }
