@@ -84,7 +84,10 @@ namespace DeVote.Structures
         }
         public Block DeepClone()
         {
-            return DeserializeBlock(SerializeBlock(this));
+            var dcBlock = DeserializeBlock(SerializeBlock(this)); // Deep-cloned Block
+            if (dcBlock.Transactions == null)
+                dcBlock.Transactions = new List<Transaction>();
+            return dcBlock;
         }
     }
 }

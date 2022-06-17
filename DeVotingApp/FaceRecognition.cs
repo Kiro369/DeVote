@@ -117,7 +117,7 @@ namespace DeVotingApp
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
 
-            if (true)
+            if (false)
             {
                 new Thread(new ThreadStart(Reco)).Start();
             }

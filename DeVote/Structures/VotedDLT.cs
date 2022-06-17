@@ -16,11 +16,11 @@ namespace DeVote.Structures
         {
             LevelDB = new DB(new Options { CreateIfMissing = true }, Settings.Current.VotedDLTPath);
         }
-        public void Add(string ID, string MachineID = "")
+        public void Add(string hashedID, string MachineID = "")
         {
             if (string.IsNullOrEmpty(MachineID))
                 MachineID = Constants.MachineID;
-            LevelDB.Put(Argon2.ComputeHash(ID), MachineID);
+            LevelDB.Put(hashedID, MachineID);
         }
         public bool Contains(string hashedID)
         {
