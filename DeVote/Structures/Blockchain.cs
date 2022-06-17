@@ -23,7 +23,6 @@ namespace DeVote.Structures
 
             // Create a new leveldb
             LevelDB = new DB(new Options { CreateIfMissing = true, CompressionLevel = CompressionLevel.NoCompression }, Settings.Current.BlockchainPath);
-            //SaveBlock(GenesisBlock);
         }
 
         public static Block GenesisBlock

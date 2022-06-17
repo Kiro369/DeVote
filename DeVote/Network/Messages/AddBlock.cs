@@ -22,41 +22,61 @@ namespace DeVote.Network.Messages
             {
                 if (Block.Transactions.Count == Block.nTx)
                 {
-                    var merkle = Argon2.ComputeMerkleRoot(Block.Transactions);
-                    if (merkle.Equals(Block.MerkleRoot))
+                    if (client.MachineID.Equals(Block.Miner))
                     {
-                        string blockHeader = Blockchain.Current.Blocks.Last.Value.Hash + Block.Timestamp.ToString() + merkle;
-                        var hash = Argon2.ComputeHash(blockHeader);
-                        if (hash.Equals(Block.Hash))
+                        var merkle = Argon2.ComputeMerkleRoot(Block.Transactions);
+                        if (merkle.Equals(Block.MerkleRoot))
                         {
-                            foreach (var tx in Block.Transactions)
+                            string blockHeader = Blockchain.Current.Blocks.Last.Value.Hash + Block.Timestamp.ToString() + merkle;
+                            var hash = Argon2.ComputeHash(blockHeader);
+                            if (hash.Equals(Block.Hash))
                             {
-                                if (Blockchain.Current.Block.Contains(tx.Hash))
+                                foreach (var tx in Block.Transactions)
                                 {
-                                    Blockchain.Current.Block.Remove(tx.Hash);
-                                    continue;
+                                    if (Blockchain.Current.Block.Contains(tx.Hash))
+                                    {
+                                        Blockchain.Current.Block.Remove(tx.Hash);
+                                        continue;
+                                    }
+
+                                    SendToFullNode(new TransactionData() { Hash = tx.Hash }.Create());
+
+                                    WaitFor(() => TransactionData.RecievedRecords.ContainsKey(tx.Hash));
+
+                                    TransactionRecord txRecord = TransactionData.RecievedRecords[tx.Hash];
+
+                                    // TxRecord already have compressed images
+                                    (string frontIDPath, string backIDPath) = txRecord.DecompressID();
+
+                                    if (!txRecord.IsVoterVerified(frontIDPath))
+                                    {
+                                        Log.Error($"Couldn't verify a transaction: {tx.Hash}, In Block: {Block.Height}");
+                                        Log.Error("Unable to add mined block");
+                                        return;
+                                    }
                                 }
-
-                                SendToFullNode(new TransactionData() { Hash = tx.Hash }.Create());
-
-                                WaitFor(() => TransactionData.RecievedRecords.ContainsKey(tx.Hash));
-
-                                TransactionRecord txRecord = TransactionData.RecievedRecords[tx.Hash];
-
-                                // TxRecord already have compressed images
-                                (string frontIDPath, string backIDPath) = txRecord.DecompressID();
-
-                                if (!txRecord.IsVoterVerified(frontIDPath))
-                                {
-                                    Log.Error($"Couldn't verify a transaction: {tx.Hash}, In Block: {Block.Height}");
-                                    Log.Error("Unable to add mined block");
-                                    return;
-                                }
+                                Blockchain.Current.AddBlock(Block);
                             }
-                            Blockchain.Current.AddBlock(Block);
+                            else
+                                Log.Error($"Couldn't generate the same Block hash. Recieved: {Block.Hash}, Generated: {hash}");
                         }
+                        else
+                            Log.Error($"Couldn't generate the same MerkleRoot. Recieved: {Block.MerkleRoot}, Generated: {merkle}");
                     }
+                    else
+                        Log.Error($"Couldn't add block: {Block.Height}, Miner: {client.MachineID}, while Choosen is: {Network.LRNConsensus.Current.Choosen}");
                 }
+                else
+                    Log.Error($"Couldn't add block: {Block.Height}, due to wrong number of transactions!");
+            }
+            else
+            {
+                Log.Warn("Failed to Add Block, Syncing with other nodes instead...");
+                Sync();
+                if (Block.Height == Blockchain.Current.Blocks.Last.Value.Height + 1)
+                    Handle(client);
+                else if (Block.Height == Blockchain.Current.Blocks.Last.Value.Height)
+                    Log.Info("Sync succeed, node is up to date!");
             }
         }
 
