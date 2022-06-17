@@ -50,18 +50,22 @@ class SQLite {
         let { Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx } = block;
         if (nTx == null) nTx = 0;
         if (Miner == null) Miner = "";
-        console.log(`Inserting Block : Hash ${Hash} -  Height ${Height}`)
+        _info(`\nInserting Block : Hash ${Hash} -  Height ${Height}`)
         await this.db.run(
             "INSERT INTO Blocks VALUES (?,?,?,?,?,?,?)",
             Height, PrevHash, Timestamp, MerkleRoot, Hash, Miner, nTx
         );
+        _success(`Done inserting Block ${Height}`)
 
         let { Transactions } = block;
         if (Transactions == null) {
-            console.log("transactions", Transactions)
+            // console.log("transactions", Transactions)
+            _warn(`No Transactions Found in Block ${Height}`)
             return
         }
+        _info(`Block ${Height} has ${Transactions.length} Transactions`)
         await this.insertTxs(Transactions, Height)
+        _success(`Done inserting ${Transactions.length} Transactions`)
     };
 
     async insertBlocks(blocks) {
@@ -104,6 +108,7 @@ class SQLite {
     async insertTx(tx, blockHeight) {
         let { Hash, Date, Elector, Elected, Confirmations } = tx;
         if (!Confirmations) Confirmations = 0;
+        _info(`Inserting Transaction : Hash ${Hash} -  blockHeight ${blockHeight}`)
         this.db.run('PRAGMA foreign_keys = OFF;');
         await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?,?)",
             Date, Hash, Elector, Elected, Confirmations, parseInt(blockHeight)
@@ -254,18 +259,21 @@ class SQLite {
     async UpdateVotesForGovernorate(governorate, oldVotes, newVotes) {
         const SQL_QUERY = `UPDATE Governorates SET Votes = ?  WHERE EnglishName == "${governorate}"`;
         await this.db.run(SQL_QUERY, newVotes)
+        _success(`Updated  Votes for Governorate : ${governorate}`)
         // console.log(`Governorate: ${governorate} | Old noVotes: ${oldVotes} | New newIDs: ${newVotes}`)
     }
 
     async UpdateColorForGovernorate(governorate, oldColor, newColor) {
         const SQL_QUERY = `UPDATE Governorates SET Color = ?  WHERE EnglishName == "${governorate}"`;
         await this.db.run(SQL_QUERY, newColor)
+        _success(`Updated  Color for Governorate : ${governorate}`)
         // console.log(`Governorate: ${governorate} | Old Color: ${oldColor} | New Color: ${newColor}`)
     }
 
     async setNoVotesAndColorForNullGovernorates() {
         // get list on null ids governorates
         const nullGovernorateList = await this.db.all("SELECT EnglishName,Color,Votes FROM Governorates Where IDsOfVMs IS NULL ")
+        _info(`Setting Votes,Color for ${nullGovernorateList.length} governorates having no voting machine`)
         for (let index = 0; index < nullGovernorateList.length; index++) {
             const { EnglishName, Color, Votes } = nullGovernorateList[index];
             let candidateList = []
@@ -277,6 +285,7 @@ class SQLite {
             await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
             await this.UpdateColorForGovernorate(EnglishName, Color, global.defaultTieColor)
         }
+        _success(`Done Setting Votes,Color`)
     }
 
     async setNoVotesForGovernorates() {
@@ -284,7 +293,7 @@ class SQLite {
         await this.setNoVotesAndColorForNullGovernorates();
 
         // get the non null-ids governorates.
-        const governorateList = await this.db.all("SELECT EnglishName,IDsOfVMs,Votes FROM Governorates Where IDsOfVMs IS NOT NULL ")
+        const governorateList = await this.db.all("SELECT EnglishName,IDsOfVMs,Votes,Color FROM Governorates Where IDsOfVMs IS NOT NULL ")
         if (!governorateList.length) {
             _warn("There are no voting machines added at the moment to any governorates.")
             return
@@ -308,7 +317,7 @@ class SQLite {
             // a list of candidates object {ID,Name,NoVotes} for each governorate.
             let candidateList = [];
             let maxNoVotes = 0;
-            let dominantColor;
+            let dominantColor = global.defaultTieColor;
 
             for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
                 let TotalNoVotesForCandidate = 0;
@@ -338,8 +347,18 @@ class SQLite {
 
             console.log("candidateList", candidateList)
 
+            if (dominantColor == global.defaultTieColor) {
+                _info(`It is a tie`)
+            }
+
             // update dominant candidate color and votes for each governorate.
+            _info(`Current  Color  : ${Color}`)
+            _info(`Dominant Color  : ${dominantColor}`)
+
+            _info(`Updating Color for Governorate : ${EnglishName}`)
             await this.UpdateColorForGovernorate(EnglishName, Color, dominantColor);
+
+            _info(`Updating Votes for Governorate : ${EnglishName}`)
             await this.UpdateVotesForGovernorate(EnglishName, Votes, JSON.stringify(candidateList))
         }
     }
