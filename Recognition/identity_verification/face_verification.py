@@ -30,8 +30,20 @@ face_mesh = media_mesh.FaceMesh()
 
 
 def compare_faces(cam_source, ID_face, frames_num=num_of_frames):
+    '''
+    verifying user personality using face img from ID and live stream vid.
+
+    :param cam_source: camera source.
+    :param ID_face: id face img.
+    :param frames_num: number of frames for comparing and return them to verifying transactions in nodes.
+    :return: tuple 1st element (True, False) verifying process result,
+                   2nd element list of frames for verifying transactions.
+    '''
     recognition_data = {"embedded": [], "paths": []}
     cam_ref = cv2.VideoCapture(cam_source)
+    if not cam_ref.isOpened():
+        print("there is an error with camera")
+        return False, []
     moves = list(movements)
     tts("Follow_1")
     pass_frames(cam_ref, 10)
@@ -84,6 +96,17 @@ def compare_faces(cam_source, ID_face, frames_num=num_of_frames):
 
 
 def spoofing_movements(cam_ref, movement, recognition_data, elapsed_time=10):
+    '''
+    detecting spoofing by generating random movements, ask user to perform,
+                          trained model detecting spoofing actions,
+                          no mare than 1 in front of the camera.
+
+    :param cam_ref: camera reference.
+    :param movement: movement type.
+    :param recognition_data: dictionary tracing and contains some data like frames and encoding.
+    :param elapsed_time: maximum time allowed to user performing moves.
+    :return: result if user perform the action right or not (True, False).
+    '''
     start = time.time()
     dipth_spoof = np.empty(0, dtype=bool)
     moves = np.empty(0)
@@ -106,6 +129,9 @@ def spoofing_movements(cam_ref, movement, recognition_data, elapsed_time=10):
             focal_length = 1 * img_width
             face_3d = []
             face_2d = []
+            end = time.time()
+            if (end - start) > elapsed_time:
+                return False
             if results.multi_face_landmarks:
                 for face_landmarks in results.multi_face_landmarks:
                     for index, landmark in enumerate(face_landmarks.landmark):
@@ -151,10 +177,26 @@ def spoofing_movements(cam_ref, movement, recognition_data, elapsed_time=10):
 
 
 def verify_movement(move_len, min_limit, dipth=True):
+    '''
+    verifying user perform the movement right or not.
+
+    :param move_len: user movements cross the frames.
+    :param min_limit: minimum numbers are allowed of user performing.
+    :param dipth: spoofing model result if we activate it.
+    :return: movement right or not.
+    '''
     return True if move_len > min_limit and dipth else False
 
 
 def closing_eye(cam_ref, recognition_data, elapsed_time=5):
+    '''
+    asking user for closing his eye and verifying if he perform the movement right.
+
+    :param cam_ref: camera reference.
+    :param recognition_data: dictionary tracing and contains some data like frames and encoding.
+    :param elapsed_time: maximum time allowed to user performing moves.
+    :return: result if user perform the action right or not (True, False).
+    '''
     start = time.time()
     closed = np.empty(0, dtype=bool)
     dipth_spoof = np.empty(0, dtype=bool)
@@ -193,6 +235,13 @@ def closing_eye(cam_ref, recognition_data, elapsed_time=5):
 
 
 def verify_blinking(landmarks):
+    '''
+    verifying if the user close his eye or not.
+
+    :param landmarks: landmarks of user face.
+    :return: result of verifying.
+    '''
+
     left_point = (landmarks.part(36).x, landmarks.part(36).y)
     right_point = (landmarks.part(39).x, landmarks.part(39).y)
     center_top = calc_geometric_center(landmarks.part(37), landmarks.part(38))
@@ -207,8 +256,8 @@ def get_face_encodings(frame):
     '''
     Given frame and extract faces to return face encoding for each face in the frame.
 
-    :param frame:frame from video streaming
-    :return:a list of face encoding, and its locations
+    :param frame:frame from video streaming.
+    :return:a list of face encoding, and its locations.
     '''
     face_locations = face_recognition.face_locations(frame)
     face_encoding = face_recognition.face_encodings(frame, face_locations)
@@ -217,10 +266,10 @@ def get_face_encodings(frame):
 
 def get_id_face_encoding(id_img):
     '''
-    getting face encoding from ID front image
+    getting face encoding from ID front image.
 
-    :param id_img: ID front image
-    :return: face encoding from ID
+    :param id_img: ID front image.
+    :return: face encoding from ID.
     '''
     id_face_encoding = get_face_encodings(id_img)[0]
     return id_face_encoding
@@ -228,8 +277,21 @@ def get_id_face_encoding(id_img):
 
 
 def compare_faces_without_antispoofing(cam_source, ID_face, frames_num=num_of_frames):
+    '''
+    verifying user personality using face img from ID and live stream vid.
+    no anti-spoofing imp.
+
+    :param cam_source: camera source.
+    :param ID_face: id face embedded.
+    :param frames_num: number of frames compare with.
+    :return: result of verifying process.
+    '''
     compared_distances = np.empty(0)
     cam_ref = cv2.VideoCapture(cam_source)
+    if not cam_ref.isOpened():
+        return False, []
+    tts("Look_at_cam")
+    start = time.time()
     while cam_ref.isOpened():
         ret, frame = cam_ref.read()
         locations = [0, iter([(0, 0, 0, 0), ])]
@@ -249,6 +311,12 @@ def compare_faces_without_antispoofing(cam_source, ID_face, frames_num=num_of_fr
             else:
                 tts("Stand_alone")
                 pass_frames(cam_ref, 10)
+        end = time.time()
+        if end-start > 30:
+            tts("Sorry")
+            cam_ref.release()
+            cv2.destroyAllWindows()
+            return False, []
 
         #display_rec(frame, locations)
 
@@ -259,6 +327,13 @@ def compare_faces_without_antispoofing(cam_source, ID_face, frames_num=num_of_fr
 
 
 def compare_faces_frame(ID_face, frame):
+    '''
+    compare id face with frame face.
+
+    :param ID_face: id face embedded.
+    :param frame: the frame will compare with.
+    :return: comparing result.
+    '''
     face_encodings = get_face_encodings(frame)[0]
     face_distances = face_recognition.face_distance(ID_face, face_encodings[0]) if len(face_encodings) == 1 else [1, ]
     return face_distances[0], face_encodings, face_distances[0] <= tolerance
@@ -266,16 +341,23 @@ def compare_faces_frame(ID_face, frame):
 
 
 def is_there_more_one(frame):
-    face_encodings = get_face_encodings(frame)[0]
-    return True if len(face_encodings) != 1 else False, face_encodings
+    '''
+    check if there are more than one in front of camera.
+
+    :param frame: frame from a stream.
+    :return: result of this checking.
+    '''
+    faces = face_recognition.face_locations(frame)
+    return True if len(faces) > 1 else False
     pass
 
 
 def is_not_spoofing_vid(vid_path):
     '''
+    detecting spoofing within the video.
 
-    :param vid_path:
-    :return:
+    :param vid_path: video path.
+    :return: result of anti-spoofing process.
     '''
     video = cv2.VideoCapture(vid_path)
     if not video.isOpened():
@@ -310,6 +392,12 @@ def is_not_spoofing_vid(vid_path):
 
 
 def is_not_spoofing(frame):
+    '''
+    detecting spoofing within the frame.
+
+    :param frame: frame from a stream.
+    :return: result of anti-spoofing process.
+    '''
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_detection.detectMultiScale(gray, 1.3, 5)
     prediction = False
@@ -323,6 +411,13 @@ def is_not_spoofing(frame):
 
 
 def pass_frames(cam_ref, number_to_pass=20):
+    '''
+    (helper fun) pass some frame from a stream.
+
+    :param cam_ref: camera reference.
+    :param number_to_pass: number of frames to pass.
+    :return: last frame in the stream after passing.
+    '''
     passed = 0
     while cam_ref.isOpened() and passed < number_to_pass:
         ret, frame = cam_ref.read()
@@ -333,13 +428,21 @@ def pass_frames(cam_ref, number_to_pass=20):
 
 
 def add_embedded(cam_ref, recognition_data):
+    '''
+    choosing a frame, extracting face embedded from it then save this data.
+
+    :param cam_ref: camera reference.
+    :param recognition_data: dictionary tracing and contains some data like frames and encoding.
+    :return: None.
+    '''
     start = time.time()
     while cam_ref.isOpened():
         ret, frame = cam_ref.read()
         if ret:
-            encodings = is_there_more_one(frame)
-            if not encodings[0]:
-                save_frame(frame, recognition_data, encodings[1])
+            is_spoofing = is_there_more_one(frame)
+            if not is_spoofing:
+                face_encoding = get_face_encodings(frame)[0]
+                save_frame(frame, recognition_data, face_encoding)
                 break
             else:
                 tts("Stand_alone")
@@ -352,6 +455,14 @@ def add_embedded(cam_ref, recognition_data):
 
 
 def save_frame(frame, recognition_data, embedded):
+    '''
+    extracting some data from a frame then save it for future process.
+
+    :param frame: the frame.
+    :param recognition_data: dictionary tracing and contains some data like frames and encoding.
+    :param embedded: face embedded from the frame.
+    :return: None
+    '''
     recognition_data["embedded"].append(embedded)
     frame_path = dir_path + "/frame{}.jpg".format(str(len(recognition_data["embedded"])))
     cv2.imwrite(frame_path, frame)
@@ -360,9 +471,17 @@ def save_frame(frame, recognition_data, embedded):
 
 
 def multi_face_spoof(cam_ref, frame, tries=1):
-    if is_there_more_one(frame)[0]:
-        print("please be alone in front of the camera:")
-        pass_frames(cam_ref, 25)
+    '''
+    check if there are more than one in front of and asking the user to avoid that.
+
+    :param cam_ref: camera reference.
+    :param frame: frame from a stream.
+    :param tries: number of tries left.
+    :return: is there a spoofing or not.
+    '''
+    if is_there_more_one(frame):
+        tts("Stand_alone")
+        pass_frames(cam_ref, 30)
         if tries == 3:
             return True
         return multi_face_spoof(cam_ref, cam_ref.read()[1], tries + 1)
@@ -381,9 +500,16 @@ for f in sounds_path.keys():
 
 
 def tts(command):
+    '''
+    getting command then play it.
+
+    :param command: the command.
+    :return: None.
+    '''
     try:
         voice_command = sounds[command].play()
         voice_command.wait_done()
     except KeyError:
         print("key error")
         return
+

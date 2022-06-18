@@ -17,7 +17,7 @@ namespace DeVotingApp
     public partial class FaceRecognition : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.2:8080/video");
+        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.4:8080/video");
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
         BitmapContainer ImageContainer;
@@ -121,7 +121,7 @@ namespace DeVotingApp
             _cameraThread = new Thread(new ThreadStart(CaptureCameraCallback));
             _cameraThread.Start();
 
-            if (false)
+            if (true)
             {
                 new Thread(new ThreadStart(Reco)).Start();
             }
