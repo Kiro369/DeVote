@@ -1,8 +1,33 @@
 # deVote Explorer 
 deVote Explorer interfaces with a blockchain node to first extract all the levelDB data. It then stores it in a SQLite database to present the data in a searchable format.
 
+For more details, refer to [Documentation](../Documentation.pdf) - Section 6.9.7 Backend Operations - Page 63:66.
+
+# Installation
+Make sure you have [Node.js](https://nodejs.org/en/download) installed.
+
+1. Install dependencies.
+```bash
+  npm install 
+```
+
+2. Set your local variables in .env file.
+Make sure to set BLKS_PATH properly, it's where blocks are saved.
+```bash
+PORT = 9000
+SQLITEDB_NAME = "deVote"
+BLKS_PATH = "M:\\GradutaionProject\\DeVote\\Blocks"
+PROTO_FILE_NAME = "block"
+MINS_TO_SYNC_DBS = 0.5
+```
+
+3. Start the server, it will be running on your local IP address.
+```bash
+  npm start 
+```
+
 # Using the deVote Explorer API
-Query JSON data for blocks, transactions, location of voting machines. 
+Query JSON data for blocks, transactions, candidates, status of running election and location of voting machines. 
 ## /blocks Endpoints
 
 ### /blocks/block-height/:blockHeight : Get block metadata by block height.
