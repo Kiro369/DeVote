@@ -1,17 +1,15 @@
 import 'dart:convert';
 
 import 'package:devote/models/people.dart';
-
 import '/models/transaction.dart';
 import 'package:http/http.dart' as http;
-
 import 'block.dart';
 import 'mapModel.dart';
 
-class CallApi {
+class callApi {
   final dynamic url;
 
-  CallApi(this.url);
+  callApi(this.url);
 
   Future<List<Result>> getTransaction() async {
     http.Response transactionFuture = await http.get(url);
