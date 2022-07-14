@@ -1,4 +1,7 @@
 import 'dart:async';
+
+import 'package:devote/models/Ip.dart';
+
 import '../models/call_api.dart';
 import '/models/people.dart';
 import '/widgets/MapChart.dart';
@@ -40,14 +43,12 @@ class _ResultState extends State<Result> {
   late LinkedScrollControllerGroup _controllers;
   late ScrollController _letters;
   late ScrollController _numbers;
-  CallApi network = CallApi(
-      Uri.https('devote-explorer-backend.herokuapp.com', 'candidates'));
-  CallApi model = CallApi(
-      Uri.https('devote-explorer-backend.herokuapp.com', 'governorates'));
+  callApi candidates = ip().candidates ;
+  callApi model =ip().model ;
 
   @override
   void initState() {
-    pie = network.getPieResult();
+    pie = candidates.getPieResult();
     map = model.getMapResults();
     data = [
       const Model('Al Iskandariyah (Alex.)', 0xffb4b4b4, 'الاسكندرية', []),
@@ -224,8 +225,8 @@ class _ResultState extends State<Result> {
                                           padding:
                                               const EdgeInsets.only(top: 14.0),
                                           // ignore: deprecated_member_use
-                                          child: FlatButton(
-                                              color: const Color(0xfff3f3f5),
+                                          child: TextButton(
+
                                               onPressed: () =>
                                                   Navigator.of(context).pop(),
                                               child: const Text(
@@ -254,12 +255,10 @@ class _ResultState extends State<Result> {
         strokeWidth: 2.0,
         onRefresh: () async {
           //request api to refresh results
-          CallApi network = CallApi(
-              Uri.https('devote-explorer-backend.herokuapp.com', 'candidates'));
-          CallApi model = CallApi(
-              Uri.https('devote-explorer-backend.herokuapp.com', 'governorates'));
+          callApi candidates = ip().candidates ;
+          callApi model =ip().model ;
           setState(() {
-            pie = network.getPieResult();
+            pie = candidates.getPieResult();
             map = model.getMapResults();
             _getlist();
           });
@@ -339,12 +338,11 @@ class _ResultState extends State<Result> {
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     // ignore: deprecated_member_use
-                    child: RaisedButton.icon(
+                    child: TextButton.icon(
                       onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (BuildContext context) => BlockChain())),
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+
                       label: const Text(
                         'متابعة العملية الانتخابية بشكل مباشر',
                         style: TextStyle(color: Colors.white, fontSize: 16),
@@ -356,9 +354,7 @@ class _ResultState extends State<Result> {
                           color: Colors.white,
                         ),
                       ),
-                      textColor: Colors.white,
-                      splashColor: const Color(0xff26375f),
-                      color: const Color(0xffd82148),
+
                     ),
                   ),
                 ],
