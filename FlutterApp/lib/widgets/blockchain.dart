@@ -1,10 +1,11 @@
+import 'package:devote/models/Ip.dart';
 import 'package:devote/widgets/shimmerLoading.dart';
 import '/widgets/BlockDetails.dart';
 import '/widgets/BlockList.dart';
 import '/widgets/TransactionsList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../models/call_api.dart';
+
 import '../models/block.dart';
 import '../models/transaction.dart';
 import 'TransactionDetails.dart';
@@ -19,6 +20,7 @@ class BlockChain extends StatefulWidget {
 }
 
 class _BlockChainState extends State<BlockChain> {
+  //
   late Future<List<Result>> daata;
   late Future<List<Results>> blockks;
   late Future<Block> all_blocks;
@@ -29,14 +31,11 @@ class _BlockChainState extends State<BlockChain> {
   @override
   initState() {
     super.initState();
-    CallApi network = CallApi(
-        Uri.https('devote-explorer-backend.herokuapp.com', 'transactions'));
-    CallApi block = CallApi(
-        Uri.https('devote-explorer-backend.herokuapp.com', 'blocks'));
-    daata = network.getTransaction();
-    blockks = block.getBlocks();
-    all_blocks=block.pagination();
-    all_transactions=network.transactionPagination();
+
+    daata = ip().network.getTransaction();
+    blockks = ip().block.getBlocks();
+    all_blocks=ip().block.pagination();
+    all_transactions=ip().network.transactionPagination();
     getlist();
   }
 
@@ -275,7 +274,7 @@ class _BlockChainState extends State<BlockChain> {
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
                         // ignore: deprecated_member_use
-                        child: FlatButton(
+                        child: TextButton(
                           child: const Text(
                             'View all blocks',
                             style:
@@ -286,9 +285,7 @@ class _BlockChainState extends State<BlockChain> {
                                MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                        BlockList(blockList))),
-                          textColor: Colors.white,
-                          splashColor: Colors.white,
-                          hoverColor: Colors.white,
+
                         ),
                       ),
                     ),
@@ -466,7 +463,7 @@ class _BlockChainState extends State<BlockChain> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       // ignore: deprecated_member_use
-                      child: FlatButton(
+                      child: TextButton(
                         child: const Text(
                           'View all transactions',
                           style: TextStyle(color: Colors.black, fontSize: 14),
@@ -476,9 +473,7 @@ class _BlockChainState extends State<BlockChain> {
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                      TransactionsList(transactionList))),
-                        textColor: Colors.white,
-                        splashColor: Colors.white,
-                        hoverColor:  Colors.white,
+
                       ),
                     ),
                   ],

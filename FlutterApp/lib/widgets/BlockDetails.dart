@@ -1,4 +1,7 @@
-import '/models/Call_api.dart';
+import 'package:devote/models/Ip.dart';
+
+
+import '../models/call_api.dart';
 import '/models/transaction.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +40,8 @@ class _BlockDetailsState extends State<BlockDetails> {
   initState() {
     super.initState();
 
-    CallApi network = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-        'transactions/tx-block-height/${widget.blockHeight}'));
+    callApi network = callApi(Uri.https(ip().authority_Height,
+        '${ip().unencodedpath_height}${widget.blockHeight}'));
     daata = network.getTransactionByBlock();
 
     //block();

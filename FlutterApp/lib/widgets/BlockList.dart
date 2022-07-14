@@ -1,7 +1,9 @@
 import 'package:devote/widgets/shimmerLoading.dart';
 import 'package:flutter/material.dart';
-import '../models/call_api.dart';
+import '../models/Ip.dart';
+
 import '../models/block.dart';
+import '../models/call_api.dart';
 import 'BlockDetails.dart';
 
 import 'package:timeago/timeago.dart' as timeago;
@@ -20,8 +22,8 @@ class _BlockListState extends State<BlockList> {
   late Future<List<Results>> blockks;
   late List blockList;
   late Future<Block> all;
-  CallApi block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-      'blocks'));
+  callApi block = ip().block;
+
 
   Future<void> getlist() async {
     blockList = await blockks;
@@ -31,8 +33,8 @@ class _BlockListState extends State<BlockList> {
 
     Uri myUri = Uri.parse(prev);
     Map<String, String> queryParameters = myUri.queryParameters;
-    block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-        'blocks',queryParameters));
+    block = callApi(Uri.https(ip().authority_block,
+        ip().unencodedpath_block,queryParameters));
     blockks = block.getBlocks();
     all=block.pagination();
     await getlist();
@@ -246,11 +248,9 @@ class _BlockListState extends State<BlockList> {
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
                                         // ignore: deprecated_member_use
-                                        child: RaisedButton.icon(
+                                        child: TextButton.icon(
                                             onPressed: () => snapshot.data!.pagination.prev==null?null:showmore(snapshot.data!.pagination.prev),
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.all(Radius.circular(10.0))),
+
                                             label: const Text(
                                               'Back',
                                               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -263,16 +263,13 @@ class _BlockListState extends State<BlockList> {
                                                 size: 15,
                                               ),
                                             ),
-                                            textColor: Colors.white,
-                                            color: Colors.blue),
+                                            ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
-                                        child: RaisedButton.icon(
+                                        child: TextButton.icon(
                                             onPressed: () =>snapshot.data!.pagination.next==null?null: showmore(snapshot.data!.pagination.next),
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.all(Radius.circular(10.0))),
+
                                             label: const Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: Icon(
@@ -285,8 +282,7 @@ class _BlockListState extends State<BlockList> {
                                               'Next',
                                               style: TextStyle(color: Colors.white, fontSize: 16),
                                             ),
-                                            textColor: Colors.white,
-                                            color: Colors.blue),
+                                           ),
                                       ),
                                     ],
                                   ),

@@ -1,9 +1,11 @@
+import 'package:devote/models/Ip.dart';
+
+import '../models/call_api.dart';
 import '/models/block.dart';
 import '/widgets/BlockDetails.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../models/call_api.dart';
 
 
 class TransactionDetails extends StatefulWidget {
@@ -31,8 +33,8 @@ class _TransactionDetailsState extends State<TransactionDetails> {
   @override
   initState() {
     super.initState();
-    CallApi block =
-        CallApi(Uri.https('devote-explorer-backend.herokuapp.com', 'blocks/block-height/${widget.block}'));
+    callApi block =
+        callApi(Uri.https(ip().authority_blockHe, '${ip().unencodedpath_blockhe}${widget.block}'));
     blockks = block.getbyBlockHeight() ;
   }
   static bool isLargeScreen(BuildContext context) {

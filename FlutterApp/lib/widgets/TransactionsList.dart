@@ -1,8 +1,10 @@
+import 'package:devote/models/Ip.dart';
 import 'package:devote/widgets/shimmerLoading.dart';
 
+import '../models/call_api.dart';
 import '/models/transaction.dart';
 import 'package:flutter/material.dart';
-import '../models/call_api.dart';
+
 import 'TransactionDetails.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -21,8 +23,8 @@ class _TransactionsListState extends State<TransactionsList> {
   late Future<List<Result>> trans;
   late List tansactionList;
   late Future<Transaction> all;
-  CallApi block = CallApi(
-      Uri.https('devote-explorer-backend.herokuapp.com', 'transactions'));
+
+  callApi transactions = ip().network;
 
   Future<void> getlist() async {
     tansactionList = await trans;
@@ -31,10 +33,10 @@ class _TransactionsListState extends State<TransactionsList> {
   void showmore(String prev) async {
     Uri myUri = Uri.parse(prev);
     Map<String, String> queryParameters = myUri.queryParameters;
-    block = CallApi(Uri.https('devote-explorer-backend.herokuapp.com',
-        'transactions', queryParameters));
-    trans = block.getTransaction();
-    all = block.transactionPagination();
+    transactions = callApi(Uri.https(ip().authority,
+        ip().unencodedpath, queryParameters));
+    trans = transactions.getTransaction();
+    all = transactions.transactionPagination();
     await getlist();
     setState(() {
       _foundsearch = tansactionList;
@@ -63,9 +65,9 @@ class _TransactionsListState extends State<TransactionsList> {
 
   @override
   void initState() {
-    trans = block.getTransaction();
+    trans = transactions.getTransaction();
     tansactionList = widget.transactions;
-    all = block.transactionPagination();
+    all = transactions.transactionPagination();
     getlist();
     _foundsearch = tansactionList;
     super.initState();
@@ -246,16 +248,14 @@ class _TransactionsListState extends State<TransactionsList> {
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
                                         // ignore: deprecated_member_use
-                                        child: RaisedButton.icon(
+                                        child: TextButton.icon(
                                             onPressed: () => snapshot.data!
                                                         .pagination.prev ==
                                                     null
                                                 ? null
                                                 : showmore(snapshot
                                                     .data!.pagination.prev),
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
+
                                             label: const Text(
                                               'Back',
                                               style: TextStyle(
@@ -270,22 +270,18 @@ class _TransactionsListState extends State<TransactionsList> {
                                                 size: 15,
                                               ),
                                             ),
-                                            textColor: Colors.white,
-                                            color: Colors.blue),
+                                           ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
                                         // ignore: deprecated_member_use
-                                        child: RaisedButton.icon(
+                                        child: TextButton.icon(
                                             onPressed: () => snapshot.data!
                                                         .pagination.next ==
                                                     null
                                                 ? null
                                                 : showmore(snapshot
                                                     .data!.pagination.next),
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
                                             label: const Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: Icon(
@@ -300,8 +296,7 @@ class _TransactionsListState extends State<TransactionsList> {
                                                   color: Colors.white,
                                                   fontSize: 16),
                                             ),
-                                            textColor: Colors.white,
-                                            color: Colors.blue),
+                                        ),
                                       ),
                                     ],
                                   ):const Text(''),
