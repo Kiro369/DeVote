@@ -1,5 +1,5 @@
 # DeVote
-An E-Voting Project using Distributed Ledger Technology (DLT) and Deep Learning.
+A Decentralized E-Voting Project using Distributed Ledger Technology (DLT) and Deep Learning.
 
 # Description
 Applying DLTs to E-Voting is not easy and is a challenging task, and we love challenge.
