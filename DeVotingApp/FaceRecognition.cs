@@ -17,7 +17,7 @@ namespace DeVotingApp
     public partial class FaceRecognition : MetroForm
     {
         readonly PrivateFontCollection KMRFont = new();
-        readonly OpenCvSharp.VideoCapture _capture = new("http://192.168.1.4:8080/video");
+        readonly OpenCvSharp.VideoCapture _capture = new(0);
         private Thread _cameraThread;
         readonly OpenCvSharp.Mat _image = new();
         BitmapContainer ImageContainer;

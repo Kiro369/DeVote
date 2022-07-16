@@ -46,7 +46,7 @@ namespace DeVote
             _ = Recognition.Current;
 
             // Starting the seeder client to be able to connect to the network
-            DNSSeeder.AsynchronousClient seederClient = new();
+            DNSSeeder.AsynchronousClient seederClient = new("192.168.0.100");
 
             // Get the addresses of all nodes, and add out IP to the seeder
             Log.Info("Fetching DNS Seeder...");
