@@ -15,8 +15,8 @@ you can download and install it separately from [here](http://dlib.net/)
 2. Set environment paths for the wrapper engine.
 in [appsettings](https://github.com/Kiro369/DeVote/blob/master/DeVote/appsettings.json) file change these variables.
 ```bash
-  PythonDLLPath": "path/to/python/interpreter/dll",
-  SitePackagesPath": "path/to/site packages",
+  PythonDLLPath: "path/to/python/interpreter/dll",
+  SitePackagesPath: "path/to/site packages",
 ```
 
 3. set cameras or scanners.
@@ -24,7 +24,7 @@ for id ocr we use [ip-webcam](https://play.google.com/store/apps/details?id=com.
 use any droidcam, ip-cam or scanner you prefere.
 Make sure you have a reference to that cam or scanner and change these variables in [IDForm](https://github.com/Kiro369/DeVote/blob/master/DeVotingApp/IDForm.cs) file
 ```bash
-  readonly OpenCvSharp.VideoCapture _capture = new(the/reference/to/cam/or/scanner);
+  readonly OpenCvSharp.VideoCapture _capture = new("the/reference/to/cam/or/scanner");
   .
   .
   .
