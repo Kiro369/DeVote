@@ -16,20 +16,20 @@ Applying DLTs to E-Voting is not easy and is a challenging task, and we love cha
 
 First you gotta run the DNS Seeder, preferably on a static IP machine, you need to open a port for the DNS Seeder (any number)
 you can adjust the port number in Program.cs in DNSSeeder project
-'''
+...
 private static readonly int Port = your_port;
-'''
+...
 
 then in Program.cs in DeVote project
 adjust the following line:
-'''
+...
 DNSSeeder.AsynchronousClient seederClient = new(your_ip, your_port);
-'''
+...
 
 you need to open another port for the Node itself (DeVote), you can adjust the port number in Program.cs in DeVote project.
-'''
+...
 var server = new Server(4269);
-'''
+...
 After setting up the environment (steps below) adjust the paths appsettings.json in DeVote Project.
 This should be enough to get your Blockchain network up and running.
 Then to get the Flutter App running, you should configure the API, you can find how to configure it here
