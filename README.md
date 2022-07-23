@@ -6,7 +6,7 @@ Applying DLTs to E-Voting is not easy and is a challenging task, and we love cha
 * We are using Blockchain as an example of DLTs (for educational purposes).
 * Our Blockchain uses LRN (Least Random Number) Consensus, in which all Blockchain nodes at time X-1 broadcast
     a generated random number, and at time X, the node with least random number gets to add the next block.
-* Our blockchain is a permissioned blockchain, that uses a private network that his its own DNS Seeder and is secured with AES encryption.
+* Our blockchain is a permissioned blockchain, that uses a private network that has its own DNS Seeder and is secured with AES encryption.
 * The AES key is exchanged over the network securely using Elliptic-curve Diffie-Hellman Key Exchange. 
 * All stored information is hashed with Argon2id hashing algorithm.
 * All the data is stored using LevelDB.
