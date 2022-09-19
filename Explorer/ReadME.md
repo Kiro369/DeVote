@@ -1,8 +1,33 @@
 # deVote Explorer 
 deVote Explorer interfaces with a blockchain node to first extract all the levelDB data. It then stores it in a SQLite database to present the data in a searchable format.
 
+For more details, refer to [Documentation](../Documentation.pdf) - Section 6.9.7 Backend Operations - Page 63:66.
+
+# Installation
+Make sure you have [Node.js](https://nodejs.org/en/download) installed.
+
+1. Install dependencies.
+```bash
+  npm install 
+```
+
+2. Set your local variables in .env file.
+Make sure to set BLKS_PATH properly, it's where blocks are saved.
+```bash
+PORT = 9000
+SQLITEDB_NAME = "deVote"
+BLKS_PATH = "M:\\GradutaionProject\\DeVote\\Blocks"
+PROTO_FILE_NAME = "block"
+MINS_TO_SYNC_DBS = 0.5
+```
+
+3. Start the server, it will be running on your local IP address.
+```bash
+  npm start 
+```
+
 # Using the deVote Explorer API
-Query JSON data for blocks, transactions, location of voting machines. 
+Query JSON data for blocks, transactions, candidates, status of running election and location of voting machines. 
 ## /blocks Endpoints
 
 ### /blocks/block-height/:blockHeight : Get block metadata by block height.
@@ -104,14 +129,14 @@ Rather than retrieving a complete set of blocks/transactions using a single requ
 The complete endpoint has the following parameters.
 ```js
 GET /blocks?limit=20&heightCursor=prev_131
-GET /transactions?limit=20&timestampCursor=prev_1650144307329
+GET /transactions?limit=20&idCursor=prev_2
 ```
 
 - `limit` - The maximum number of blocks to fetch.
  The default limit value is 20.
  The maximum limit value is 50.
 
-- `heightCursor/timestampCursor` - The cursor serving as 
+- `heightCursor/idCursor` - The cursor serving as 
   - a pointer to a specific block/transaction,  where last request left off.
   - an indicator for whether we want set of blocks/transaction next or previous to the pointer.
 
@@ -120,7 +145,7 @@ We are using the unique, sequential columns : **blockHeight** and **transactionT
 
 #### How to use /blocks and /transactions Endpoints:
 ##### **1- Initial request**
-On the initial request, you don't pass a heightCursor/timestampCursor parameter.
+On the initial request, you don't pass a heightCursor/idCursor parameter.
 You just request the endpoint without parameters.
 ```js
 GET /blocks
@@ -145,9 +170,9 @@ GET /transactions/?limit=50
   }
 
   "pagination": {
-    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307329",
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&idCursor=prev_2",
     "more": true,
-    "max": 1650144307640
+    "max": 2
   }
 ```
 
@@ -192,9 +217,9 @@ GET /transactions/?limit=50
 ```json
 {
   "pagination": {
-    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307329",
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&idCursor=prev_2",
     "more": true,
-    "max": 1650144307640
+    "max": 2
   },
   "result": [
     {
@@ -219,10 +244,10 @@ GET /transactions/?limit=50
 <br>
 
 ##### **2- Subsequent requests  :**
-On subsequent requests, there should be a heightCursor/timestampCursor parameter
+On subsequent requests, there should be a heightCursor/idCursor parameter
 ```js
 GET /blocks?limit=20&heightCursor=prev_131
-GET /transactions?limit=20&timestampCursor=prev_1650144307329
+GET /transactions?limit=20&idCursor=prev_2
 ```
 **The server's response to the *subsequent request* will include a pagination object that includes prev and next properties when there are additional blocks/transactions to be retrieved.**
 
@@ -237,8 +262,8 @@ GET /transactions?limit=20&timestampCursor=prev_1650144307329
   }
 
  "pagination": {
-    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=prev_1650144307018",
-    "next": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&timestampCursor=next_1650144307287",
+    "prev": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&idCursor=prev_1650144307018",
+    "next": "https://devote-explorer-backend.herokuapp.com/transactions?limit=20&idCursor=next_2",
     "more": true,
     "max": 1650144307640
   }

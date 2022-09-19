@@ -103,8 +103,8 @@ async function updateItemsUI(baseAPI, resourceType, limit, requestType) {
         const { more, prev, next, max } = pagination;
 
         paginationDiv.innerHTML = "";
-        let cursorParamName = resourceType == "block" ? "height" : "timestamp"
-        let maxValue = resourceType == "block" ? max : `${max} - ${new Date(max).toLocaleString()}`;
+        let cursorParamName = resourceType == "block" ? "height" : "id"
+        let maxValue = max;
         paginationFeedBackDiv.innerHTML = `
         latest ${resourceType} ${cursorParamName} : ${maxValue}
         <br>

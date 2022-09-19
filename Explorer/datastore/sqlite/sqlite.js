@@ -95,13 +95,23 @@ class SQLite {
         return ltt["MIN(Date)"] || 0
     };
 
-    async getTxsByTimestampCursorAndLimit(timestampCursor, limit, operator, order) {
+    async getLatestTxId() {
+        const ltt = await this.db.get("SELECT MAX(ID) FROM Transactions")
+        return ltt["MAX(ID)"] || 0
+    };
+
+    async getOldestTxId() {
+        const lti = await this.db.get("SELECT MIN(ID) FROM Transactions")
+        return lti["MIN(ID)"] || 0
+    };
+
+    async getTxsByIdCursorAndLimit(idCursor, limit, operator, order) {
         const SQL_QUERY = `
         SELECT * FROM Transactions
-        WHERE Date ${operator} ?
-		ORDER BY Date ${order}
+        WHERE ID ${operator} ?
+		ORDER BY ID ${order}
         LIMIT ?`
-        const txs = await this.db.all(SQL_QUERY, timestampCursor, limit);
+        const txs = await this.db.all(SQL_QUERY, idCursor, limit);
         return txs
     }
 
@@ -110,7 +120,7 @@ class SQLite {
         if (!Confirmations) Confirmations = 0;
         _info(`Inserting Transaction : Hash ${Hash} -  blockHeight ${blockHeight}`)
         this.db.run('PRAGMA foreign_keys = OFF;');
-        await this.db.run("INSERT INTO Transactions VALUES (?,?,?,?,?,?)",
+        await this.db.run("INSERT INTO Transactions (Date,Hash,Elector,Elected,Confirmations,BlockHeight) VALUES (?,?,?,?,?,?)",
             Date, Hash, Elector, Elected, Confirmations, parseInt(blockHeight)
         )
         this.db.run('PRAGMA foreign_keys = ON;');

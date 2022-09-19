@@ -16,14 +16,68 @@ dir_path = os.path.dirname(os.path.dirname(__file__))
 reader = easyocr.Reader(["ar"])
 
 
+def scan_card(path, execution_time=60):
+    '''
+    reading card's data.
+
+    :param path: the path of scanner or camera.
+    :param execution_time: maximum time for reading.
+    :return: tuple 1st element is indicate for success read or not,
+                   2nd element is dictionary contain the card info.
+    '''
+    face = {"Front": None, "Back": None}
+    ter, ids = 0, []
+    data = {"Front": []}
+    video = cv2.VideoCapture(path)
+    if not video.isOpened():
+        return False, {}
+    elapsed_time = max(execution_time, 60)
+
+    for face_key in face.keys():
+        voice_ord = sounds[face_key].play()
+        voice_ord.wait_done()
+        pass_frames(video, 20)
+        start = time.time()
+        while video.isOpened():
+            ret, frame = video.read()
+            if ret:
+                is_card = is_there_card(frame)
+                if is_card:
+                    #front_or_back = is_front_back(frame)
+                    if face[face_key] is None:# and front_or_back == face_key:
+                        temp = scan(frame, face_key, ter)
+                        if temp is not None:
+                            if face_key == "Back":
+                                data[face_key] = temp
+                                face[face_key] = True
+                                break
+                            elif face_key == "Front":
+                                data[face_key].append(temp)
+                                ids.append(temp["ID"])
+                                ter = ter + 1
+                                if ter == 5:
+                                    face[face_key] = True
+                                    data[face_key] = get_best_id_data(data[face_key], ids)
+                                    break
+
+            pass_frames(video, 5)
+            end = time.time()
+            if (end-start) > elapsed_time:
+                terminate(video)
+                return False, {}
+    terminate(video)
+    return all(list(face.values())), data
+
+
 def id_read(img, gray=False, *, data, face):
     '''
-    reading ID card info
-    :param img: image contain ID card
-    :param gray: indicator if image passed with grayscale or Not
-    :param data: dictionary contain data you want to read as key,value pair
-    :param face: indicator for card side (front side , back side)
-    :return: dictionary have read data from the card
+    reading ID card info.
+
+    :param img: image contain ID card.
+    :param gray: indicator if image passed with grayscale or Not.
+    :param data: dictionary contain data you want to read as key,value pair.
+    :param face: indicator for card side (front side , back side).
+    :return: dictionary have read data from the card.
     '''
     image = img if gray else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, (1410, 900))
@@ -58,15 +112,15 @@ def id_read(img, gray=False, *, data, face):
         if len(ex_date) > 3:
             data[face]["expire_date"] = ex_date[0:4]
 
-
     pass
 
 
 def get_contours(img_edges):
     '''
-    find contours of different region of image helps us to crop it
-    :param img_edges: preprocessed image ready for extract contours from it
-    :return: sorted list of contours py Area
+    find contours of different region of image helps us to crop it.
+
+    :param img_edges: preprocessed image ready for extract contours from it.
+    :return: sorted list of contours py Area.
     '''
     contours = cv2.findContours(img_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
@@ -78,9 +132,10 @@ def get_contours(img_edges):
 
 def select_contour(contours):
     '''
-    selecting contours achieve ID card criteria
-    :param contours: list of contours
-    :return: a list contain selected contours
+    selecting contours achieve ID card criteria.
+
+    :param contours: list of contours.
+    :return: a list contain selected contours.
     '''
     for c in contours:
         approx = cv2.approxPolyDP(c, .01 * cv2.arcLength(c, True), True)
@@ -91,10 +146,11 @@ def select_contour(contours):
 
 def id_crop(id_img, gray=False):
     '''
-    crop the ID card from the Image
-    :param id_img: image contain the ID
-    :param gray: indicator if image passed with grayscale or Not
-    :return: cropped ID
+    crop the ID card from the Image.
+
+    :param id_img: image contain the ID.
+    :param gray: indicator if image passed with grayscale or Not.
+    :return: cropped ID.
     '''
     temp = id_img.copy()
     image = id_img if gray else cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
@@ -117,10 +173,11 @@ def id_crop(id_img, gray=False):
 
 def id_crop_simple(id_img, gray=False):
     '''
-    simplest method for cropping ID but less accuracy
-    :param id_img: image contain the ID
-    :param gray: indicator if image passed with grayscale or Not
-    :return: cropped image
+    simplest method for cropping ID but less accuracy.
+
+    :param id_img: image contain the ID.
+    :param gray: indicator if image passed with grayscale or Not.
+    :return: cropped image.
     '''
     image = id_img if gray else cv2.cvtColor(id_img, cv2.COLOR_BGR2GRAY)
     image = cv2.threshold(image, 160, 255, cv2.THRESH_BINARY)[1]
@@ -139,10 +196,11 @@ def id_crop_simple(id_img, gray=False):
 
 def ocr_id(id_path, face):
     '''
-    preparing card image and reading it
-    :param id_path: image contain the ID card
-    :param face: indicate the side of the card
-    :return: extracting data from the card
+    preparing card image and reading it.
+
+    :param id_path: image contain the ID card.
+    :param face: indicate the side of the card.
+    :return: extracting data from the card.
     '''
     ID_img = img_load(id_path)
     info = {"Front": {"first_name": "", "full_name": "", "address": "", "ID": ""},
@@ -160,22 +218,24 @@ def ocr_id(id_path, face):
 
 def img_load(img_ref):
     '''
-    helps method for loading image using specific path
-    :param img_ref: image path as str or opencv image
-    :return: resize loaded image
+    helps method for loading image using specific path.
+
+    :param img_ref: image path as str or opencv image.
+    :return: resize loaded image.
     '''
     if type(img_ref) is not str:
-        img_path = cv2.resize(img_ref, (800, 600))
-        return img_path
+        img_ref = cv2.resize(img_ref, (800, 600))
+        return img_ref
     img = cv2.imread(img_ref, 1)
     return cv2.resize(img, (800, 600))
 
 
 def test_card(card):
     '''
-    read specific data from different side of the card
-    :param card: cropped ID card
-    :return: data from the front,back side if any
+    read specific data from different side of the card.
+
+    :param card: cropped ID card.
+    :return: data from the front,back side if any.
     '''
     image = cv2.resize(card, (1410, 900))
 
@@ -198,10 +258,11 @@ def test_card(card):
 
 def is_front_back(img_path):
     '''
-    indicating if the ID is front side or back side
-    :param img_path: the path of the card image
-    :return: tuple 1st element is the card side (Front, Back, None)
-                   2nd element is the path for barcode from the back side if any
+    indicating if the ID is front side or back side.
+
+    :param img_path: the path of the card image.
+    :return: tuple 1st element is the card side (Front, Back, None),
+                   2nd element is the path for barcode from the back side if any.
     '''
     img = img_load(img_path)
     cropped = id_crop(img)
@@ -221,16 +282,17 @@ def is_front_back(img_path):
 
 def is_there_card(img_path):
     '''
-    search if there is a card in a image
-    :param img_path: the path of image
-    :return: there is a card or Not (True, False)
+    search if there is a card in a image.
+
+    :param img_path: the path of image.
+    :return: there is a card or Not (True, False).
     '''
     img = img_load(img_path)
     cropped = id_crop(img)
 
     #if cropped is not None:
-     #   cv2.imshow("test", cropped)
-      #  cv2.waitKey(1)
+    #    cv2.imshow("test", cropped)
+    #    cv2.waitKey(1)
     if cropped is not None:
         test_cropped = np.array(cropped.shape[:2]) >= 50
         return test_cropped.all()
@@ -241,9 +303,10 @@ def is_there_card(img_path):
 
 def preprocess_img(img):
     '''
-    preparing image and located different regions in the image to helps to crop them easy
-    :param img: image have regions we want
-    :return: different image regions colored with white
+    preparing image and located different regions in the image to helps to crop them easy.
+
+    :param img: image have regions we want.
+    :return: different image regions colored with white.
     '''
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ddepth = cv2.cv.CV_32F if imutils.is_cv2() else cv2.CV_32F
@@ -262,11 +325,11 @@ def preprocess_img(img):
 
 def get_barcode(img):
     '''
-    detecting 'PDF417' barcode, cropped it,
-    :param img: image may contain a barcode
-    :return: a tuple with 1st element indicate if there is a barcode or Not
-    and the path to the cropped barcode
-    '''
+    detecting 'PDF417' barcode, cropped it.
+
+    :param img: image may contain a barcode.
+    :return: a tuple with 1st element indicate if there is a barcode or Not.
+    and the path to the cropped barcode.
     '''
     processed_img = preprocess_img(img)
     contours = get_contours(processed_img)[0]
@@ -274,18 +337,23 @@ def get_barcode(img):
     box = cv2.cv.BoxPoints(rect) if imutils.is_cv2() else cv2.boxPoints(rect)
     box = np.int0(box)
     x, y, w, h = cv2.boundingRect(box)
-    barcode = img.copy()[y:y + h, x: x + w]'''
+    barcode = img.copy()[y-15:y + h+15, x-15: x + w+15]
     path = dir_path + "/barcode.jpg"
-    #saved = cv2.imwrite(path, barcode)
-    saved = cv2.imwrite(path, img)
+    saved = cv2.imwrite(path, barcode)
     return saved, path
 
 
-def is_back_API(filePath):
+def is_back_API(file_path):
+    '''
+    api for checking if the barcode is PDF417 type or not.
+
+    :param file_path: barcode img path.
+    :return: if the type is match or not.
+    '''
     url = "https://wabr.inliteresearch.com/barcodes"
-    formData = {'types': 'Pdf417', 'fields': 'type,length', }
-    files = {'file': (filePath, open(filePath, 'rb'), 'application/octet-stream')}
-    response = requests.post(url, data=formData, files=files)
+    form_data = {'types': 'Pdf417', 'fields': 'type,length', }
+    files = {'file': (file_path, open(file_path, 'rb'), 'application/octet-stream')}
+    response = requests.post(url, data=form_data, files=files)
 
     # print(response.text)
 
@@ -293,10 +361,10 @@ def is_back_API(filePath):
         print("Could not sent the Request")
         return False
 
-    resJson = json.loads(response.text)
-    Pdf417BarcodeList = resJson["Barcodes"]
+    res_json = json.loads(response.text)
+    Pdf417_barcode_list = res_json["Barcodes"]
 
-    if not len(Pdf417BarcodeList):
+    if not len(Pdf417_barcode_list):
         print("No Barcode of type Pdf417 detected")
         return False
 
@@ -310,6 +378,14 @@ for f in sounds_path.keys():
 
 
 def scan(frame, face, ter):
+    '''
+    reading card info, check data, save copy of front image if success.
+
+    :param frame: frame contains a id card.
+    :param face: determine the card side.
+    :param ter: saved frames number.
+    :return: data if success reading or None.
+    '''
     data = ocr_id(frame, face)
     if check_acc(data, face):
         if face == "Front":
@@ -322,6 +398,13 @@ def scan(frame, face, ter):
 
 
 def check_acc(data, face):
+    '''
+    check if data meets specific criteria.
+
+    :param data: the card data.
+    :param face: determine the card side.
+    :return: True , False based on specific criteria.
+    '''
     if face == "Front":
         return len(data[face]["first_name"]) > 1 and len(data[face]["ID"]) == 14
     else:
@@ -329,6 +412,13 @@ def check_acc(data, face):
 
 
 def pass_frames(cam_ref, number_to_pass=20):
+    '''
+    pass number of frames from a stream video.
+
+    :param cam_ref: the camera reference.
+    :param number_to_pass: number of frames to pass.
+    :return: last frame in the stream after passing.
+    '''
     passed = 0
     while cam_ref.isOpened() and passed < number_to_pass:
         ret, frame = cam_ref.read()
@@ -337,56 +427,29 @@ def pass_frames(cam_ref, number_to_pass=20):
     return cam_ref.read()[1]
 
 
-def scan_card(path, execution_time=60):
-    face = {"Front": None}  # , "Back": None}
-    ter, ids = 0, []
-    data = {"Front": []}
-    video = cv2.VideoCapture(path)
-    if not video.isOpened():
-        return False, {}
-    elapsed_time = max(execution_time, 60)
-
-    for face_key in face.keys():
-        voice_ord = sounds[face_key].play()
-        voice_ord.wait_done()
-        pass_frames(video, 20)
-        start = time.time()
-        while video.isOpened():
-            ret, frame = video.read()
-            if ret:
-                is_card = is_there_card(frame)
-                if is_card:
-                    #front_or_back = is_front_back(frame)
-                    if face[face_key] is None:# and front_or_back == face_key:
-                        temp = scan(frame, face_key, ter)
-                        if temp is not None:
-                            data[face_key].append(temp)
-                            ids.append(temp["ID"])
-                            ter = ter + 1
-                            if ter == 5:
-                                face[face_key] = True
-                                data[face_key] = get_id_data(data[face_key], ids)
-                                break
-
-            pass_frames(video, 5)
-            end = time.time()
-            if (end-start) > elapsed_time:
-                terminate(video)
-                return False, {}
-    terminate(video)
-    return all(list(face.values())), data
-
-
 def terminate(cam_ref):
+    '''
+    release all camera references.
+
+    :param cam_ref: camera reference.
+    :return: None.
+    '''
     cam_ref.release()
     cv2.destroyAllWindows()
     voice_th = sounds["End"].play()
     voice_th.wait_done()
 
 
-def get_id_data(data, ids):
+def get_best_id_data(data, ids):
+    '''
+    return data with related with maximum frequent id.
+
+    :param data: card data.
+    :param ids: list of IDs.
+    :return: best front side data.
+    '''
     counts = Counter(ids)
-    max_id = max(counts.items(), key = lambda k : k[1])[0]
+    max_id = max(counts.items(), key=lambda k: k[1])[0]
     for val in data:
         if val["ID"] == max_id:
             return val
