@@ -9,8 +9,9 @@ CREATE TABLE  Blocks (
 );
 
 CREATE TABLE Transactions (
+    ID              INTEGER PRIMARY KEY AUTOINCREMENT,
     Date            INTEGER,
-    Hash            TEXT PRIMARY KEY,
+    Hash            TEXT,
     Elector         TEXT,
     Elected         TEXT,
     Confirmations   INTEGER NOT NULL,

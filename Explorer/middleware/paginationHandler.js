@@ -1,17 +1,20 @@
 async function cursorBasedPaginationHandler(req, res, resourceType) {
     const mySQLite = global.SQLite;
 
-    const cursorParamName = resourceType == "block" ? "heightCursor" : "timestampCursor";
-    const cursorColumnName = resourceType == "block" ? "Height" : "Date";
+    const cursorParamName = resourceType == "block" ? "heightCursor" : "idCursor";
+    const cursorColumnName = resourceType == "block" ? "Height" : "ID";
 
     const limit = parseInt(req.query["limit"]) || 20;
     if (limit > 50) limit = 50;
 
     const lbh = await mySQLite.getLatestBlockHeight();
-    const ltt = await mySQLite.getLatestTxTimestamp();
+    const ltt = await mySQLite.getLatestTxId();
 
     const obh = await mySQLite.getOldestBlockHeight();
-    const ott = await mySQLite.getOldestTxTimestamp();
+    const ott = await mySQLite.getOldestTxId();
+
+    // console.log("ltt", ltt)
+    // console.log("ott", ott)
 
     const maxCursorValue = resourceType == "block" ? lbh : ltt;
     const minCursorValue = resourceType == "block" ? obh : ott;
@@ -30,22 +33,24 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
     }
 
 
-    // set cursor to the max value of the unique column in the initial request.
-    if (!cursor) cursor = maxCursorValue;
+    // if (!cursor) cursor = maxCursorValue;
     let more = true;
     let prev, next;
     let pagination = {};
 
     // case one : initial request by the client
-    if (cursor == maxCursorValue) {
+    // if (cursor == maxCursorValue) {
+    if (!cursor) {
         console.log("Case 1 : Initial request by the client")
         // increment by 1 to avoid comparison by equality in SQL query.
+        // set cursor to the max value of the unique column in the initial request.
+        cursor = maxCursorValue;
         cursor += 1;
         next = null;
     }
 
     // other cases : subsequent requests
-    if (cursor < maxCursorValue) {
+    if (cursor <= maxCursorValue) {
         console.log("Case 2 : Subsequent requests by client")
     }
 
@@ -53,7 +58,7 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
 
     let items = resourceType == "block" ?
         await mySQLite.getBlocksByHeightCursorAndLimit(cursor, limit, operator, order) :
-        await mySQLite.getTxsByTimestampCursorAndLimit(cursor, limit, operator, order);
+        await mySQLite.getTxsByIdCursorAndLimit(cursor, limit, operator, order);
 
 
     if (paginationDir == "next") items = items.reverse();
@@ -71,8 +76,8 @@ async function cursorBasedPaginationHandler(req, res, resourceType) {
     // console.log("cursor", cursor)
 
     const host = req.headers.host;
-    let protocol = "https" || req.protocol
-    if (host.includes("localhost")) protocol = "http"
+    let protocol = req.protocol || "https"
+    // if (host.includes("localhost")) protocol = "http"
 
     // console.log("host", host)
     // console.log("req.secure ", req.secure)
